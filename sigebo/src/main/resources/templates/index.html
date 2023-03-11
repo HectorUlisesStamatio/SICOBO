@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es"  xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/LandingPage/head :: head}"></head>
+<body>
+<!--==================== HEADER ====================-->
+<header th:insert="~{layout/LandingPage/header :: header}"></header>
+<!--==================== MAIN ====================-->
+<main class="main">
+    <!--==================== INICIO ====================-->
+    <section class="home section" id="home">
+
+        <div class="home__container container grid">
+            <div class="home__data">
+                <h1 class="home__title">
+                    Descubre <br> La Mejor <br> Bodega
+                </h1>
+                <p class="home__description">
+                    Busca entre una enorme variedad de bodegas el espacio más adecuado,
+                    olvidate de todas las dificultades.
+                </p>
+
+
+                <div class="home__value">
+                    <div>
+                        <h1 class="home__value-number">
+                            12K <span>+</span>
+                        </h1>
+                        <span class="home__value-description">
+                Bodegas <br> Lujosas
+              </span>
+                    </div>
+
+                    <div>
+                        <h1 class="home__value-number">
+                            28K <span>+</span>
+                        </h1>
+                        <span class="home__value-description">
+                Clientes <br> Satisfechos
+              </span>
+                    </div>
+
+                    <div>
+                        <h1 class="home__value-number">
+                            32K <span>+</span>
+                        </h1>
+                        <span class="home__value-description">
+                Bodegas <br> Accesibles
+              </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="home__images">
+                <div class="home__orbe"></div>
+
+                <div class="home__img">
+                    <img th:src="@{/img/home.jpg}" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== LOGOS ====================-->
+    <section class="logos section">
+        <div class="logos__container container grid">
+            <div class="logos__img">
+                <img th:src="@{/img/logo1.png}" alt="">
+            </div>
+            <div class="logos__img">
+                <img th:src="@{/img/logo2.png}" alt="">
+            </div>
+            <div class="logos__img">
+                <img th:src="@{/img/logo3.png}" alt="">
+            </div>
+            <div class="logos__img">
+                <img th:src="@{/img/logo4.png}" alt="">
+            </div>
+        </div>
+    </section>
+
+    <!--==================== POPULAR ====================-->
+    <section class="section" id="popular">
+        <div class="container">
+            <span class="section__subtitle">La mejor elección</span>
+            <h2 class="section__title">
+                Bodegas Lujosas<span>.</span>
+            </h2>
+
+            <div class="popular__container grid swiper">
+                <div class="swiper-wrapper">
+                    <article class="popular__card swiper-slide">
+                        <img th:src="@{/img/popular1.jpg}" alt="" class="popular__img">
+
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                <span>$</span>69,999
+                            </h2>
+                            <h3 class="popular__title">
+                                Bodega de lujo Santa Fe
+                            </h3>
+                            <p class="popular__description">
+                                Av. Vasco de Quiroga 3800, Santa Fe, Alvaro Obregón, Ciudad de México . #9876
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="popular__card swiper-slide">
+                        <img th:src="@{/img/popular2.jpg}" alt="" class="popular__img">
+
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                <span>$</span>200,000
+                            </h2>
+                            <h3 class="popular__title">
+                                Bodega en Citta San Jeronimo
+                            </h3>
+                            <p class="popular__description">
+                                Avenida de las torres 900 , San José del Olivar, Alvaro Obregón #9876
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="popular__card swiper-slide">
+                        <img th:src="@{/img/popular3.jpg}" alt="" class="popular__img">
+
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                <span>$</span>77,000
+                            </h2>
+                            <h3 class="popular__title">
+                                Vidalta Sitio de Bodegas
+                            </h3>
+                            <p class="popular__description">
+                                Av. Stim 28 Bosques de las Lomas, Cuajimalpa de Morelos #9876
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="popular__card swiper-slide">
+                        <img th:src="@{/img/popular4.jpg}" alt="" class="popular__img">
+
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                <span>$</span>65,000
+                            </h2>
+                            <h3 class="popular__title">
+                                Bodega Grande Condesa, Cdmx
+                            </h3>
+                            <p class="popular__description">
+                                C. Chilpancingo 57 Hipódromo Condesa, Cuauhtémoc #9876
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="popular__card swiper-slide">
+                        <img th:src="@{/img/popular5.jpg}" alt="" class="popular__img">
+
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                <span>$</span>120,000
+                            </h2>
+                            <h3 class="popular__title">
+                                Fresnos. - Gabriel Mancera 29
+                            </h3>
+                            <p class="popular__description">
+                                Gabriel Mancera 29, Del Valle Centro, Benito Juárez, Ciudad de México. #9876
+                            </p>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="swiper-button-next">
+                    <i class='bx bx-chevron-right'></i>
+                </div>
+                <div class="swiper-button-prev">
+                    <i class='bx bx-chevron-left'></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== VALOR ====================-->
+    <section class="value section" id="value">
+        <div class="value__container container grid">
+            <div class="value__images">
+                <div class="value__orbe"></div>
+
+                <div class="value__img">
+                    <img th:src="@{/img/valor.jpg}" alt="">
+                </div>
+            </div>
+
+            <div class="value__content">
+                <div class="value__data">
+                    <span class="section__subtitle">Nuestro valor</span>
+                    <h2 class="section__title">
+                        Nuestro Valor Agregado<span>.</span>
+                    </h2>
+                    <p class="value__description">
+                        Nosotros siempre estamos listos para ayudar dando el mejor servicio para todos.
+                        Podemos hacer que encuentres la mejor bodega.
+                    </p>
+                </div>
+
+                <div class="value__accordion">
+                    <div class="value__accordion-item">
+                        <header class="value__accordion-header">
+                            <i class='bx bxs-shield-x value__accordion-icon'></i>
+                            <h3 class="value__accordion-title">
+                                Las mejores tasas de interés del mercado
+                            </h3>
+                            <div class="value__accordion-arrow">
+                                <i class='bx bxs-down-arrow'></i>
+                            </div>
+                        </header>
+
+                        <div class="value__accordion-content">
+                            <p class="value__accordion-description">
+                                Manejamos un interés tan bajo que no lo notarás.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="value__accordion-item">
+                        <header class="value__accordion-header">
+                            <i class='bx bxs-x-square value__accordion-icon'></i>
+                            <h3 class="value__accordion-title">
+                                Prevenimos los precios inestables
+                            </h3>
+                            <div class="value__accordion-arrow">
+                                <i class='bx bxs-down-arrow'></i>
+                            </div>
+                        </header>
+
+                        <div class="value__accordion-content">
+                            <p class="value__accordion-description">
+                                El precio que ofrecemos es el mejor para usted, le garantizamos que no habrá cambios en el precio de
+                                su
+                                bodega debido a varios costos inesperados que puedan surgir.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="value__accordion-item">
+                        <header class="value__accordion-header">
+                            <i class='bx bxs-bar-chart-square value__accordion-icon'></i>
+                            <h3 class="value__accordion-title">
+                                Los mejores precios del mercado
+                            </h3>
+                            <div class="value__accordion-arrow">
+                                <i class='bx bxs-down-arrow'></i>
+                            </div>
+                        </header>
+
+                        <div class="value__accordion-content">
+                            <p class="value__accordion-description">
+                                Ofrecemos los costos más bajos del mercado.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="value__accordion-item">
+                        <header class="value__accordion-header">
+                            <i class='bx bxs-checkbox-checked value__accordion-icon'></i>
+                            <h3 class="value__accordion-title">
+                                Mantenemos segura tu informacion
+                            </h3>
+                            <div class="value__accordion-arrow">
+                                <i class='bx bxs-down-arrow'></i>
+                            </div>
+                        </header>
+
+                        <div class="value__accordion-content">
+                            <p class="value__accordion-description">
+                                Tu información se encuentra protegida por nosotros.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== PRECIOS ====================-->
+    <section class="section" id="pricing">
+        <div class="container">
+            <span class="section__subtitle">Consulta nuestros tipos de bodegas</span>
+            <h2 class="section__title">
+                Los mejores precios<span>.</span>
+            </h2>
+
+            <div class="card___grid">
+                <div class="card___box PBasico">
+                    <div class="card___title">Simple</div>
+                    <div class="card___price">
+                        <b>$3,000</b>
+                        <span>Por mes</span>
+                    </div>
+                    <div class="card___features">
+                        <div>Espacio Moderado</div>
+                        <div>Servicio de Limpieza</div>
+                        <div>Mantenimiento Incluido</div>
+                        <div>20% de Interés</div>
+                    </div>
+                    <div class="card___button">
+                        <button>Buscar</button>
+                    </div>
+                </div>
+
+                <div class="card___box PVIP">
+                    <div class="card___title">Media</div>
+                    <div class="card___price">
+                        <b>$5,000</b>
+                        <span>Por mes</span>
+                    </div>
+                    <div class="card___features">
+                        <div>Espacio Amplio</div>
+                        <div>Servicio de Limpieza</div>
+                        <div>Mantenimiento Incluido</div>
+                        <div>15% de Interés</div>
+                    </div>
+                    <div class="card___button">
+                        <button>Buscar</button>
+                    </div>
+                </div>
+
+                <div class="card___box PProfesional">
+                    <div class="card___title">Especial</div>
+                    <div class="card___price">
+                        <b>$7,000</b>
+                        <span>Por mes</span>
+                    </div>
+                    <div class="card___features">
+                        <div>Espacio Grande</div>
+                        <div>Servicio de Limpieza</div>
+                        <div>Mantenimiento Incluido</div>
+                        <div>10% de Interés</div>
+                    </div>
+                    <div class="card___button">
+                        <button>Buscar</button>
+                    </div>
+                </div>
+
+
+                <div class="card___box PVIP">
+                    <div class="card___title">Empresarial</div>
+                    <div class="card___price">
+                        <b>$10,000</b>
+                        <span>Por mes</span>
+                    </div>
+                    <div class="card___features">
+                        <div>Espacio Grande</div>
+                        <div>Servicio de Limpieza</div>
+                        <div>Servicio de Refrigeración</div>
+                        <div>5% de Interés</div>
+                    </div>
+                    <div class="card___button">
+                        <button>Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== CONTACTO ====================-->
+    <section class="contact section" id="contact">
+        <div class="contact__container container grid">
+            <div class="contact__images">
+                <div class="contact__orbe"></div>
+
+                <div class="contact__img">
+                    <img th:src="@{/img/contacto.jpg}" alt="">
+                </div>
+            </div>
+
+            <div class="contact__content">
+                <div class="contact__data">
+                    <span class="section__subtitle">Contáctenos</span>
+                    <h2 class="section__title">
+                        Es fácil contactarnos<span>.</span>
+                    </h2>
+                    <p class="contact__description">
+
+                        ¿Tienes un problema buscando la bodega de tus sueños? ¿Necesitas
+                        una guía para poder rentar tu bodega? ¿O necesitas consultar un problema?
+                        Solo contáctenos ya mismo.
+                    </p>
+                </div>
+
+                <div class="contact__card">
+                    <div class="contact__card-box">
+                        <div class="contact__card-info">
+                            <i class='bx bxs-phone-call'></i>
+                            <div>
+                                <h3 class="contact__card-title">
+                                    Llámanos
+                                </h3>
+                                <p class="contact__card-description">
+                                    7775996014
+                                </p>
+                            </div>
+                        </div>
+                        <button class="button contact__card-button">
+                            ¡Llame ya!
+                        </button>
+                    </div>
+
+                    <div class="contact__card-box">
+                        <div class="contact__card-info">
+                            <i class='bx bxs-message-rounded-dots'></i>
+
+                            <div>
+                                <h3 class="contact__card-title">
+                                    Chat
+                                </h3>
+                                <p class="contact__card-description">
+                                    7775996014
+                                </p>
+                            </div>
+                        </div>
+                        <button class="button contact__card-button">
+                            Chatea ya!
+                        </button>
+                    </div>
+
+                    <div class="contact__card-box">
+                        <div class="contact__card-info">
+                            <i class='bx bxs-video'></i>
+
+                            <div>
+                                <h3 class="contact__card-title">
+                                    Videollamada
+                                </h3>
+                                <p class="contact__card-description">
+                                    7775996014
+                                </p>
+                            </div>
+                        </div>
+                        <button class="button contact__card-button">
+                            ¡Llame ya!
+                        </button>
+                    </div>
+
+                    <div class="contact__card-box">
+                        <div class="contact__card-info">
+                            <i class='bx bxs-envelope'></i>
+
+                            <div>
+                                <h3 class="contact__card-title">
+                                    Mensaje
+                                </h3>
+                                <p class="contact__card-description">
+                                    7775996014
+                                </p>
+                            </div>
+                        </div>
+                        <button class="button contact__card-button">
+                            ¡Mensaje ya!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!--==================== LOGIN ====================-->
+    <section class="subscribe section">
+        <div class="subscribe__container container">
+            <h1 class="subscribe__title">
+                Inicia ya mismo con SICOBO
+            </h1>
+            <p class="subscribe__description">
+                Inicia tu sesión o regístrate para empezar a buscar tu bodega ideal.
+            </p>
+            <a th:href="@{/login}" class="button subscribe__button">
+                Iniciar Sesión
+            </a>
+        </div>
+    </section>
+</main>
+
+<!--==================== FOOTER ====================-->
+<footer th:insert="~{layout/LandingPage/footer :: footer}"></footer>
+
+
+<!--========== SCROLL UP ==========-->
+<a href="#" class="scrollup" id="scroll-up">
+    <i class='bx bx-chevrons-up'></i>
+</a>
+<div th:insert="~{layout/LandingPage/scripts :: scripts}"></div>
+</body>
+
+</html>

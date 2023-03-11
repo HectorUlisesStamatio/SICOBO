@@ -1,0 +1,18 @@
+<head th:fragment="head">
+  <!--=============== META ===============-->
+  <meta name="theme-color" content="#4285f4">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--=============== FAVICON ===============-->
+  <link rel="shortcut icon" href="./../img/favicon.png" type="image/x-icon">
+  <!--=============== BOXICONS ===============-->
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
+  <!--=============== CSS ===============-->
+  <link rel="stylesheet" th:href="@{/css/error.css}">
+
+  <title th:if="${status == 403}">SICOBO | Error 403</title>
+  <title th:if="${status == 404}">SICOBO | Error 404</title>
+  <title th:if="${status == 500}">SICOBO | Error 500</title>
+  <title th:if="${status != 500 && status != 404 && status != 403}">SICOBO | Error Desconocido</title>
+</head>

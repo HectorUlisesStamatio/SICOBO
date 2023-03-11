@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<main>
+    <div class="container">
+
+        <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+            <h1 id="codigo">Error</h1>
+            <h2 id="descripcion">Descripcion del error.</h2>
+            <a class="btn" th:href="@{/}">Volver al inicio</a>
+            <img src="./img/500.svg" class="img-fluid py-5" alt=" ">
+            <div th:insert="~{layout/extras/credits :: credits}"></div>
+        </section>
+
+    </div>
+</main>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<input type="hidden" id="estado" th:value="${status}">
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+</script>
+
+<script>
+
+    let $ = jQuery;
+
+    $(document).ready(function(){
+        try{
+            let tipo = document.getElementById("estado").value;
+            let codigo = parseInt(tipo);
+            switch(codigo){
+                case 404:
+                    document.getElementById("codigo").innerHTML = "404";
+                    document.getElementById("descripcion").innerHTML = "La pagina que buscas no fue encontrada.";
+                    document.title = "Error 404 | SICOBO";
+                    break;
+                case 403:
+                    document.getElementById("codigo").innerHTML = "403";
+                    document.getElementById("descripcion").innerHTML = "Parece que no cuentas con los permisos necesarios para estar aquí.";
+                    document.title = "Error 403 | SICOBO";
+                    break;
+                case 500:
+                    document.getElementById("codigo").innerHTML = "500";
+                    document.getElementById("descripcion").innerHTML = "Parece que hubo un fallo interno estamos trabajando en ello.";
+                    document.title = "Error 500 | SICOBO";
+                    break;
+                default:
+                    document.getElementById("codigo").innerHTML = "Error Inesperado";
+                    document.getElementById("descripcion").innerHTML = "Parece que ocurrió un error inesperado, intente nuevamente.";
+                    document.title = "Error Desconocido | SICOBO";
+            }
+        } catch (Exception){}
+    })
+
+</script>
+
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+</body>
+
+</html>

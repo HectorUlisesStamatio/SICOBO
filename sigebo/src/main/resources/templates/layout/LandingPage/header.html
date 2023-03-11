@@ -1,0 +1,45 @@
+<header th:fragment="header" class="header" id="header">
+    <nav class="nav container">
+        <a href="#" class="nav__logo">
+            SICOBO
+        </a>
+        <div class="nav__menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="#home" class="nav__link active-link">
+                        <i class='bx bx-home-alt-2'></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="#popular" class="nav__link">
+                        <i class='bx bx-building-house'></i>
+                        <span>Bodegas</span>
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="#value" class="nav__link">
+                        <i class='bx bx-award'></i>
+                        <span>Valor agregado</span>
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="#pricing" class="nav__link">
+                        <span>Precios</span>
+                        <i class='bx bx-dollar'></i>
+                    </a>
+                </li>
+
+                <li class="nav__item">
+                    <a href="#contact" class="nav__link">
+                        <span>Contáctanos</span>
+                        <i class='bx bx-phone'></i>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <a th:href="@{/login}" class="nav__button button" style="margin-left: 30px">Iniciar sesión</a>
+    </nav>
+</header>

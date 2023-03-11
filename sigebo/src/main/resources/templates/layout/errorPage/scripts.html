@@ -1,0 +1,46 @@
+<div th:fragment="scripts">
+    <!--=============== SCROLLREVEAL ===============-->
+    <script  th:src="@{/js/scrollreveal.min.js}"></script>
+
+    <!--=============== MAIN JS ===============-->
+    <script th:src="@{/js/error.js}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+
+    <script>
+
+        let $ = jQuery;
+
+        $(document).ready(function(){
+            try{
+                let tipo = document.getElementById("estado").value;
+                let codigo = parseInt(tipo);
+                console.log(tipo);
+                switch(codigo){
+                    case 404:
+                        document.getElementById("subtitulo").innerHTML = "Error 404";
+                        document.getElementById("titulo").innerHTML = "Algo Ocurrió";
+                        document.getElementById("descripcion").innerHTML = `La pagina que buscas <br> no fue encontrada.`;
+                        break;
+                    case 403:
+                        document.getElementById("subtitulo").innerHTML = "Error 403";
+                        document.getElementById("titulo").innerHTML = "Acceso Denegado";
+                        document.getElementById("descripcion").innerHTML = `Parece que no cuentas con los permisos<br> necesarios para estar aquí.`;
+                        break;
+                    case 500:
+                        document.getElementById("subtitulo").innerHTML = "Error 500";
+                        document.getElementById("titulo").innerHTML = "Error Interno";
+                        document.getElementById("descripcion").innerHTML = `Parece que hubo un fallo interno<br> estamos trabajando en ello.`;
+                        break;
+                    default:
+                        document.getElementById("subtitulo").innerHTML = "Error Desconocido";
+                        document.getElementById("titulo").innerHTML = "Error Inesperado";
+                        document.getElementById("descripcion").innerHTML = `Parece que ocurrió un error <br> inesperado, intente nuevamente.`;
+                }
+            } catch (Exception){}
+        })
+
+    </script>
+</div>
