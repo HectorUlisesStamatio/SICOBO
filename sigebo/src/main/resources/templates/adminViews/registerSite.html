@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Sitios</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Sitios</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/sitios}">Lista de sitios</a></li>
+                <li class="breadcrumb-item active">Registro</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <form class="row g-3 needs-validation" th:action="@{/login}" method="post" novalidate>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Registrar Sitio</h5>
+
+                            <div class="col-12 mb-3">
+                                <label for="name" class="form-label">Nombre</label>
+                                <div class="input-group has-validation">
+                                    <input type="text" name="name" class="form-control" id="name" required>
+                                    <!--<div th:text="#{login.usuario.error}" class="invalid-feedback"></div>-->
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="address" class="form-label">Dirección</label>
+                                <div class="input-group has-validation">
+                                    <input type="text" name="address" class="form-control" id="address" required>
+                                    <!--<div th:text="#{login.usuario.error}" class="invalid-feedback"></div>-->
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="beanState" class="form-label">Estado</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="beanState" id="beanState" required>
+                                    <option selected>Selecciona una opción...</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+
+                    </div>
+                    <div class="card-footer text-end">
+                        <button class="btn btn-danger mt-2 mb-2">Cancelar</button>
+                        <button class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>
