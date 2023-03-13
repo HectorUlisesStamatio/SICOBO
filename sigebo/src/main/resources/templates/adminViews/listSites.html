@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Sitios</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Sitios</a></li>
+                <li class="breadcrumb-item active">Lista de sitios</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col">Listado de sitios</div>
+                                <div class="col text-end"> <a th:href="@{/registro}" class="btn btn-outline-success"><i class="bi bi-plus-lg"></i></a></div>
+                            </div>
+                        </h5>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col table-responsive">
+                                    <table class="table table-borderless datatable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Área geográfica</th>
+                                            <th scope="col">Dirección</th>
+                                            <th scope="col">Estado</th>
+                                            <th scope="col">Acciones</th>
+                                            <th scope="col">Habilitar o Deshabilitar</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row"><a href="#">#1</a></th>
+                                            <td>Sitio less</td>
+                                            <td>Jalisco</td>
+                                            <td>Paseo de la Rosa #125, Jardines del Sol, Guadalajara, 45050</td>
+                                            <td><span class="badge bg-success">Activo</span></td>
+                                            <td class="text-center">
+                                                <a th:href="@{/modificacion}" class="btn btn-outline-warning"><i
+                                                        class="bi bi-pencil-fill"></i></a>
+                                            </td>
+                                            <td >
+                                                <form class="d-flex justify-content-center">
+                                                    <div class="form-check form-switch" >
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                               id="flexSwitchCheckDefault">
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>
