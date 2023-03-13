@@ -8,6 +8,10 @@
 <header th:insert="~{layout/admin/header :: header}"></header>
 <aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
 
+<script th:inline="javascript">
+
+</script>
+
 <main id="main" class="main">
 
     <div class="pagetitle">
@@ -19,7 +23,11 @@
             </ol>
         </nav>
     </div>
-
+    <script th:inline="javascript">
+        var dato = /*[[${response.result}]]*/ '';
+        console.log("Hola" + dato);
+    </script>
+    <input type="hidden" id="response" th:value="${status}"/>
     <section class="section">
         <div class="row">
             <div class="col">
@@ -28,7 +36,7 @@
                         <h5 class="card-title">
                             <div class="row justify-content-between align-items-center">
                                 <div class="col">Listado de sitios</div>
-                                <div class="col text-end"> <a th:href="@{/registro}" class="btn btn-outline-success"><i class="bi bi-plus-lg"></i></a></div>
+                                <div class="col text-end"> <a th:href="@{/registro}" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></a></div>
                             </div>
                         </h5>
                         <div class="container-fluid">
@@ -47,12 +55,16 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <th scope="row"><a href="#">#1</a></th>
-                                            <td>Sitio less</td>
-                                            <td>Jalisco</td>
-                                            <td>Paseo de la Rosa #125, Jardines del Sol, Guadalajara, 45050</td>
-                                            <td><span class="badge bg-success">Activo</span></td>
+                                        <tr th:each="site, index: ${response.result}" th:if="${#arrays.length(response.result) > 0}">
+                                            <th scope="row" th:text="${index.index + 1 }"></th>
+                                            <td th:text="${site.name}"></td>
+                                            <td th:text="${site.beanState.name}">Jalisco</td>
+                                            <td th:text="${site.address}"></td>
+                                            <td>
+                                                <span th:if="${site.status == 1}" class="badge bg-success">Activo</span>
+                                                <span th:unless="${site.status == 1}" class="badge bg-secondary">Inactivo</span>
+
+                                            </td>
                                             <td class="text-center">
                                                 <a th:href="@{/modificacion}" class="btn btn-outline-warning"><i
                                                         class="bi bi-pencil-fill"></i></a>
@@ -60,11 +72,14 @@
                                             <td >
                                                 <form class="d-flex justify-content-center">
                                                     <div class="form-check form-switch" >
-                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                        <input class="form-check-input" type="checkbox" role="switch" th:checked="${site.status == 1}"
                                                                id="flexSwitchCheckDefault">
                                                     </div>
                                                 </form>
                                             </td>
+                                        </tr>
+                                        <tr th:unless="${#arrays.length(response.result) > 0}">
+                                            <td colspan="7" class="text-center fw-semibold">No hay sitios registrados en el sistema.</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -85,6 +100,13 @@
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<!--<script>
+    window.addEventListener('load', () =>{
+        let response = document.getElementById("response").value
+        console.log(response)
+    })
+</script>-->
 
 </body>
 
