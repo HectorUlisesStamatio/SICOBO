@@ -15,7 +15,7 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/dash}">Sitios</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/sitios}">Lista de sitios</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/sitios}">Lista de sitios</a></li>
                 <li class="breadcrumb-item active">Registro</li>
             </ol>
         </nav>
@@ -24,7 +24,7 @@
     <section class="section">
         <div class="row">
             <div class="col">
-                <form class="row g-3 needs-validation" th:action="@{/login}" method="post" novalidate>
+                <form class="row g-3 needs-validation" th:action="@{/admin/registrarSitio}" th:object="${sitio}" method="post" novalidate>
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Registrar Sitio</h5>

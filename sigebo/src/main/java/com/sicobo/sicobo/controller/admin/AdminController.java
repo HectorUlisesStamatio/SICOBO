@@ -16,7 +16,6 @@ public class AdminController {
 
     @GetMapping("/sitios")
     public String listar(Model model){
-        System.out.println(siteService.listar());
         model.addAttribute("response", siteService.listar().getBody());
         model.addAttribute("status", siteService.listar().getStatusCode());
         return "adminViews/listSites";

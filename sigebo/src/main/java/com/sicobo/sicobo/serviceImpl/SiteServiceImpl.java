@@ -22,7 +22,7 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return new ResponseEntity(new Message("Usuario registrado","HOLA", "success",200, daoSite.findAll()), HttpStatus.OK);
+        return new ResponseEntity(new Message("Consulta exitosa","La consulta de sitios ha sido exitosa", "success",200, daoSite.findAll()), HttpStatus.OK);
     }
 
     @Override
