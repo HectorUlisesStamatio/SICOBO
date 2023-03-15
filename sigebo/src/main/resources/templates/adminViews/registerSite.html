@@ -24,24 +24,31 @@
     <section class="section">
         <div class="row">
             <div class="col">
-                <form class="row g-3 needs-validation" th:action="@{/admin/registrarSitio}" th:object="${sitio}" method="post" novalidate>
+                <form class="row g-3 needs-validation" th:action="@{/admin/registrarSitio}" th:object="${sitio}" method="post" novalidate id="formValid">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Registrar Sitio</h5>
 
                             <div class="col-12 mb-3">
                                 <label for="name" class="form-label">Nombre</label>
-                                <div class="input-group has-validation">
-                                    <input type="text" name="name" class="form-control" id="name" required>
-                                    <!--<div th:text="#{login.usuario.error}" class="invalid-feedback"></div>-->
+                                <div class="input-group has-validation" >
+                                    <input type="text" name="name" class="form-control" id="name" required maxlength="255" minlength="3" pattern="^[a-zA-Z0-9\s&%]*$">
+                                    <div th:text="#{registerSite.nombre.errorRequired}" class="invalid-feedback" id="nameRequired"></div>
+                                    <div th:text="#{registerSite.nombre.errorPattern}" class="invalid-feedback" id="namePattern"></div>
+                                    <div th:text="#{registerSite.nombre.errorMax}" class="invalid-feedback" id="nameMax"></div>
+                                    <div th:text="#{registerSite.nombre.errorMin}" class="invalid-feedback" id="nameMin"></div>
                                 </div>
                             </div>
 
                             <div class="col-12 mb-3">
                                 <label for="address" class="form-label">Dirección</label>
                                 <div class="input-group has-validation">
-                                    <input type="text" name="address" class="form-control" id="address" required>
-                                    <!--<div th:text="#{login.usuario.error}" class="invalid-feedback"></div>-->
+                                    <input type="text" name="address" class="form-control" id="address" required maxlength="255" minlength="10" pattern="^[a-zA-Z0-9\s&%]*$">
+                                    <div th:text="#{registerSite.direccion.error}" class="invalid-feedback" id="addressRequired"></div>
+                                    <div th:text="#{registerSite.direccion.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
+                                    <div th:text="#{registerSite.direccion.errorMax}" class="invalid-feedback" id="addressMax"></div>
+                                    <div th:text="#{registerSite.direccion.errorMin}" class="invalid-feedback" id="addressMin"></div>
+
                                 </div>
                             </div>
 
@@ -53,12 +60,13 @@
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
+                                <div th:text="#{registerSite.estado.error}" class="invalid-feedback"></div>
                             </div>
 
                     </div>
                     <div class="card-footer text-end">
-                        <button class="btn btn-danger mt-2 mb-2">Cancelar</button>
-                        <button class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
+                        <button type="button" class="btn btn-danger mt-2 mb-2">Cancelar</button>
+                        <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
                     </div>
                 </div>
                 </form>
@@ -73,6 +81,152 @@
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script>
+    let name = document.getElementById("name");
+    let address = document.getElementById("address");
+
+    name.addEventListener("input", function(event) {
+            document.getElementById("nameRequired").style.display = "none";
+            document.getElementById("namePattern").style.display = "none";
+            document.getElementById("nameMax").style.display = "none";
+            document.getElementById("nameMin").style.display = "none";
+        if (name.validity.valueMissing) {
+            document.getElementById("nameRequired").style.display = "block";
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+        }else if (name.validity.patternMismatch) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("namePattern").style.display = "block";
+        }else  if (name.validity.tooShort) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("nameMin").style.display = "block";
+        }else if (name.validity.tooShort) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("nameMin").style.display = "block";
+        }else{
+            name.classList.remove('is-invalid');
+            name.classList.add('is-valid');
+            document.getElementById("nameRequired").style.display = "none";
+            document.getElementById("namePattern").style.display = "none";
+            document.getElementById("nameMax").style.display = "none";
+            document.getElementById("nameMin").style.display = "none";
+        }
+
+
+
+    });
+
+    name.oninvalid = function() {
+        if (name.validity.valueMissing) {
+            document.getElementById("nameRequired").style.display = "block";
+        }else{
+            document.getElementById("nameRequired").style.display = "none";
+        }
+
+        if (name.validity.patternMismatch) {
+            document.getElementById("namePattern").style.display = "block";
+        }else{
+            document.getElementById("namePattern").style.display = "none";
+        }
+
+        if (name.validity.tooLong) {
+            document.getElementById("nameMax").style.display = "block";
+        }else{
+            document.getElementById("nameMax").style.display = "none";
+        }
+
+        if (name.validity.tooShort) {
+            document.getElementById("nameMin").style.display = "block";
+        }else{
+            document.getElementById("nameMin").style.display = "none";
+        }
+
+
+        if (name.validity.valid) {
+            console.log("Entro a valido")
+            document.getElementById("nameRequired").style.display = "none";
+            document.getElementById("namePattern").style.display = "none";
+            document.getElementById("nameMax").style.display = "none";
+            document.getElementById("nameMin").style.display = "none";
+        }
+
+    };
+
+
+
+    address.addEventListener("input", function(event) {
+        document.getElementById("addressRequired").style.display = "none";
+        document.getElementById("addressPattern").style.display = "none";
+        document.getElementById("addressMax").style.display = "none";
+        document.getElementById("addressMin").style.display = "none";
+        if (address.validity.valueMissing) {
+            document.getElementById("addressRequired").style.display = "block";
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+        }else if (address.validity.patternMismatch) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressPattern").style.display = "block";
+        }else  if (address.validity.tooShort) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressMin").style.display = "block";
+        }else if (address.validity.tooShort) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressMin").style.display = "block";
+        }else{
+            address.classList.remove('is-invalid');
+            address.classList.add('is-valid');
+            document.getElementById("addressRequired").style.display = "none";
+            document.getElementById("addressPattern").style.display = "none";
+            document.getElementById("addressMax").style.display = "none";
+            document.getElementById("addressMin").style.display = "none";
+        }
+
+
+
+    });
+
+    address.oninvalid = function() {
+        if (address.validity.valueMissing) {
+            document.getElementById("addressRequired").style.display = "block";
+        }else{
+            document.getElementById("addressRequired").style.display = "none";
+        }
+
+        if (address.validity.patternMismatch) {
+            document.getElementById("addressPattern").style.display = "block";
+        }else{
+            document.getElementById("addressPattern").style.display = "none";
+        }
+
+        if (address.validity.tooLong) {
+            document.getElementById("addressMax").style.display = "block";
+        }else{
+            document.getElementById("addressMax").style.display = "none";
+        }
+
+        if (address.validity.tooShort) {
+            document.getElementById("addressMin").style.display = "block";
+        }else{
+            document.getElementById("addressMin").style.display = "none";
+        }
+
+
+        if (address.validity.valid) {
+            document.getElementById("addressRequired").style.display = "none";
+            document.getElementById("addressPattern").style.display = "none";
+            document.getElementById("addressMax").style.display = "none";
+            document.getElementById("addressMin").style.display = "none";
+        }
+
+    };
+</script>
 
 </body>
 
