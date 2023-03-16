@@ -32,7 +32,7 @@
                             <div class="col-12 mb-3">
                                 <label for="name" class="form-label">Nombre</label>
                                 <div class="input-group has-validation" >
-                                    <input type="text" name="name" class="form-control" id="name" required maxlength="255" minlength="3" pattern="^[a-zA-Z0-9\s&%]*$">
+                                    <input type="text" name="name" class="form-control" id="name" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9&%#\s]+$">
                                     <div th:text="#{registerSite.nombre.errorRequired}" class="invalid-feedback" id="nameRequired"></div>
                                     <div th:text="#{registerSite.nombre.errorPattern}" class="invalid-feedback" id="namePattern"></div>
                                     <div th:text="#{registerSite.nombre.errorMax}" class="invalid-feedback" id="nameMax"></div>
@@ -43,7 +43,7 @@
                             <div class="col-12 mb-3">
                                 <label for="address" class="form-label">Dirección</label>
                                 <div class="input-group has-validation">
-                                    <input type="text" name="address" class="form-control" id="address" required maxlength="255" minlength="10" pattern="^[a-zA-Z0-9\s&%]*$">
+                                    <input type="text" name="address" class="form-control" id="address" required maxlength="255" minlength="10" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9&%#\s]+$">
                                     <div th:text="#{registerSite.direccion.error}" class="invalid-feedback" id="addressRequired"></div>
                                     <div th:text="#{registerSite.direccion.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
                                     <div th:text="#{registerSite.direccion.errorMax}" class="invalid-feedback" id="addressMax"></div>
@@ -54,13 +54,14 @@
 
                             <div class="col-12 mb-3">
                                 <label for="beanState" class="form-label">Estado</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="beanState" id="beanState" required>
-                                    <option selected>Selecciona una opción...</option>
+                                <select class="form-select" aria-label=".form-select-lg example" name="beanState" id="beanState" required pattern="[0-9]+">
+                                    <option value="" >Selecciona una opción...</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
-                                <div th:text="#{registerSite.estado.error}" class="invalid-feedback"></div>
+                                <div th:text="#{registerSite.estado.error}" class="invalid-feedback" id="beanStateRequired"></div>
+                                <div th:text="#{registerSite.estado.errorPattern}" class="invalid-feedback" id="beanStatePattern"></div>
                             </div>
 
                     </div>
@@ -85,6 +86,7 @@
 <script>
     let name = document.getElementById("name");
     let address = document.getElementById("address");
+    let beanState = document.getElementById("beanState");
 
     name.addEventListener("input", function(event) {
             document.getElementById("nameRequired").style.display = "none";
@@ -226,6 +228,54 @@
         }
 
     };
+
+    beanState.addEventListener("input", function(event) {
+        console.log("Valor de beanState: " + beanState.value)
+        console.log("Valor de beanState: " + beanState.validity.patternMismatch)
+        document.getElementById("beanStateRequired").style.display = "none";
+        document.getElementById("beanStatePattern").style.display = "none";
+
+        if (beanState.validity.valueMissing) {
+            document.getElementById("beanStateRequired").style.display = "block";
+            beanState.classList.remove('valid');
+            beanState.classList.add('is-invalid');
+        }else if (beanState.validity.patternMismatch) {
+            beanState.classList.remove('valid');
+            beanState.classList.add('is-invalid');
+            document.getElementById("beanStatePattern").style.display = "block";
+        }else{
+            beanState.classList.remove('is-invalid');
+            beanState.classList.add('is-valid');
+            document.getElementById("beanStateRequired").style.display = "none";
+            document.getElementById("beanStatePattern").style.display = "none";
+        }
+
+
+
+    });
+
+    beanState.oninvalid = function() {
+
+        if (beanState.validity.valueMissing) {
+            document.getElementById("beanStateRequired").style.display = "block";
+        }else{
+            document.getElementById("beanStateRequired").style.display = "none";
+        }
+
+        if (beanState.validity.patternMismatch) {
+            document.getElementById("beanStatePattern").style.display = "block";
+        }else{
+            document.getElementById("beanStatePattern").style.display = "none";
+        }
+
+
+        if (beanState.validity.valid) {
+            document.getElementById("beanStateRequired").style.display = "none";
+            document.getElementById("beanStatePattern").style.display = "none";
+        }
+
+    };
+
 </script>
 
 </body>
