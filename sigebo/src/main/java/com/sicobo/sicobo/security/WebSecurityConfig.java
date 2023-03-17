@@ -34,28 +34,23 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
 
         http.authorizeHttpRequests((request) ->{
-            request.requestMatchers("/", "/home","/index").permitAll();
+            request.requestMatchers("/", "/home","/index","/register").permitAll();
             request.requestMatchers("/css/**", "/js/**", "/img/**", "/scss/**", "/vendor/**").permitAll();
-            //request.requestMatchers("/admin/**").permitAll();
-
-            //request.requestMatchers("/usuario/**").hasAnyRole("USUARIO");
-            //request.requestMatchers("/gestor/**").hasAnyRole("GESTOR");
+            request.requestMatchers("/usuario/**").hasRole("USUARIO");
+            request.requestMatchers("/gestor/**").hasRole("GESTOR");
             request.requestMatchers("/admin/**").hasRole("ADMIN");
-            //request.anyRequest().authenticated();
-
-            //request.anyRequest().permitAll();
+            request.anyRequest().authenticated();
         });
-
 
         http.formLogin((login) ->{
             login.loginPage("/login").permitAll();
+            login.defaultSuccessUrl("/");
         });
 
         http.logout((logout) ->{
                     logout.permitAll();
                 }
         );
-
 
         return http.build();
     }
