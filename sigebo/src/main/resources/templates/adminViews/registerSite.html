@@ -166,7 +166,6 @@
         }
 
         if (name.validity.valid) {
-            console.log("Entro a valido")
             hideErrorsInputName();
         }
 
@@ -233,7 +232,6 @@
 
     beanState.addEventListener("input", function(event) {
         hideErrorsInputBeanState();
-        console.log(beanState.validity)
         if (beanState.validity.valueMissing) {
             document.getElementById("beanStateRequired").style.display = "block";
             beanState.classList.remove('valid');

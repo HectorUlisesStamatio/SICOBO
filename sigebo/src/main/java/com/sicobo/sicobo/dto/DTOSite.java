@@ -5,6 +5,9 @@ import lombok.Data;
 
 @Data
 public class DTOSite {
+
+    private Long id;
+
     @NotBlank(message = "El campo no debe estar en blanco")
     @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9&%#\\s]+$", message = "Ingresa un valor válido")
     @Size(min = 3, max = 255, message = "El nombre debe tener entre 3 y 255 caracteres")

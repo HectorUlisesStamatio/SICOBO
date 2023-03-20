@@ -38,6 +38,16 @@ public class BeanSite {
     public BeanSite() {
 
     }
+    public BeanSite(Long id, String name, int status, String address, BeanState beanState) {
+        this.name = name;
+        this.status = status;
+        this.address = address;
+        this.beanState = beanState;
+        this.id =id;
+    }
+
+
+
     public BeanSite(String name, int status, String address, BeanState beanState) {
         this.name = name;
         this.status = status;
