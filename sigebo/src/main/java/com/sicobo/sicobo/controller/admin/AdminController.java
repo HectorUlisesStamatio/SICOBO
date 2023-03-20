@@ -43,7 +43,7 @@ public class AdminController {
     }
 
     @PostMapping("/guardarSitio")
-    public String prepareRegistration(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+    public String saveSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
@@ -74,5 +74,27 @@ public class AdminController {
         model.addAttribute("site", message.getResult());
         return "adminViews/updateSite";
     }
+
+    @PostMapping("/actualizarSitio")
+    public String updateSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+        if(result.hasErrors()){
+            for (ObjectError error: result.getAllErrors()){
+                log.error("Error: " + error.getDefaultMessage());
+            }
+            log.info("Entro en fallos de datos");
+            model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
+            return "adminViews/updateSite";
+        }
+        Message message = (Message) siteService.editar(site).getBody();
+        if(message.getType().equals("failed")){
+            log.info("Entro en fallos de editar");
+            model.addAttribute("message", message);
+            model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
+            return "adminViews/updateSite";
+        }
+        attributes.addFlashAttribute("message", message);
+        return "redirect:/admin/sitios";
+    }
+
 
 }
