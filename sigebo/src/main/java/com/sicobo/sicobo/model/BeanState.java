@@ -21,6 +21,13 @@ public class BeanState {
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
+    public BeanState() {
+
+    }
+    public BeanState(Long id) {
+        this.id = id;
+    }
+
     @PrePersist
     private void prePersist(){
         this.fechaCreacion = LocalDateTime.now();
