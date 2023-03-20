@@ -10,4 +10,40 @@
     <script th:src="@{/vendor/php-email-form/validate.js}"></script>
     <!-- JS -->
     <script th:src="@{/js/script.js}"></script>
+
+    <script th:src="@{/js/sweetalert2.all.min.js}"></script>
+    <script>
+        window.onload = function() {
+            let code = document.getElementById("status").value
+            switch (parseInt(code)){
+                case 200:
+                    break;
+                case 401:
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Sesión expirada",
+                        text: "Por tu seguridad tu sesión ha sido cerrada.",
+                        timer: 5000,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    })
+                    setTimeout(function () {
+                        window.location.replace("/login");
+                    }, 5000);
+                    break;
+                case 403:
+                    Swal.fire({title: "Acceso denegado", text: "Lamentablemente no cuentas con los permisos necesarios para realizar esta acción", icon: "error", timer: 3000});
+                    break;
+                case 500:
+                    Swal.fire({title: "Error interno", text: "Un error interno ocurrió dentro del sistema", icon: "error", timer: 3000});
+                    break;
+                case 400:
+                    Swal.fire({title: "Error interno", text: "Un error interno ocurrió dentro del sistema", icon: "error", timer: 3000});
+                    break;
+                default:
+                    Swal.fire({title: "Error interno", text: "Ocurrio un error", icon: "error", timer: 3000});
+            }
+
+        };
+    </script>
 </div>

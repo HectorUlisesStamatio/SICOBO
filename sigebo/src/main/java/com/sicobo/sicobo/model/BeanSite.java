@@ -35,6 +35,16 @@ public class BeanSite {
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
+    public BeanSite() {
+
+    }
+    public BeanSite(String name, int status, String address, BeanState beanState) {
+        this.name = name;
+        this.status = status;
+        this.address = address;
+        this.beanState = beanState;
+    }
+
     @PrePersist
     private void prePersist(){
         this.fechaCreacion = LocalDateTime.now();
