@@ -28,7 +28,7 @@
     <section class="section">
         <div class="row">
             <div class="col-12">
-                <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert" >
+                <div th:if="${message != null}" class="alert alert-dismissible fade show" role="alert" th:classappend="${message.type} == 'success' ? 'alert-success' : 'alert-danger'">
                     <strong>[[${message.title}]]</strong> [[${message.message}]]
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -45,7 +45,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col table-responsive">
-                                    <table class="table table-borderless datatable">
+                                    <table class="table table-borderless datatable" id="sitesTable">
                                         <thead>
                                         <tr>
                                             <th scope="col">#</th>
@@ -69,7 +69,7 @@
 
                                             </td>
                                             <td class="text-center">
-                                                <form th:action="@{/admin/prepararModificacion}" method="POST">
+                                                <form th:action="@{/admin/prepararModificacion}" method="POST" >
                                                     <input type="hidden" name="idSite" id="idSite" th:value="${site.id}">
                                                     <button type="submit" class="btn btn-outline-warning"><i
                                                             class="bi bi-pencil-fill"></i></button>
@@ -77,10 +77,12 @@
 
                                             </td>
                                             <td >
-                                                <form class="d-flex justify-content-center">
+                                                <form  th:action="@{/admin/cambiarEstadoSitio}" method="POST" class="d-flex justify-content-center" th:id="'form-' + ${site.id}">
+                                                    <input type="hidden" name="idSite" id="idSite" th:value="${site.id}">
+                                                    <input type="hidden" name="statusSite" id="statusSite" th:value="${site.status == 1}">
                                                     <div class="form-check form-switch" >
                                                         <input class="form-check-input" type="checkbox" role="switch" th:checked="${site.status == 1}"
-                                                               id="flexSwitchCheckDefault">
+                                                               th:id="'switch-' + ${site.id}">
                                                     </div>
                                                 </form>
                                             </td>
@@ -108,6 +110,28 @@
         class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 
+<script>
+    let $ = jQuery;
+
+    const tableBody = document.querySelector('#sitesTable tbody');
+    tableBody.addEventListener('change', function(event) {
+        let switchInput = event.target;
+        let form = switchInput.form;
+            Swal.fire({
+                title: '¿Estás seguro de guardar los cambios?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }else{
+                    document.getElementById(switchInput.id+"").checked = !event.target.checked;
+                }
+            })
+    });
+
+
+</script>
 
 </body>
 

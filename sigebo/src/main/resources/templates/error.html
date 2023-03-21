@@ -11,7 +11,7 @@
             <h1 id="codigo">Error</h1>
             <h2 id="descripcion">Descripcion del error.</h2>
             <a class="btn" th:href="@{/}">Volver al inicio</a>
-            <img src="./img/500.svg" class="img-fluid py-5" alt=" ">
+            <img src="https://em-content.zobj.net/source/microsoft-teams/337/construction-worker_light-skin-tone_1f477-1f3fb_1f3fb.png" class="img-fluid py-5" alt=" ">
             <div th:insert="~{layout/extras/credits :: credits}"></div>
         </section>
 
@@ -50,7 +50,7 @@
                     document.title = "Error 500 | SICOBO";
                     break;
                 default:
-                    document.getElementById("codigo").innerHTML = "Error Inesperado";
+                    document.getElementById("codigo").innerHTML = "Oh no";
                     document.getElementById("descripcion").innerHTML = "Parece que ocurrió un error inesperado, intente nuevamente.";
                     document.title = "Error Desconocido | SICOBO";
             }

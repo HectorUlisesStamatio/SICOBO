@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.controller.admin;
 
 import com.sicobo.sicobo.dto.DTOSite;
+import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceImpl.StateServiceImpl;
 import com.sicobo.sicobo.util.Message;
@@ -15,6 +16,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -27,8 +30,16 @@ public class AdminController {
     @Autowired
     private StateServiceImpl stateService;
 
+
+    @GetMapping("/dashboard")
+    public String dash(Model model){
+        model.addAttribute("opcion",null);
+        return "adminViews/dashboard";
+    }
+
     @GetMapping("/sitios")
     public String listar(Model model){
+        model.addAttribute("opcion","sitios");
         model.addAttribute("response", siteService.listar().getBody());
         model.addAttribute("status", siteService.listar().getStatusCode());
         return "adminViews/listSites";
@@ -36,6 +47,7 @@ public class AdminController {
 
     @GetMapping("/registrarSitio")
     public String prepareRegistration(Model model, DTOSite site){
+        model.addAttribute("opcion","sitios");
         Message response = (Message) stateService.listar().getBody();
         model.addAttribute("states", response.getResult());
         model.addAttribute("site", site);
@@ -44,6 +56,7 @@ public class AdminController {
 
     @PostMapping("/guardarSitio")
     public String saveSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+        model.addAttribute("opcion","sitios");
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
@@ -63,7 +76,7 @@ public class AdminController {
 
     @PostMapping("/prepararModificacion")
     public String prepareModification( @RequestParam("idSite") long idSite, Model model, RedirectAttributes attributes){
-
+        model.addAttribute("opcion","sitios");
         Message message = (Message) siteService.buscar(idSite).getBody();
         if(message.getType().equals("failed")){
             attributes.addFlashAttribute("message", message);
@@ -77,21 +90,37 @@ public class AdminController {
 
     @PostMapping("/actualizarSitio")
     public String updateSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+        model.addAttribute("opcion","sitios");
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
             }
-            log.info("Entro en fallos de datos");
             model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
             return "adminViews/updateSite";
         }
         Message message = (Message) siteService.editar(site).getBody();
         if(message.getType().equals("failed")){
-            log.info("Entro en fallos de editar");
             model.addAttribute("message", message);
             model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
             return "adminViews/updateSite";
         }
+        attributes.addFlashAttribute("message", message);
+        return "redirect:/admin/sitios";
+    }
+
+
+    @PostMapping("/cambiarEstadoSitio")
+    public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes){
+        if(!idSite.isPresent() || !statusSite.isPresent()){
+            attributes.addFlashAttribute("message", new Message("Ejecución fallida", "Ingresa valores válidos", "failed", 400, null));
+            return "redirect:/admin/sitios";
+        }
+
+        BeanSite beanSite = new BeanSite();
+        beanSite.setId(idSite.get());
+        beanSite.setStatus(statusSite.get() ? 0 : 1);
+
+        Message message = (Message) siteService.eliminar(beanSite).getBody();
         attributes.addFlashAttribute("message", message);
         return "redirect:/admin/sitios";
     }
