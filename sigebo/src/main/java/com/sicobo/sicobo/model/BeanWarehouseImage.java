@@ -1,9 +1,14 @@
 package com.sicobo.sicobo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sicobo.sicobo.dto.DTOWarehouse;
+import com.sicobo.sicobo.util.Message;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +22,7 @@ public class BeanWarehouseImage {
 
     private String url;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "warehouse_id")

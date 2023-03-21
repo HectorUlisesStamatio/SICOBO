@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<script th:inline="javascript">
+
+</script>
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Bodegas</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/dash}">Listar Bodegas</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <input name="status" id="status" type="hidden" th:if="${response}" th:value="${response.code}">
+  <section class="section">
+    <div class="row">
+      <div class="col-12">
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert" >
+          <strong>[[${message.title}]]</strong> [[${message.message}]]
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <div class="row justify-content-between align-items-center">
+                <div class="col">Listado de bodegas</div>
+                <div class="col text-end"> <a th:href="@{/gestor/registrarBodegas}" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></a></div>
+              </div>
+            </h5>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col table-responsive">
+                  <table class="table table-borderless datatable">
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Imágenes</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col">Sección</th>
+                      <th scope="col">Descripción</th>
+                      <th scope="col">Costo</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Acciones</th>
+                      <th scope="col">Habilitar o Deshabilitar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="warehouse, index: ${response.result}" th:if="${#arrays.length(response.result) > 0}">
+                      <th scope="row" th:text="${index.index + 1 }"></th>
+                      <td>
+                        <div th:id="'carousel-' + ${warehouse.id}"  class="carousel slide" data-bs-ride="carousel">
+                          <div class="carousel-inner">
+                            <div th:each="image, i : ${warehouse.images}"
+                                 class="carousel-item"
+                                 th:classappend="${i.index == 0} ? 'active'" data-bs-interval="3000">
+                              <div class="d-flex justify-content-center">
+                                <img th:src="${image.url}"  alt="..." style="max-width: 100%; max-height: 100px;">
+                              </div>
+                            </div>
+                          </div>
+                          <button class="carousel-control-prev" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                          </button>
+                          <button class="carousel-control-next" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                          </button>
+                        </div>
+                      </td>
+                      <td th:text="${warehouse.warehousesType.description}"></td>
+                      <td th:text="${warehouse.section}"></td>
+                      <td th:text="${warehouse.description}"></td>
+                      <td th:text="${warehouse.finalCost}"></td>
+                      <td>
+                        <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Habilitada' : 'En renta')}"
+                              th:classappend="${warehouse.status == 0 ? 'bg-danger' : (warehouse.status == 1 ? 'bg-success' : 'bg-warning')}"></span>
+                      </td>
+                      <td class="text-center">
+                        <form th:action="@{/gestor/bodega}" method="POST">
+                          <input type="hidden" name="idSite" id="idSite" th:value="${warehouse.id}">
+                          <button type="submit" class="btn btn-outline-warning"><i
+                                  class="bi bi-pencil-fill"></i></button>
+                        </form>
+
+                      </td>
+                      <td >
+                        <form class="d-flex justify-content-center">
+                          <div class="form-check form-switch" >
+                            <input class="form-check-input" type="checkbox" role="switch" th:checked="${warehouse.status == 1}"
+                                   id="flexSwitchCheckDefault" th:attr="disabled=${warehouse.status == 2} ? true : null"
+                                   th:title="${warehouse.status == 2 ? 'El estado solo puede cambiar si la bodega no esta en renta' : (warehouse.status == 1 ? 'Deshabilitar' : 'Habilitar')}">
+                          </div>
+                        </form>
+                      </td>
+                    </tr>
+                    <tr th:unless="${#arrays.length(response.result) > 0}">
+                      <td colspan="7" class="text-center fw-semibold">No hay bodegas registradas en el sistema para su sitio.</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>

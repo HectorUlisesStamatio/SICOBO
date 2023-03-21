@@ -1,10 +1,14 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -39,6 +43,11 @@ public class BeanWarehouse {
 
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "beanWarehouse", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+    private List<BeanWarehouseImage> images;
 
     @PrePersist
     private void prePersist(){
