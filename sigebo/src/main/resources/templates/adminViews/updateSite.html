@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <form class="row g-3 needs-validation" th:action="@{/admin/actualizarSitio}" th:object="${site}" method="post" novalidate>
+                <form class="row g-3 needs-validation" th:action="@{/admin/actualizarSitio}" th:object="${site}" method="post" novalidate id="formValid">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Modificar Sitio</h5>
@@ -97,6 +97,28 @@
     let addressOriginalValue = address.value;
     let beanStateOriginalValue = beanState.value;
 
+    const checkSimilarity = () =>{
+        if(addressOriginalValue === address.value){
+            address.classList.remove('is-valid');
+        }
+        if(nameOriginalValue === name.value){
+            name.classList.remove('is-valid');
+        }
+        if(beanStateOriginalValue === beanState.value){
+            beanState.classList.remove('is-valid');
+        }
+
+        console.log("Hola amigo")
+        console.log(parseInt(beanState.value))
+        if((nameOriginalValue !== name.value) || (addressOriginalValue !== address.value) || (beanStateOriginalValue !== beanState.value && parseInt(beanState.value) !== 0)){
+            if(parseInt(beanState.value) !== 0){
+                document.getElementById("actualizar").disabled = false;
+            }
+        }else{
+            document.getElementById("actualizar").disabled = true;
+        }
+    }
+
     const hideErrorsInputName = () =>{
         document.getElementById("nameRequired").style.display = "none";
         document.getElementById("namePattern").style.display = "none";
@@ -136,12 +158,7 @@
         }else{
             name.classList.remove('is-invalid');
             name.classList.add('is-valid')
-            if(nameOriginalValue !== name.value){
-                document.getElementById("actualizar").disabled = false;
-            }else{
-                name.classList.remove('is-valid');
-                document.getElementById("actualizar").disabled = true;
-            }
+            checkSimilarity()
             hideErrorsInputName();
         }
 
@@ -201,13 +218,7 @@
         }else{
             address.classList.remove('is-invalid');
             address.classList.add('is-valid');
-            if(addressOriginalValue !== address.value){
-                document.getElementById("actualizar").disabled = false;
-            }else{
-                address.classList.remove('is-valid');
-                document.getElementById("actualizar").disabled = true;
-            }
-
+            checkSimilarity();
             hideErrorsInputAddress();
         }
 
@@ -252,17 +263,17 @@
             document.getElementById("beanStateRequired").style.display = "block";
             beanState.classList.remove('valid');
             beanState.classList.add('is-invalid');
+        }else if(parseInt(beanState.value) === 0) {
+            document.getElementById("beanStateRequired").style.display = "block";
+            beanState.setCustomValidity('Seleccione una opción válida');
+            beanState.classList.remove('is-valid');
+            beanState.classList.add('is-invalid');
+            document.getElementById("actualizar").disabled = true;
         }else{
+            beanState.setCustomValidity('');
             beanState.classList.remove('is-invalid');
             beanState.classList.add('is-valid');
-            if(beanStateOriginalValue !== beanState.value){
-                document.getElementById("actualizar").disabled = false;
-
-            }else{
-                beanState.classList.remove('is-valid');
-                document.getElementById("actualizar").disabled = true;
-            }
-
+            checkSimilarity()
             hideErrorsInputBeanState();
         }
 
@@ -283,6 +294,24 @@
         }
 
     };
+
+
+    $('#formValid').submit(function(event) {
+        event.preventDefault();
+        if(this.checkValidity() === true){
+            Swal.fire({
+                title: '¿Estás seguro de guardar los cambios?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            })
+        }else{
+            event.stopPropagation();
+        }
+    })
 
 </script>
 </body>
