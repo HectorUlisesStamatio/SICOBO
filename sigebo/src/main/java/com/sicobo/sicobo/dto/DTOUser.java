@@ -29,7 +29,7 @@ public class DTOUser {
     private String phone_number;
 
     @PositiveOrZero(groups =  {Modify.class},message = "Tiene que ser un número positivo o 0")
-    private int status;
+    private int enabled;
 
     @NotBlank(groups = {Register.class}, message = "El campo no puede estar vacío")
     private String username;

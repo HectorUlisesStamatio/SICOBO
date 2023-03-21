@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class BeanUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class BeanUser {
     private int policy_acceptance;
 
     @Column(columnDefinition = "integer default 1")
-    private int status;
+    private int enabled;
 
     @OneToOne(mappedBy = "beanUser")
     private BeanSiteAssigment beanSiteAssigment;

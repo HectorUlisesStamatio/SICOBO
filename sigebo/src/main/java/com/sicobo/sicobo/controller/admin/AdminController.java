@@ -27,8 +27,16 @@ public class AdminController {
     @Autowired
     private StateServiceImpl stateService;
 
+
+    @GetMapping("/dashboard")
+    public String dash(Model model){
+        model.addAttribute("opcion",null);
+        return "adminViews/dashboard";
+    }
+
     @GetMapping("/sitios")
     public String listar(Model model){
+        model.addAttribute("opcion","sitios");
         model.addAttribute("response", siteService.listar().getBody());
         model.addAttribute("status", siteService.listar().getStatusCode());
         return "adminViews/listSites";
@@ -36,6 +44,7 @@ public class AdminController {
 
     @GetMapping("/registrarSitio")
     public String prepareRegistration(Model model, DTOSite site){
+        model.addAttribute("opcion","sitios");
         Message response = (Message) stateService.listar().getBody();
         model.addAttribute("states", response.getResult());
         model.addAttribute("site", site);
@@ -44,6 +53,7 @@ public class AdminController {
 
     @PostMapping("/guardarSitio")
     public String saveSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+        model.addAttribute("opcion","sitios");
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
@@ -63,7 +73,7 @@ public class AdminController {
 
     @PostMapping("/prepararModificacion")
     public String prepareModification( @RequestParam("idSite") long idSite, Model model, RedirectAttributes attributes){
-
+        model.addAttribute("opcion","sitios");
         Message message = (Message) siteService.buscar(idSite).getBody();
         if(message.getType().equals("failed")){
             attributes.addFlashAttribute("message", message);
@@ -77,6 +87,7 @@ public class AdminController {
 
     @PostMapping("/actualizarSitio")
     public String updateSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
+        model.addAttribute("opcion","sitios");
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
