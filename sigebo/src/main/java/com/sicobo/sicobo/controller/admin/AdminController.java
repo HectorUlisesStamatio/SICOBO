@@ -95,13 +95,11 @@ public class AdminController {
             for (ObjectError error: result.getAllErrors()){
                 log.error("Error: " + error.getDefaultMessage());
             }
-            log.info("Entro en fallos de datos");
             model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
             return "adminViews/updateSite";
         }
         Message message = (Message) siteService.editar(site).getBody();
         if(message.getType().equals("failed")){
-            log.info("Entro en fallos de editar");
             model.addAttribute("message", message);
             model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
             return "adminViews/updateSite";
@@ -113,8 +111,6 @@ public class AdminController {
 
     @PostMapping("/cambiarEstadoSitio")
     public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes){
-        log.info("Id site " + idSite.get());
-        log.info("Status site " + statusSite.get());
         if(!idSite.isPresent() || !statusSite.isPresent()){
             attributes.addFlashAttribute("message", new Message("Ejecución fallida", "Ingresa valores válidos", "failed", 400, null));
             return "redirect:/admin/sitios";
