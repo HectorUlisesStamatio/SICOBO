@@ -13,7 +13,7 @@
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                    <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
 
                         <div class="d-flex justify-content-center py-4">
                             <a href="index.html" class="logo d-flex align-items-center w-auto">
@@ -32,28 +32,61 @@
 
                                 <form class="row g-3 needs-validation" novalidate>
                                     <div class="col-12">
+                                        <label for="name" class="form-label">Nombre(s)</label>
+                                        <input type="text" class="form-control" id="name"  name="name" required>
+                                        <div th:text="#{register.name.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label for="lastname" class="form-label">Apellido Paterno</label>
+                                        <input type="text" class="form-control" id="lastname"  name="lastname" required>
+                                        <div th:text="#{register.lastname.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label for="surname" class="form-label">Apellido Materno</label>
+                                        <input type="text" class="form-control" id="surname"  name="surname" required>
+                                        <div th:text="#{register.surname.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="rfc" class="form-label">RFC</label>
+                                        <input type="text" class="form-control" id="rfc" name="rfc" required>
+                                        <div th:text="#{register.rfc.error}" class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-8 col-sm-7">
+                                        <label for="phone_number" class="form-label">Número de Teléfono</label>
+                                        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                                        <div th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-4 col-sm-5">
+                                        <label for="ext" class="form-label">Extensión</label>
+                                        <input type="text" class="form-control" id="ext" name="ext" required>
+                                        <div th:text="#{register.ext.error}" class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-12">
                                         <label for="username" class="form-label">Usuario</label>
-                                        <input type="text" name="name" class="form-control" id="username" required>
+                                        <input type="text" class="form-control" id="username" name="username" required>
                                         <div th:text="#{register.usuario.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <label for="email" class="form-label">Correo</label>
-                                        <input type="email" name="email" class="form-control" id="email" required>
+                                        <input type="email" class="form-control" id="email" name="email" required>
                                         <div th:text="#{register.correo.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" name="password" class="form-control" id="password" pattern="^(?=^.{12,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" minlength="12" required>
+                                        <input type="password" name="password" class="form-control" id="password" pattern="^(?=^.{10,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" minlength="10" required>
                                         <div th:text="#{register.password.error}" class="invalid-feedback"></div>
                                         <div th:text="#{register.password.error.hint}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="form-check">
-                                            <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
-                                            <label class="form-check-label" for="acceptTerms">Estoy de acuerdo y acepto los <a href="#">Términos y Condiciones</a></label>
+                                            <input class="form-check-input" type="checkbox" value="" id="policy_acceptance" name="policy_acceptance" required>
+                                            <label class="form-check-label" for="policy_acceptance">Estoy de acuerdo y acepto los <a href="#">Términos y Condiciones</a></label>
                                             <div th:text="#{register.terms.error}" class="invalid-feedback"></div>
                                         </div>
                                     </div>
