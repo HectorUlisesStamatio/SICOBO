@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.controller.admin;
 
 import com.sicobo.sicobo.dto.DTOSite;
+import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceImpl.StateServiceImpl;
 import com.sicobo.sicobo.util.Message;
@@ -14,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Controller
@@ -103,6 +106,25 @@ public class AdminController {
             model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
             return "adminViews/updateSite";
         }
+        attributes.addFlashAttribute("message", message);
+        return "redirect:/admin/sitios";
+    }
+
+
+    @PostMapping("/cambiarEstadoSitio")
+    public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes){
+        log.info("Id site " + idSite.get());
+        log.info("Status site " + statusSite.get());
+        if(!idSite.isPresent() || !statusSite.isPresent()){
+            attributes.addFlashAttribute("message", new Message("Ejecución fallida", "Ingresa valores válidos", "failed", 400, null));
+            return "redirect:/admin/sitios";
+        }
+
+        BeanSite beanSite = new BeanSite();
+        beanSite.setId(idSite.get());
+        beanSite.setStatus(statusSite.get() ? 0 : 1);
+
+        Message message = (Message) siteService.eliminar(beanSite).getBody();
         attributes.addFlashAttribute("message", message);
         return "redirect:/admin/sitios";
     }
