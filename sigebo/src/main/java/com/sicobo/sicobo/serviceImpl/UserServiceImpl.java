@@ -23,7 +23,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class UserServiceImpl implements IUserService //UserDetailsService
+public class UserServiceImpl implements IUserService
 {
 
     @Autowired
@@ -37,6 +37,14 @@ public class UserServiceImpl implements IUserService //UserDetailsService
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> registrar(DTOUser dtoUser) {
+        try{
+            System.out.println(dtoUser.getPolicy_acceptance());
+            BeanUser beanUser = new BeanUser(dtoUser.getName(),dtoUser.getLastname(),dtoUser.getSurname(),dtoUser.getEmail(),dtoUser.getRfc(),dtoUser.getPhone_number(), dtoUser.getUsername(),dtoUser.getPassword(),"ROLE_USUARIO",0,dtoUser.getPolicy_acceptance(),1);
+            daoUser.save(beanUser);
+            System.out.println("Se logró");
+        }catch (Exception e){
+            System.out.println("No se pudo");
+        }
         return null;
     }
 

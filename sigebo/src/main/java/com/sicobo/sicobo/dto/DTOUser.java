@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -37,8 +38,9 @@ public class DTOUser {
     @NotBlank(message = "El campo no puede estar vacío")
     private String username;
 
-    @Length(min = 12)
+    @Length(min = 10)
     @NotBlank(message = "El campo no puede estar vacío")
+    @Pattern(regexp = "^(?=^.{10,}$)(?=.*\\d)(?=.*[!@#$%^&*]+)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$", message = "Ingresa una contraseña válida")
     private String password;
 
     private String role;
