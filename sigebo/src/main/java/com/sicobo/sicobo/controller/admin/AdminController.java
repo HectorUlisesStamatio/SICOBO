@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,19 +25,22 @@ import java.util.Optional;
 @Slf4j
 public class AdminController {
 
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
     @Autowired
     private SiteServiceImpl siteService;
 
     @Autowired
     private StateServiceImpl stateService;
 
-
+    @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
     public String dash(Model model){
         model.addAttribute("opcion",null);
         return "adminViews/dashboard";
     }
 
+    @Secured({ROLE_ADMIN})
     @GetMapping("/sitios")
     public String listar(Model model){
         model.addAttribute("opcion","sitios");
@@ -45,6 +49,7 @@ public class AdminController {
         return "adminViews/listSites";
     }
 
+    @Secured({ROLE_ADMIN})
     @GetMapping("/registrarSitio")
     public String prepareRegistration(Model model, DTOSite site){
         model.addAttribute("opcion","sitios");
@@ -54,6 +59,7 @@ public class AdminController {
         return "adminViews/registerSite";
     }
 
+    @Secured({ROLE_ADMIN})
     @PostMapping("/guardarSitio")
     public String saveSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
         model.addAttribute("opcion","sitios");
@@ -74,6 +80,7 @@ public class AdminController {
         return "redirect:/admin/sitios";
     }
 
+    @Secured({ROLE_ADMIN})
     @PostMapping("/prepararModificacion")
     public String prepareModification( @RequestParam("idSite") long idSite, Model model, RedirectAttributes attributes){
         model.addAttribute("opcion","sitios");
@@ -88,6 +95,7 @@ public class AdminController {
         return "adminViews/updateSite";
     }
 
+    @Secured({ROLE_ADMIN})
     @PostMapping("/actualizarSitio")
     public String updateSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model){
         model.addAttribute("opcion","sitios");
@@ -109,6 +117,7 @@ public class AdminController {
     }
 
 
+    @Secured({ROLE_ADMIN})
     @PostMapping("/cambiarEstadoSitio")
     public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes){
         if(!idSite.isPresent() || !statusSite.isPresent()){

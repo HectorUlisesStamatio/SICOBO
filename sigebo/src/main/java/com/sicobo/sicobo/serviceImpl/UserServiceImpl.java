@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,13 +24,19 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserServiceImpl implements IUserService //UserDetailsService
-     {
+{
 
     @Autowired
     private DaoUser daoUser;
 
     @Override
     public ResponseEntity<Object> listar() {
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Object> registrar(DTOUser dtoUser) {
         return null;
     }
 

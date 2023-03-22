@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 public interface IUserService {
     public ResponseEntity<Object> listar();
 
+    public ResponseEntity<Object> registrar(DTOUser dtoUser);
+
     public ResponseEntity<Object> guardar(DTOUser dtoUser);
 
     public ResponseEntity<Object> editar(DTOUser dtoUser);
