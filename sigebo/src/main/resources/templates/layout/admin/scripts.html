@@ -14,6 +14,12 @@
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
     </script>
     <script th:src="@{/js/sweetalert2.all.min.js}"></script>
+    <script>
+        window.addEventListener("load", function() {
+            const loader = document.getElementById("loader");
+            loader.style.display = "none";
+        });
+    </script>
     <!--
        <script>
            try {
