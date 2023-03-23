@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,8 +45,12 @@ public class AdminController {
     @GetMapping("/sitios")
     public String listar(Model model){
         model.addAttribute("opcion","sitios");
-        model.addAttribute("response", siteService.listar().getBody());
-        model.addAttribute("status", siteService.listar().getStatusCode());
+        try{
+            Message message = (Message) siteService.listar().getBody();
+            model.addAttribute("response", message);
+        }catch(NullPointerException e){
+            model.addAttribute("response", new Message("Ejecución fallida", "Ocurrio un error interno", "failed", 500, null));
+        }
         return "adminViews/listSites";
     }
 
