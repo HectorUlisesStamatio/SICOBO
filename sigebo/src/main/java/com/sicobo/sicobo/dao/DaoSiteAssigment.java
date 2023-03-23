@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DaoSiteAssigment extends JpaRepository<BeanSiteAssigment,Long> {
 
     boolean existsBeanSiteAssigmentByBeanSite_Id(Long id);
+
+    BeanSiteAssigment findByBeanUser_IdAAndStatus(Long id, int status);
 }

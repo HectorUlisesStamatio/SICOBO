@@ -1,5 +1,7 @@
 package com.sicobo.sicobo.serviceImpl;
 
+import com.sicobo.sicobo.dao.DaoSiteAssigment;
+import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dao.DaoWarehouse;
 import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.BeanWarehouse;
@@ -18,6 +20,12 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Autowired
     DaoWarehouse daoWarehouse;
+
+    @Autowired
+    DaoUser daoUser;
+
+    @Autowired
+    DaoSiteAssigment daoSiteAssigment;
 
     @Override
     public ResponseEntity<Object> listar() {

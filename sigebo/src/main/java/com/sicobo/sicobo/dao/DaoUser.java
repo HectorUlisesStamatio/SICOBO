@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DaoUser  extends JpaRepository<BeanUser, Long> {
     BeanUser findByUsername(String username);
     boolean existsBeanUserByUsername(String username);
+
+    BeanUser findByUsernameAndPassword(String username, String password);
 }

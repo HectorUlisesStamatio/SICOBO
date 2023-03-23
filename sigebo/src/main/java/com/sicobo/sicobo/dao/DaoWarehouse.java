@@ -14,4 +14,6 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     boolean existsBeanWarehouseByBeanSite_Id(Long id);
 
     List<BeanWarehouse> findBeanWarehouseByBeanSite_Id(Long id);
+
+
 }
