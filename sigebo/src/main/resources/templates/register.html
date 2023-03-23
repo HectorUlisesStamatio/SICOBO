@@ -8,6 +8,9 @@
 <body onload="generate()">
 
 <main>
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
     <input th:if="${message != null}" name="status" id="status" type="hidden" th:value="${message.code}">
     <input th:unless="${message != null}" name="status" id="status" type="hidden" value="200">
     <div class="container">
