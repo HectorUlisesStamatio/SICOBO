@@ -17,18 +17,18 @@
 
 <h1>✔️Características</h1>
 
-- [ ] 🔑Control de Acceso
+- [X] 🔑Control de Acceso
     - [X] Inicio de Sesión - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
-    - [ ] AutoRegistro - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
+    - [X] AutoRegistro - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
 - [ ] 👤Perfiles
     - [ ] Modificación de Perfil - [@Nathaly](https://www.github.com/20203tn082)
     - [ ] Recuperar Contraseña - [@Nahum](https://www.github.com/GaticaNahum)
 
-- [ ] 🏫Sitios
+- [X] 🏫Sitios
     - [X] Consulta de sitios - [@Omar](https://www.github.com/20203tn096)
     - [X] Registro de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
-    - [ ] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
+    - [X] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
 - [ ] 👷Gestores
     - [ ] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
     - [ ] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)

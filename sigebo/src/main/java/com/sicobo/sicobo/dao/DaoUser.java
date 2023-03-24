@@ -8,4 +8,5 @@ public interface DaoUser  extends JpaRepository<BeanUser, Long> {
     boolean existsBeanUserByUsername(String username);
 
     BeanUser findByUsernameAndPassword(String username, String password);
+    boolean existsBeanUserByEmail(String email);
 }

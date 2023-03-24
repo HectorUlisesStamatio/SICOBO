@@ -23,19 +23,18 @@ public class BeanUser {
 
     private String email;
 
-    @Column(length = 13)
+    @Length(max = 13)
     private String rfc;
 
-    @Column(length = 15)
+    @Length(max = 15)
     private String phone_number;
 
     private String username;
 
-    @Length(min = 12)
+    @Length(min = 10)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Rol role;
+    private String role;
 
     private int number_attempts;
 
@@ -54,11 +53,26 @@ public class BeanUser {
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
-    public enum Rol {
-        ADMIN,
-        GESTOR,
-        USUARIO
+    public BeanUser() {
+
     }
+
+    public BeanUser(String name, String lastname, String surname, String email, String rfc, String phone_number, String username, String password, String role, int number_attempts, int policy_acceptance, int enabled) {
+        this.name = name;
+        this.lastname = lastname;
+        this.surname = surname;
+        this.email = email;
+        this.rfc = rfc;
+        this.phone_number = phone_number;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.number_attempts = number_attempts;
+        this.policy_acceptance = policy_acceptance;
+        this.enabled = enabled;
+    }
+
+
 
     @PrePersist
     private void prePersist(){
