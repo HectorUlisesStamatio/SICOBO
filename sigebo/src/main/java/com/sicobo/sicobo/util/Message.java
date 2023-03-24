@@ -16,6 +16,5 @@ public class Message {
 
     private int code;
 
-    @NonNull
     private Object result;
 }

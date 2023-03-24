@@ -75,7 +75,7 @@
 
                                     <div class="col-4 col-sm-5">
                                         <label for="ext" class="form-label">Extensión</label>
-                                        <input th:field="*{ext}" type="number" class="form-control" id="ext" pattern="[0-9]{0,3}">
+                                        <input th:field="*{ext}" type="number" class="form-control" id="ext" pattern="[0-9]{0,3}" maxlength="3">
                                         <div th:if="${#fields.hasErrors('ext')}" th:errors="*{ext}" class="alert alert-danger mb-3 mt-3"></div>
                                         <div th:unless="${#fields.hasErrors('ext')}" th:text="#{register.ext.error}" class="invalid-feedback"></div>
                                     </div>
