@@ -33,7 +33,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Object> listWarehousesBySiteId(Long idSite) {
+    public ResponseEntity<Object> listWarehousesBySiteId(String user, String pass) {
         return new ResponseEntity(new Message("Consulta exitosa","La consulta de bodegas ha sido exitosa", "success",200, daoWarehouse.findAllByBeanSite_Id(idSite)), HttpStatus.OK);
     }
 

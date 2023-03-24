@@ -10,6 +10,7 @@ import com.sicobo.sicobo.serviceImpl.WarehouseServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -25,22 +26,29 @@ import java.security.Principal;
 @RequestMapping("/gestor")
 @Slf4j
 public class GestorController {
+    public static final String ROLE_GESTOR = "ROLE_GESTOR";
+
     @Autowired
     private SiteServiceImpl siteService;
-
     @Autowired
     private WarehouseServiceImpl warehouseService;
 
+    @Secured({ROLE_GESTOR})
     @GetMapping("/bodegas")
     public String listWarehouses(Model model){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        String username = ((User) auth.getPrincipal()).getUsername();
-        String pass = ((User) auth.getPrincipal()).getPassword();
+            String username = ((User) auth.getPrincipal()).getUsername();
+            String pass = ((User) auth.getPrincipal()).getPassword();
 
-
-        model.addAttribute("response", warehouseService.listWarehousesBySiteId(Long.parseLong(idSite)).getBody());
-        model.addAttribute("status", warehouseService.listWarehousesBySiteId(Long.parseLong(idSite)).getStatusCode());
+            Message message = (Message) warehouseService.listWarehousesBySiteId(username, pass).getBody();
+            model.addAttribute("response", message);
+            Object status = warehouseService.listWarehousesBySiteId(username, pass).getStatusCode();
+            model.addAttribute("status", status);
+        } catch (Exception e) {
+            log.error("Ocurrio un error en GestorController - listWarehouses" + e.getMessage());
+        }
         return "gestorViews/listWarehouses";
     }
 
