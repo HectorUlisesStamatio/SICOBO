@@ -7,11 +7,8 @@ import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceImpl.StateServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +17,10 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.lang.reflect.Executable;
 import java.util.List;
 import java.util.Optional;
+
+import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 
 
 @Controller
@@ -30,7 +28,6 @@ import java.util.Optional;
 @Slf4j
 public class AdminController {
 
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Autowired
     private SiteServiceImpl siteService;

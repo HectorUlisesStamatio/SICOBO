@@ -34,7 +34,7 @@ public class DTOUser {
     private String phone_number;
 
     @Length(max = 3, message = "Solo se permite máximo 3 caracteres")
-    @Pattern(regexp = "[0-9]{0,3}", message = "Ingresa un teléfono válido")
+    @Pattern(regexp = "[0-9]{0,3}", message = "Ingresa una extensión válida")
     private String ext;
 
     @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
