@@ -1,7 +1,9 @@
 package com.sicobo.sicobo.serviceImpl;
 
+import com.sicobo.sicobo.dao.DaoAuthorities;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
+import com.sicobo.sicobo.model.BeanAuthorities;
 import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.service.IUserService;
 import com.sicobo.sicobo.util.*;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements IUserService
 
     @Autowired
     private DaoUser daoUser;
+    @Autowired
+    private DaoAuthorities daoAuthorities;
+
     @Autowired
     private PasswordEncrypter passwordEncrypter;
     @Autowired
@@ -80,6 +85,8 @@ public class UserServiceImpl implements IUserService
         beanUser.setPassword(passwordEncrypter.encriptarPassword(beanUser.getPassword()));
         try{
             BeanUser beanUserCreated = daoUser.save(beanUser);
+            BeanAuthorities beanAuthorities = new BeanAuthorities(beanUser.getUsername(),beanUser.getPassword(),beanUser.getEnabled(),beanUser.getRole());
+            daoAuthorities.save(beanAuthorities);
             return new ResponseEntity(new Message(SUCCESSFUL_REGISTRATION, INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanUserCreated), HttpStatus.OK);
         }catch(Exception e){
             log.error("Ocurrió un error al registrar" + e.getMessage());

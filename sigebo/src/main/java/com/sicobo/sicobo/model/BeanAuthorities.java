@@ -15,7 +15,20 @@ public class BeanAuthorities {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private String enabled;
+    private int enabled;
     @Column(nullable = false)
     private String authority;
+
+    public BeanAuthorities() {
+
+    }
+
+    public BeanAuthorities(String username, String password, int enabled, String authority) {
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.authority = authority;
+    }
+
+
 }
