@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.sicobo.sicobo.util.Constantes.Message_Body.INTERNAL_ERROR;
-import static com.sicobo.sicobo.util.Constantes.Message_Body.SEARCH_SUCCESSFUL;
-import static com.sicobo.sicobo.util.Constantes.Message_Codes.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Headers.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.FAILED;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.SUCCESS;
+import static com.sicobo.sicobo.util.Constantes.MessageBody.INTERNAL_ERROR;
+import static com.sicobo.sicobo.util.Constantes.MessageBody.SEARCH_SUCCESSFUL;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
+import static com.sicobo.sicobo.util.Constantes.MessageType.SUCCESS;
 
 @Service
 @Slf4j
