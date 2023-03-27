@@ -61,11 +61,11 @@ public class SiteServiceImpl implements ISiteService {
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-        if( siteValidator.validName(beanSite.getName())){
+        if( siteValidator.validName(Optional.ofNullable(beanSite.getName()))){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_NAME, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-        if( siteValidator.validAddress(beanSite.getAddress())){
+        if( siteValidator.validAddress(Optional.ofNullable(beanSite.getAddress()))){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_ADDRESS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
@@ -93,11 +93,11 @@ public class SiteServiceImpl implements ISiteService {
         if(!siteSearched.isPresent()){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El sitio ha actualizar no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
-        if( siteValidator.validName(dtoSite.getName())){
+        if( siteValidator.validName(Optional.ofNullable(dtoSite.getName()))){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_NAME, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-        if( siteValidator.validAddress(dtoSite.getAddress())){
+        if( siteValidator.validAddress(Optional.ofNullable(dtoSite.getAddress()))){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_ADDRESS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
