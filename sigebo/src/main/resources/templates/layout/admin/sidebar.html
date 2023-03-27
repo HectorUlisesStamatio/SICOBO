@@ -26,7 +26,7 @@
         </li>
 
         <li class="nav-item">
-            <a th:classappend="${opcion}=='bodegas' ? '' : 'collapsed'" class="nav-link" href="@{/gestor/bodegas/}">
+            <a th:classappend="${opcion}=='bodegas' ? '' : 'collapsed'" class="nav-link" th:href="@{/gestor/bodegas}">
                 <i class="bi bi-archive"></i>
                 <span>Bodegas</span>
             </a>

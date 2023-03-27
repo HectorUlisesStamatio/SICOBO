@@ -9,11 +9,12 @@ import java.util.Optional;
 
 public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
-    List<BeanWarehouse> findAllByBeanSite_Id(Long id);
 
+    boolean existsBeanWarehouseByBeanSite(BeanSite beanSite);
     boolean existsBeanWarehouseByBeanSite_Id(Long id);
-
+    List<BeanWarehouse> findBeanWarehouseByBeanSite(BeanSite beanSite);
     List<BeanWarehouse> findBeanWarehouseByBeanSite_Id(Long id);
+
 
 
 }
