@@ -11,6 +11,7 @@ import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.service.ISiteService;
 import com.sicobo.sicobo.util.Message;
+import com.sicobo.sicobo.util.SiteValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sicobo.sicobo.util.Constantes.Message_Body.INTERNAL_ERROR;
-import static com.sicobo.sicobo.util.Constantes.Message_Body.SEARCH_SUCCESSFUL;
-import static com.sicobo.sicobo.util.Constantes.Message_Codes.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Headers.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.FAILED;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.SUCCESS;
+import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
+import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
 @Service
 @Slf4j
@@ -45,10 +45,12 @@ public class SiteServiceImpl implements ISiteService {
     @Autowired
     private DaoPayment daoPayment;
 
+    private SiteValidator siteValidator = new SiteValidator();
+
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return new ResponseEntity<>(new Message("Consulta exitosa","La consulta de sitios ha sido exitosa", "success",200, daoSite.findAll()), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"La consulta de sitios ha sido exitosa", SUCCESS,SUCCESS_CODE, daoSite.findAll()), HttpStatus.OK);
     }
 
     @Override
@@ -56,15 +58,28 @@ public class SiteServiceImpl implements ISiteService {
     public ResponseEntity<Object> guardar(DTOSite dtoSite) {
         BeanSite beanSite = new BeanSite(dtoSite.getName(), 0, dtoSite.getAddress(), new BeanState((long)dtoSite.getBeanState()));
         if(daoSite.existsBeanSiteByName(beanSite.getName())){
-            return new ResponseEntity<>(new Message("Ejecución fallida","El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", "failed",400, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
+
+        if( siteValidator.validName(Optional.ofNullable(beanSite.getName()))){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_NAME, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if( siteValidator.validAddress(Optional.ofNullable(beanSite.getAddress()))){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_ADDRESS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if( siteValidator.validState(beanSite.getBeanState().getId())){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_STATE, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
 
         try{
             BeanSite beanSiteCreated = daoSite.save(beanSite);
-            return new ResponseEntity<>(new Message("Registro exitoso","Se ha realizado el registro exitosamente", "success",200, beanSiteCreated), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION, INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanSiteCreated), HttpStatus.OK);
         }catch(Exception e){
             log.error("Ocurrio un error en SiteServiceImpl - guardar" + e.getMessage());
-            return new ResponseEntity<>(new Message("Ejecución fallida","Ocurrio un error interno", "failed",500, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -73,10 +88,21 @@ public class SiteServiceImpl implements ISiteService {
     public ResponseEntity<Object>   editar(DTOSite dtoSite) {
         Optional<BeanSite> siteSearched = daoSite.findBeanSiteById(dtoSite.getId());
         if(daoSite.existsBeanSiteByNameAndIdNot(dtoSite.getName(), dtoSite.getId())){
-            return new ResponseEntity<>(new Message("Ejecución fallida","El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", "failed",400, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!siteSearched.isPresent()){
-            return new ResponseEntity<>(new Message("Ejecución fallida","El sitio ha actualizar no se encuentra registrado en el sistema", "failed",400, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El sitio ha actualizar no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if( siteValidator.validName(Optional.ofNullable(dtoSite.getName()))){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_NAME, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if( siteValidator.validAddress(Optional.ofNullable(dtoSite.getAddress()))){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_ADDRESS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if( siteValidator.validState((long) dtoSite.getBeanState())){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_STATE, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
         BeanSite sitePrepared =siteSearched.get();
@@ -85,10 +111,10 @@ public class SiteServiceImpl implements ISiteService {
         sitePrepared.setBeanState(new BeanState((long) dtoSite.getBeanState()));
         try{
             BeanSite beanSiteUpdated = daoSite.save(sitePrepared);
-            return new ResponseEntity<>(new Message("Actualización exitosa","Se ha realizado la actualización exitosamente", "success",200, beanSiteUpdated), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE,UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanSiteUpdated), HttpStatus.OK);
         }catch(Exception e){
             log.error("Ocurrio un error en SiteServiceImpl - editar" + e.getMessage());
-            return new ResponseEntity<>(new Message("Ejecución fallida","Ocurrio un error interno", "failed",500, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -100,7 +126,7 @@ public class SiteServiceImpl implements ISiteService {
         String typeMethod = beanSite.getStatus() == 1 ? "habilitacion" : "deshabilitacion";
         String typeTitle= beanSite.getStatus() == 1 ? "Habilitacion" : "Deshabilitacion";
         if(!siteSearched.isPresent()){
-            return new ResponseEntity<>(new Message("Ejecución fallida","El sitio ha "+ typeChange +" no se encuentra registrado en el sistema", "failed",400, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El sitio ha "+ typeChange +" no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
        /* if(beanSite.getStatus() == 1  && !daoSiteAssigment.existsBeanSiteAssigmentByBeanSite_Id(beanSite.getId())){
@@ -121,10 +147,10 @@ public class SiteServiceImpl implements ISiteService {
         sitePrepared.setStatus(beanSite.getStatus());
         try{
             BeanSite beanSiteUpdated = daoSite.save(sitePrepared);
-            return new ResponseEntity<>(new Message(typeTitle + " exitosa","Se ha realizado la " + typeMethod+ " exitosamente", "success",200, beanSiteUpdated), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(typeTitle + " exitosa","Se ha realizado la " + typeMethod+ " exitosamente", SUCCESS,SUCCESS_CODE, beanSiteUpdated), HttpStatus.OK);
         }catch(Exception e){
             log.error("Ocurrio un error en SiteServiceImpl - eliminar" + e.getMessage());
-            return new ResponseEntity<>(new Message("Ejecución fallida","Ocurrio un error interno", "failed",500, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -132,10 +158,14 @@ public class SiteServiceImpl implements ISiteService {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
         if(!daoSite.existsBeanSiteById(id)){
-            return new ResponseEntity<>(new Message("Ejecución fallida","No se encuentra el sitio seleccionado", "failed",400, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra el sitio seleccionado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
+        if( siteValidator.validState(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_STATE, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
         BeanSite site = daoSite.findBeanSiteById(id).get();
-        return new ResponseEntity<>(new Message("Consulta exitosa","Se ha realizado la consulta de forma exitosa", "success",200,site ), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,site ), HttpStatus.OK);
     }
 
     public ResponseEntity<Object> findBeanSiteByBeanUser(BeanUser beanUser) {

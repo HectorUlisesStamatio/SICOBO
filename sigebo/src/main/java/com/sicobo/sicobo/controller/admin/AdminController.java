@@ -22,6 +22,11 @@ import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 
+import static com.sicobo.sicobo.util.Constantes.Stuff.*;
+import static com.sicobo.sicobo.util.Constantes.Redirects.*;
+import static com.sicobo.sicobo.util.Constantes.ObjectMessages.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -38,100 +43,112 @@ public class AdminController {
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
     public String dash(Model model) {
-        model.addAttribute("opcion", null);
-        return "adminViews/dashboard";
+        model.addAttribute(OPTION, null);
+        return ADMIN_DASHBOARD;
     }
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/sitios")
     public String listar(Model model) {
-        model.addAttribute("opcion", "sitios");
+        model.addAttribute(OPTION, SITES);
         try {
             Message message = (Message) siteService.listar().getBody();
-            model.addAttribute("response", message);
+            assert message !=null;
+            model.addAttribute(RESPONSE, message);
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - listar" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         } catch (Exception e) {
             log.error("Ocurrio un error en AdminController - listar" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
-        return "adminViews/listSites";
+        return ADMIN_LISTSITES;
     }
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/registrarSitio")
     public String prepareRegistration(Model model, DTOSite site) {
-        model.addAttribute("opcion", "sitios");
+        model.addAttribute(OPTION, SITES);
         try {
             Message response = (Message) stateService.listar().getBody();
-            model.addAttribute("states", response.getResult());
-            model.addAttribute("site", site);
+            assert response != null;
+            model.addAttribute(STATES, response.getResult());
+            model.addAttribute(SITE, site);
         }catch (NullPointerException e) {
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
             log.error("Valor nulo un error en AdminController - prepareRegistration" + e.getMessage());
         }  catch (Exception e) {
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
             log.error("Ocurrio un error en AdminController - prepareRegistration" + e.getMessage());
         }
 
 
-        return "adminViews/registerSite";
+        return ADMIN_REGISTERSITE;
     }
 
     @Secured({ROLE_ADMIN})
     @PostMapping("/guardarSitio")
     public String saveSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model) {
+        model.addAttribute(OPTION, SITES);
         try{
             Message message = (Message) stateService.listar().getBody();
             assert message != null;
             List<BeanState> states = (List<BeanState>) message.getResult();
 
-            model.addAttribute("opcion", "sitios");
             if (result.hasErrors()) {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
                 }
-                model.addAttribute("states", states);
-                return "adminViews/registerSite";
+                model.addAttribute(STATES, states);
+                return ADMIN_REGISTERSITE;
             }
 
             Message response = (Message) siteService.guardar(site).getBody();
             assert response != null;
-            if (message.getType().equals("failed")) {
-                model.addAttribute("message", response);
-                model.addAttribute("states", states);
-                return "adminViews/registerSite";
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                model.addAttribute(STATES, states);
+                return ADMIN_REGISTERSITE;
             }
-            attributes.addFlashAttribute("message", message);
+            attributes.addFlashAttribute(MESSAGE, response);
         }catch (AssertionError e) {
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
             log.error("Ocurrio un error en AdminController - saveSite" + e.getMessage());
         }
-        return "redirect:/admin/sitios";
+        return REDIRECT_ADMIN_LISTSITES;
     }
 
     @Secured({ROLE_ADMIN})
     @PostMapping("/prepararModificacion")
     public String prepareModification(@RequestParam("idSite") long idSite, Model model, RedirectAttributes attributes) {
-        model.addAttribute("opcion", "sitios");
+        model.addAttribute(OPTION, SITES);
         try{
             Message message = (Message) siteService.buscar(idSite).getBody();
-            if (message.getType().equals("failed")) {
-                attributes.addFlashAttribute("message", message);
-                return "redirect:/admin/sitios";
+            assert message != null;
+            if (message.getType().equals(FAILED)) {
+                attributes.addFlashAttribute(MESSAGE, message);
+                return REDIRECT_ADMIN_LISTSITES;
             }
-            model.addAttribute("response", message);
-            model.addAttribute("states", ((Message) stateService.listar().getBody()).getResult());
-            model.addAttribute("site", message.getResult());
+            Message statesResponse = (Message) stateService.listar().getBody();
+            assert statesResponse != null;
+            model.addAttribute(RESPONSE, message);
+            model.addAttribute(STATES, statesResponse.getResult());
+            model.addAttribute(SITE, message.getResult());
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - prepareModification" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
             log.error("Ocurrio un error en AdminController - prepareModification" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
 
-        return "adminViews/updateSite";
+        return ADMIN_UPDATESITE;
     }
 
     @Secured({ROLE_ADMIN})
     @PostMapping("/actualizarSitio")
     public String updateSite(@Valid @ModelAttribute("site") DTOSite site, BindingResult result, RedirectAttributes attributes, Model model) {
-        model.addAttribute("opcion", "sitios");
+        model.addAttribute(OPTION, SITES);
         try{
             Message message =  (Message) stateService.listar().getBody();
             assert message != null;
@@ -139,31 +156,35 @@ public class AdminController {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
                 }
-                model.addAttribute("states", message.getResult());
-                return "adminViews/updateSite";
+                model.addAttribute(STATES, message.getResult());
+                return ADMIN_UPDATESITE;
             }
             Message response = (Message) siteService.editar(site).getBody();
-            if (message.getType().equals("failed")) {
-                model.addAttribute("message", response);
-                model.addAttribute("states", message.getResult());
-                return "adminViews/updateSite";
+            assert response !=null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                model.addAttribute(STATES, message.getResult());
+                return ADMIN_UPDATESITE;
             }
-            attributes.addFlashAttribute("message", message);
+            attributes.addFlashAttribute(MESSAGE, response);
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - updateSite" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
             log.error("Ocurrio un error en AdminController - updateSite" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
-        return "redirect:/admin/sitios";
+        return REDIRECT_ADMIN_LISTSITES;
     }
 
 
     @Secured({ROLE_ADMIN})
     @PostMapping("/cambiarEstadoSitio")
     public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes) {
+        model.addAttribute(OPTION, SITES);
         try{
             if (!idSite.isPresent() || !statusSite.isPresent()) {
-                attributes.addFlashAttribute("message", new Message("Ejecución fallida", "Ingresa valores válidos", "failed", 400, null));
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 return "redirect:/admin/sitios";
             }
 
@@ -171,14 +192,17 @@ public class AdminController {
             beanSite.setId(idSite.get());
             beanSite.setStatus(statusSite.get() ? 0 : 1);
             Message message = (Message) siteService.eliminar(beanSite).getBody();
-            attributes.addFlashAttribute("message", message);
+            assert message !=null;
+            attributes.addFlashAttribute(MESSAGE, message);
 
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - changeStateSite" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
             log.error("Ocurrio un error en AdminController - changeStateSite" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
-        return "redirect:/admin/sitios";
+        return REDIRECT_ADMIN_LISTSITES;
     }
 
 

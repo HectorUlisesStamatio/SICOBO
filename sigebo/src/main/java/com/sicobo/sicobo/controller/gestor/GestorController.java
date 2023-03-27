@@ -28,9 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 
-import static com.sicobo.sicobo.util.Constantes.Message_Type.FAILED;
+import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Codes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
