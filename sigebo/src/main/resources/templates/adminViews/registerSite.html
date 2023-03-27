@@ -42,7 +42,7 @@
                             <div class="col-12 mb-3">
                                 <label for="name" class="form-label">Nombre</label>
                                 <div class="form-group has-validation" >
-                                    <input type="text" th:field="*{name}" id="name" class="form-control" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9&%#\s]+$">
+                                    <input type="text" th:field="*{name}" id="name" class="form-control" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
                                     <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorRequired}" class="invalid-feedback" id="nameRequired"></div>
                                     <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorPattern}" class="invalid-feedback" id="namePattern"></div>
                                     <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorMax}" class="invalid-feedback" id="nameMax"></div>
