@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Bodegas</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/gestor/bodegas/(id=${localStorage.getItem('idWarehouse')})}">Listar Bodegas</a></li>
+                <li class="breadcrumb-item active">Registro</li>
+            </ol>
+        </nav>
+    </div>
+    <input th:if="${message != null}" name="status" id="status" type="hidden" th:value="${message.code}">
+    <input th:unless="${message != null}" name="status" id="status" type="hidden" value="200">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${message != null}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="col-12">
+                <form class="row g-3 needs-validation" th:action="@{/admin/guardarSitio}" th:object="${site}" method="post" novalidate id="formValid">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Registrar Sitio</h5>
+
+                            <div class="col-12 mb-3">
+                                <label for="name" class="form-label">Nombre</label>
+                                <div class="form-group has-validation" >
+                                    <input type="text" th:field="*{name}" id="name" class="form-control" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9&%#\s]+$">
+                                    <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorRequired}" class="invalid-feedback" id="nameRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorPattern}" class="invalid-feedback" id="namePattern"></div>
+                                    <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorMax}" class="invalid-feedback" id="nameMax"></div>
+                                    <div th:unless="${#fields.hasErrors('name')}" th:text="#{registerSite.nombre.errorMin}" class="invalid-feedback" id="nameMin"></div>
+                                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="alert alert-danger mb-3 mt-3"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="address" class="form-label">Dirección</label>
+                                <div class="form-group has-validation">
+                                    <input type="text" th:field="*{address}"  class="form-control" id="address" required maxlength="255" minlength="10" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
+                                    <div th:text="#{registerSite.direccion.error}" class="invalid-feedback" id="addressRequired"></div>
+                                    <div th:text="#{registerSite.direccion.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
+                                    <div th:text="#{registerSite.direccion.errorMax}" class="invalid-feedback" id="addressMax"></div>
+                                    <div th:text="#{registerSite.direccion.errorMin}" class="invalid-feedback" id="addressMin"></div>
+                                    <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="alert alert-danger mb-3 mt-3"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="beanState" class="form-label">Estado</label>
+                                <select class="form-select" th:field="*{beanState}" id="beanState" required>
+                                    <option value="0" disabled >Selecciona una opción...</option>
+                                    <option th:each="tmpState: ${states}" th:value="${tmpState.id}"
+                                     th:text="${tmpState.name}"></option>
+                                </select>
+                                <div th:text="#{registerSite.estado.error}" class="invalid-feedback" id="beanStateRequired"></div>
+                                <div th:if="${#fields.hasErrors('beanState')}" th:errors="*{beanState}" class="alert alert-danger mb-3 mt-3">
+                            </div>
+                    <div class="card-footer text-end">
+                        <a th:href="@{/admin/sitios}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
+                        <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script>
+    let name = document.getElementById("name");
+    let address = document.getElementById("address");
+    let beanState = document.getElementById("beanState");
+
+    const hideErrorsInputName = () =>{
+        document.getElementById("nameRequired").style.display = "none";
+        document.getElementById("namePattern").style.display = "none";
+        document.getElementById("nameMax").style.display = "none";
+        document.getElementById("nameMin").style.display = "none";
+    }
+
+    const hideErrorsInputAddress = () =>{
+        document.getElementById("addressRequired").style.display = "none";
+        document.getElementById("addressPattern").style.display = "none";
+        document.getElementById("addressMax").style.display = "none";
+        document.getElementById("addressMin").style.display = "none";
+    }
+
+    const hideErrorsInputBeanState = () =>{
+        document.getElementById("beanStateRequired").style.display = "none";
+    }
+
+    name.addEventListener("input", function(event) {
+        hideErrorsInputName();
+        if (name.validity.valueMissing) {
+            document.getElementById("nameRequired").style.display = "block";
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+        }else if (name.validity.patternMismatch) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("namePattern").style.display = "block";
+        }else  if (name.validity.tooShort) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("nameMin").style.display = "block";
+        }else if (name.validity.tooShort) {
+            name.classList.remove('valid');
+            name.classList.add('is-invalid');
+            document.getElementById("nameMin").style.display = "block";
+        }else{
+            name.classList.remove('is-invalid');
+            name.classList.add('is-valid');
+            hideErrorsInputName();
+        }
+
+
+
+    });
+
+    name.oninvalid = function() {
+        if (name.validity.valueMissing) {
+            document.getElementById("nameRequired").style.display = "block";
+        }else{
+            document.getElementById("nameRequired").style.display = "none";
+        }
+
+        if (name.validity.patternMismatch) {
+            document.getElementById("namePattern").style.display = "block";
+        }else{
+            document.getElementById("namePattern").style.display = "none";
+        }
+
+        if (name.validity.tooLong) {
+            document.getElementById("nameMax").style.display = "block";
+        }else{
+            document.getElementById("nameMax").style.display = "none";
+        }
+
+        if (name.validity.tooShort) {
+            document.getElementById("nameMin").style.display = "block";
+        }else{
+            document.getElementById("nameMin").style.display = "none";
+        }
+
+        if (name.validity.valid) {
+            hideErrorsInputName();
+        }
+
+    };
+
+    address.addEventListener("input", function(event) {
+        hideErrorsInputAddress();
+        if (address.validity.valueMissing) {
+            document.getElementById("addressRequired").style.display = "block";
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+        }else if (address.validity.patternMismatch) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressPattern").style.display = "block";
+        }else  if (address.validity.tooShort) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressMin").style.display = "block";
+        }else if (address.validity.tooShort) {
+            address.classList.remove('valid');
+            address.classList.add('is-invalid');
+            document.getElementById("addressMin").style.display = "block";
+        }else{
+            address.classList.remove('is-invalid');
+            address.classList.add('is-valid');
+            hideErrorsInputAddress();
+        }
+
+
+
+    });
+
+    address.oninvalid = function() {
+        if (address.validity.valueMissing) {
+            document.getElementById("addressRequired").style.display = "block";
+        }else{
+            document.getElementById("addressRequired").style.display = "none";
+        }
+
+        if (address.validity.patternMismatch) {
+            document.getElementById("addressPattern").style.display = "block";
+        }else{
+            document.getElementById("addressPattern").style.display = "none";
+        }
+
+        if (address.validity.tooLong) {
+            document.getElementById("addressMax").style.display = "block";
+        }else{
+            document.getElementById("addressMax").style.display = "none";
+        }
+
+        if (address.validity.tooShort) {
+            document.getElementById("addressMin").style.display = "block";
+        }else{
+            document.getElementById("addressMin").style.display = "none";
+        }
+
+        if (address.validity.valid) {
+            hideErrorsInputAddress();
+        }
+
+    };
+
+    beanState.addEventListener("input", function(event) {
+        hideErrorsInputBeanState();
+        if (beanState.validity.valueMissing) {
+            document.getElementById("beanStateRequired").style.display = "block";
+            beanState.classList.remove('valid');
+            beanState.classList.add('is-invalid');
+        }else{
+            beanState.classList.remove('is-invalid');
+            beanState.classList.add('is-valid');
+            hideErrorsInputBeanState();
+        }
+
+
+
+    });
+
+    beanState.oninvalid = function() {
+        if (beanState.validity.valueMissing) {
+            document.getElementById("beanStateRequired").style.display = "block";
+        }else{
+            document.getElementById("beanStateRequired").style.display = "none";
+        }
+
+
+        if (beanState.validity.valid) {
+            hideErrorsInputBeanState();
+        }
+
+    };
+
+</script>
+
+</body>
+
+</html>
