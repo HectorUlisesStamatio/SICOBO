@@ -1,5 +1,7 @@
 package com.sicobo.sicobo.util;
 
+import java.util.Optional;
+
 public class SiteValidator {
 
     private static final String REGEX_FIELD_EMPTY = "^[\\s.\\-_]*$";
@@ -18,40 +20,48 @@ public class SiteValidator {
 
 
 
-    public boolean validName(String nombre){
+    public boolean validName(Optional<String> nombre){
         boolean flag = false;
-        assert nombre != null;
-        if(nombre == null || nombre.matches(REGEX_FIELD_EMPTY)){
+        if(nombre.isPresent()){
+            if(nombre.get().matches(REGEX_FIELD_EMPTY)){
+                flag = true;
+            }
+            if(!nombre.get().matches(REGEX_NAME_INCORRECT)){
+                flag = true;
+            }
+            if(nombre.get().length() > SIZE_MAX_NAME){
+                flag = true;
+            }
+            if(nombre.get().length() < SIZE_MIN_NAME ){
+                flag = true;
+            }
+        }else{
             flag = true;
         }
-        if(!nombre.matches(REGEX_NAME_INCORRECT)){
-            flag = true;
-        }
-        if(nombre.length() > SIZE_MAX_NAME){
-            flag = true;
-        }
-        if(nombre.length() < SIZE_MIN_NAME ){
-            flag = true;
-        }
+
 
         return flag;
     }
 
-    public boolean validAddress(String address){
+    public boolean validAddress(Optional<String> address){
         boolean flag = false;
-        assert address != null;
-        if(address == null || address.matches(REGEX_FIELD_EMPTY)){
+        if(address.isPresent()){
+            if(address.get().matches(REGEX_FIELD_EMPTY)){
+                flag = true;
+            }
+            if(!address.get().matches(REGEX_ADDRESS_INCORRECT)){
+                flag = true;
+            }
+            if(address.get().length() > SIZE_MAX_ADDRESS){
+                flag = true;
+            }
+            if(address.get().length() < SIZE_MIN_ADDRESS ){
+                flag = true;
+            }
+        }else{
             flag = true;
         }
-        if(!address.matches(REGEX_ADDRESS_INCORRECT)){
-            flag = true;
-        }
-        if(address.length() > SIZE_MAX_ADDRESS){
-            flag = true;
-        }
-        if(address.length() < SIZE_MIN_ADDRESS ){
-            flag = true;
-        }
+
         return flag;
     }
 
