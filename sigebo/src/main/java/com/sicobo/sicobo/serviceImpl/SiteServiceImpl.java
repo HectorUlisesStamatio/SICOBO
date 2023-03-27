@@ -23,10 +23,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sicobo.sicobo.util.Constantes.Message_Body.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Codes.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Headers.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.*;
+import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
 @Service

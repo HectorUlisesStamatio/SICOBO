@@ -1,10 +1,5 @@
 package com.sicobo.sicobo.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 public class SiteValidator {
 
     private static final String REGEX_FIELD_EMPTY = "^[\\s.\\-_]*$";
@@ -24,24 +19,46 @@ public class SiteValidator {
 
 
     public boolean validName(String nombre){
-        if(nombre == null || nombre.matches(REGEX_FIELD_EMPTY)) return true;
-        if(!nombre.matches(REGEX_NAME_INCORRECT))return true;
-        if(nombre.length() > SIZE_MAX_NAME) return true;
-        if(nombre.length() < SIZE_MIN_NAME ) return true;
-        return false;
+        boolean flag = false;
+        if(nombre == null || nombre.matches(REGEX_FIELD_EMPTY)){
+            flag = true;
+        }
+        if(!nombre.matches(REGEX_NAME_INCORRECT)){
+            flag = true;
+        }
+        if(nombre.length() > SIZE_MAX_NAME){
+            flag = true;
+        }
+        if(nombre.length() < SIZE_MIN_NAME ){
+            flag = true;
+        }
+
+        return flag;
     }
 
     public boolean validAddress(String address){
-        if(address == null || address.matches(REGEX_FIELD_EMPTY)) return true;
-        if(!address.matches(REGEX_ADDRESS_INCORRECT))return true;
-        if(address.length() > SIZE_MAX_ADDRESS) return true;
-        if(address.length() < SIZE_MIN_ADDRESS ) return true;
-        return false;
+        boolean flag = false;
+        if(address == null || address.matches(REGEX_FIELD_EMPTY)){
+            flag = true;
+        }
+        if(!address.matches(REGEX_ADDRESS_INCORRECT)){
+            flag = true;
+        }
+        if(address.length() > SIZE_MAX_ADDRESS){
+            flag = true;
+        }
+        if(address.length() < SIZE_MIN_ADDRESS ){
+            flag = true;
+        }
+        return flag;
     }
 
     public boolean validState(Long state){
-        if(state == 0) return true;
-        return false;
+        boolean flag = false;
+        if(state == 0){
+            flag = true;
+        }
+        return flag;
     }
 
 

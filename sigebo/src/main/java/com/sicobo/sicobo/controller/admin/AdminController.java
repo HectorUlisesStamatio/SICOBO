@@ -25,7 +25,7 @@ import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.*;
-import static com.sicobo.sicobo.util.Constantes.Message_Type.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 
 
 @Controller
@@ -53,6 +53,7 @@ public class AdminController {
         model.addAttribute(OPTION, SITES);
         try {
             Message message = (Message) siteService.listar().getBody();
+            assert message !=null;
             model.addAttribute(RESPONSE, message);
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - listar" + e.getMessage());
@@ -159,6 +160,7 @@ public class AdminController {
                 return ADMIN_UPDATESITE;
             }
             Message response = (Message) siteService.editar(site).getBody();
+            assert response !=null;
             if (response.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, response);
                 model.addAttribute(STATES, message.getResult());
@@ -190,6 +192,7 @@ public class AdminController {
             beanSite.setId(idSite.get());
             beanSite.setStatus(statusSite.get() ? 0 : 1);
             Message message = (Message) siteService.eliminar(beanSite).getBody();
+            assert message !=null;
             attributes.addFlashAttribute(MESSAGE, message);
 
         }catch (NullPointerException e) {
