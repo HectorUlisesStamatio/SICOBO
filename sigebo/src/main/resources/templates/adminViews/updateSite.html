@@ -54,10 +54,10 @@
                                 <label for="address" class="form-label">Dirección</label>
                                 <div class="form-group has-validation">
                                     <input type="text" th:field="*{address}"  class="form-control" id="address" required maxlength="255" minlength="10" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
-                                    <div th:text="#{registerSite.direccion.error}" class="invalid-feedback" id="addressRequired"></div>
-                                    <div th:text="#{registerSite.direccion.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
-                                    <div th:text="#{registerSite.direccion.errorMax}" class="invalid-feedback" id="addressMax"></div>
-                                    <div th:text="#{registerSite.direccion.errorMin}" class="invalid-feedback" id="addressMin"></div>
+                                    <div th:unless="${#fields.hasErrors('address')}" th:text="#{registerSite.direccion.error}" class="invalid-feedback" id="addressRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('address')}" th:text="#{registerSite.direccion.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
+                                    <div th:unless="${#fields.hasErrors('address')}" th:text="#{registerSite.direccion.errorMax}" class="invalid-feedback" id="addressMax"></div>
+                                    <div th:unless="${#fields.hasErrors('address')}" th:text="#{registerSite.direccion.errorMin}" class="invalid-feedback" id="addressMin"></div>
                                     <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="alert alert-danger mb-3 mt-3"></div>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                                     <option th:each="tmpState: ${states}" th:value="${tmpState.id}"
                                             th:text="${tmpState.name}"></option>
                                 </select>
-                                <div th:text="#{registerSite.estado.error}" class="invalid-feedback" id="beanStateRequired"></div>
+                                <div th:unless="${#fields.hasErrors('beanState')}" th:text="#{registerSite.estado.error}" class="invalid-feedback" id="beanStateRequired"></div>
                                 <div th:if="${#fields.hasErrors('beanState')}" th:errors="*{beanState}" class="alert alert-danger mb-3 mt-3">
                             </div>
 
