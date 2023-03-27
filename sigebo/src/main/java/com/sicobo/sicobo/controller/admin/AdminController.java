@@ -70,6 +70,7 @@ public class AdminController {
         model.addAttribute(OPTION, SITES);
         try {
             Message response = (Message) stateService.listar().getBody();
+            assert response != null;
             model.addAttribute(STATES, response.getResult());
             model.addAttribute(SITE, site);
         }catch (NullPointerException e) {
@@ -122,12 +123,15 @@ public class AdminController {
         model.addAttribute(OPTION, SITES);
         try{
             Message message = (Message) siteService.buscar(idSite).getBody();
+            assert message != null;
             if (message.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, message);
                 return REDIRECT_ADMIN_LISTSITES;
             }
+            Message statesResponse = (Message) stateService.listar().getBody();
+            assert statesResponse != null;
             model.addAttribute(RESPONSE, message);
-            model.addAttribute(STATES, ((Message) stateService.listar().getBody()).getResult());
+            model.addAttribute(STATES, statesResponse.getResult());
             model.addAttribute(SITE, message.getResult());
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - prepareModification" + e.getMessage());

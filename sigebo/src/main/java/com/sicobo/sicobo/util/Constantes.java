@@ -8,24 +8,24 @@ import static com.sicobo.sicobo.util.Constantes.Message_Headers.*;
 public final class Constantes {
 
     public static final class Roles {
-        public final static String ROLE_ADMIN = "ROLE_ADMIN";
-        public final static String ROLE_GESTOR = "ROLE_GESTOR";
+        public static final String ROLE_ADMIN = "ROLE_ADMIN";
+        public static final String ROLE_GESTOR = "ROLE_GESTOR";
     }
 
     public static final class Message_Headers{
-        public final static String FAILED_REGISTRATION = "Registro fallido";
-        public final static String FAILED_EXECUTION = "Ejecución fallida";
-        public final static String SUCCESSFUL_REGISTRATION = "Registro exitoso";
-        public final static String SUCCESSFUL_SEARCH = "Búsqueda exitosa";
+        public static final String FAILED_REGISTRATION = "Registro fallido";
+        public static final String FAILED_EXECUTION = "Ejecución fallida";
+        public static final String SUCCESSFUL_REGISTRATION = "Registro exitoso";
+        public static final String SUCCESSFUL_SEARCH = "Búsqueda exitosa";
 
-        public final static String SUCCESSFUL_UPDATE = "Actualización exitosa";
-        public final static String FAILED_SEARCH = "Búsqueda fallida";
+        public static final String SUCCESSFUL_UPDATE = "Actualización exitosa";
+        public static final String FAILED_SEARCH = "Búsqueda fallida";
     }
 
     public static final class Message_Codes{
-        public final static int SERVER_FAIL_CODE = 500;
-        public final static int FAIL_CODE = 400;
-        public final static int SUCCESS_CODE = 200;
+        public static final int SERVER_FAIL_CODE = 500;
+        public static final int FAIL_CODE = 400;
+        public static final int SUCCESS_CODE = 200;
     }
 
     public static final class Message_Body{
@@ -43,8 +43,8 @@ public final class Constantes {
     }
 
     public static final class Message_Type{
-        public final static String FAILED = "failed";
-        public final static String SUCCESS = "success";
+        public static final String FAILED = "failed";
+        public static final String SUCCESS = "success";
     }
 
     public static final class Redirects{
