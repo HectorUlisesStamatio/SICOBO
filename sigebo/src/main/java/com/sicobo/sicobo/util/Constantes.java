@@ -7,6 +7,7 @@ import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
 
 public final class Constantes {
 
+    private Constantes(){}
     public static final class Roles {
 
         private Roles(){}

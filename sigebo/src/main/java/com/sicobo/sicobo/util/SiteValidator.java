@@ -20,6 +20,7 @@ public class SiteValidator {
 
     public boolean validName(String nombre){
         boolean flag = false;
+        assert nombre != null;
         if(nombre == null || nombre.matches(REGEX_FIELD_EMPTY)){
             flag = true;
         }
@@ -38,6 +39,7 @@ public class SiteValidator {
 
     public boolean validAddress(String address){
         boolean flag = false;
+        assert address != null;
         if(address == null || address.matches(REGEX_FIELD_EMPTY)){
             flag = true;
         }
