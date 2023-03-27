@@ -49,9 +49,8 @@ public class GestorController {
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararRegistro")
-    public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes,@Valid @ModelAttribute("warehouse")  DTOWarehouse warehouse, BindingResult bindingResult) {
+    public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
-            System.out.println(idSite);
             ResponseEntity<?> responseEntity = warehousesTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
@@ -63,6 +62,7 @@ public class GestorController {
             model.addAttribute(RESPONSE, message);
             Object status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);
+            model.addAttribute("warehouse", warehouse);
 
             return "/gestorViews/registerWarehouse";
         }catch (Exception e){

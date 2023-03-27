@@ -42,10 +42,10 @@
                                 <label for="section" class="form-label">Sección</label>
                                 <div class="form-group has-validation" >
                                     <input type="text" th:field="*{section}" id="section" class="form-control" required maxlength="100" minlength="5" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorRequired}" class="invalid-feedback" id="nameRequired"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorPattern}" class="invalid-feedback" id="namePattern"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMax}" class="invalid-feedback" id="nameMax"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMin}" class="invalid-feedback" id="nameMin"></div>
+                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorRequired}" class="invalid-feedback" id="sectionRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorPattern}" class="invalid-feedback" id="sectionPattern"></div>
+                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMax}" class="invalid-feedback" id="sectionMax"></div>
+                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMin}" class="invalid-feedback" id="sectionMin"></div>
                                     <div th:if="${#fields.hasErrors('section')}" th:errors="*{section}" class="alert alert-danger mb-3 mt-3"></div>
                                 </div>
                             </div>
@@ -54,10 +54,10 @@
                                 <label for="description" class="form-label">Descripción</label>
                                 <div class="form-group has-validation">
                                     <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"/>
-                                    <div th:text="#{registerWarehouse.description.error}" class="invalid-feedback" id="addressRequired"></div>
-                                    <div th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="addressPattern"></div>
-                                    <div th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="addressMax"></div>
-                                    <div th:text="#{registerWarehouse.description.errorMin}" class="invalid-feedback" id="addressMin"></div>
+                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorRequired}" class="invalid-feedback" id="descriptionRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="descriptionPattern"></div>
+                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="descriptionMax"></div>
+                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMin}" class="invalid-feedback" id="descriptionMin"></div>
                                     <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="alert alert-danger mb-3 mt-3"></div>
                                 </div>
                             </div>
@@ -69,20 +69,21 @@
                                     <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
                                      th:text="${tmpWarehouseType.description}"></option>
                                 </select>
-                                <div th:text="#{registerWarehouse.warehouseType.error}" class="invalid-feedback" id="warehousesTypeRequired"></div>
+                                <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
                                 <div th:if="${#fields.hasErrors('warehousesType')}" th:errors="*{warehousesType}" class="alert alert-danger mb-3 mt-3">
                             </div>
-                                <div class="col-12 mb-3" th:if="${warehousesType != null}">
+                                <div class="col-12 mb-3">
                                     <label for="section" class="form-label">Costo</label>
                                     <div class="form-group has-validation" >
-                                        <input type="number" th:field="*{warehousesType.beanCostType}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,2})?$" required>
-                                        <div th:unless="${#fields.hasErrors('warehousesType.beanCostType')}" th:text="#{registerWarehouse.warehousesType.beanCostType.errorRequired}" class="invalid-feedback" id="beanCostTypeRequired"></div>
-                                        <div th:unless="${#fields.hasErrors('warehousesType.beanCostType')}" th:text="#{registerWarehouse.warehousesType.beanCostType.errorPattern}" class="invalid-feedback" id="beanCostTypePattern"></div>
-                                        <div th:unless="${#fields.hasErrors('warehousesType.beanCostType')}" th:text="#{registerWarehouse.warehousesType.beanCostType.errorMax}" class="invalid-feedback" id="beanCostTypeMax"></div>
-                                        <div th:unless="${#fields.hasErrors('warehousesType.beanCostType')}" th:text="#{registerWarehouse.warehousesType.beanCostType.errorMin}" class="invalid-feedback" id="beanCostTypeMin"></div>
-                                        <div th:if="${#fields.hasErrors('warehousesType.beanCostType')}" th:errors="*{warehousesType.beanCostType}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <input type="number" th:disabled="${warehousesType == null}" th:field="*{finalCost}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,2})?$" required>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMinLength}" class="invalid-feedback" id="finalCostTypeMinLength"></div>
+                                        <div th:if="${#fields.hasErrors('finalCost')}" th:errors="*{finalCost}" class="alert alert-danger mb-3 mt-3"></div>
                                     </div>
                                 </div>
+                                <input type="number" th:disabled="${warehousesType == null}" th:field="*{finalCost}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,2})?$" required>
                     <div class="card-footer text-end">
                         <a th:href="@{/gestor/bodegas}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
                         <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
