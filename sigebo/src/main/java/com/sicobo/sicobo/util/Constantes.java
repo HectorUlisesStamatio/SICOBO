@@ -46,6 +46,8 @@ public final class Constantes {
         public static final String USER = "user";
         public static final String ERRORS = "Error: ";
         public static final String STATUS = "status";
+        public static final String RESPONSE = "response";
+        public static final String SITIOID = "sitioId";
     }
 
 
