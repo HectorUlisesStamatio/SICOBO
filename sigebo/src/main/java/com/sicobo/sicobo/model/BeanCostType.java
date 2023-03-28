@@ -1,5 +1,7 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -19,7 +21,7 @@ public class BeanCostType {
     @Column(columnDefinition = "integer default 1")
     private int status;
 
-
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "warehouses_type_id")
     private BeanWarehousesType beanWarehousesType;

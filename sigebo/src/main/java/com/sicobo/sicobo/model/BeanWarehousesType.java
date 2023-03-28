@@ -1,5 +1,7 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,7 +17,6 @@ public class BeanWarehousesType {
     private Long id;
 
     private String description;
-
 
     @OneToOne(mappedBy = "beanWarehousesType")
     private BeanCostType beanCostType;

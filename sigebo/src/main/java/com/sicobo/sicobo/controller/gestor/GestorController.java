@@ -1,10 +1,9 @@
 package com.sicobo.sicobo.controller.gestor;
 
-import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.BeanSite;
+import com.sicobo.sicobo.model.BeanState;
 import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.model.BeanWarehousesType;
 import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceImpl.UserServiceImpl;
 import com.sicobo.sicobo.serviceImpl.WarehouseServiceImpl;
@@ -22,13 +21,14 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.List;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
+import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
@@ -58,10 +58,11 @@ public class GestorController {
             String error = handleErrorMessage(message, redirectAttributes);
             if (error != null)
                 return REDIRECT_ERROR;
-            model.addAttribute(SITIOID, idSite);
             model.addAttribute(RESPONSE, message);
-            Object status = responseEntity.getStatusCode().value();
+            int status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);
+            warehouse.setBeanSite( (int) idSite);
+            warehouse.setStatus(1);
             model.addAttribute("warehouse", warehouse);
 
             return "/gestorViews/registerWarehouse";
@@ -70,6 +71,40 @@ public class GestorController {
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
             return REDIRECT_ERROR;
         }
+    }
+
+    @Secured({ROLE_GESTOR})
+    @PostMapping("/guardarBodega")
+    public String saveSite(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
+        try{
+            ResponseEntity<?> responseEntity = warehousesTypeService.listar();
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+
+            String error = handleErrorMessage(message, redirectAttributes);
+            if (error != null)
+                model.addAttribute(RESPONSE, message);
+                int status = responseEntity.getStatusCode().value();
+                model.addAttribute(STATUS, status);
+                warehouse.setBeanSite( warehouse.getBeanSite());
+                warehouse.setStatus(1);
+                model.addAttribute("warehouse", warehouse);
+                return GESTOR_REGISTERWAREHOUSE;
+            // aqui habria que ver como se va a hacer ya que primero se debe subir las imagenes y
+            // de acuerdo se van a regresar los id y url de donde se inserto para en el futuro actualizar
+            Message response = (Message) siteService.guardar(site).getBody();
+            assert response != null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                model.addAttribute(STATES, states);
+                return ADMIN_REGISTERSITE;
+            }
+            attributes.addFlashAttribute(MESSAGE, response);
+        }catch (AssertionError e) {
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - saveSite" + e.getMessage());
+        }
+        return REDIRECT_ADMIN_LISTSITES;
     }
 
     @Secured({ROLE_GESTOR})
@@ -112,7 +147,7 @@ public class GestorController {
             Object status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);
 
-            return GESTOR_BODEGAS;
+            return GESTOR_WAREHOUSES;
         } catch (Exception e) {
             log.error("Ocurrio un error en GestorController - listWarehouses" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);

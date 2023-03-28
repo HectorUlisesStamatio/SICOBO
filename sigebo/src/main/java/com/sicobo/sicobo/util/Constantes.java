@@ -66,12 +66,15 @@ public final class Constantes {
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
-        public static final String GESTOR_BODEGAS = "gestorViews/listWarehouses";
+        public static final String GESTOR_WAREHOUSES = "gestorViews/listWarehouses";
         public static final String REDIRECT_ERROR = "redirect:/error";
         public static final String ADMIN_LISTSITES = "adminViews/listSites";
         public static final String ADMIN_REGISTERSITE = "adminViews/registerSite";
         public static final String REDIRECT_ADMIN_LISTSITES = "redirect:/admin/sitios";
         public static final String ADMIN_UPDATESITE = "adminViews/updateSite";
+
+        public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
+        public static final String GESTOR_UPDATEWAREHOUSE = "gestorViews/updateWarehouse";
     }
 
     public static final class Stuff{
