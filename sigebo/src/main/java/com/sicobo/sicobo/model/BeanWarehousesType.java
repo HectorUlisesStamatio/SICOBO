@@ -16,7 +16,6 @@ public class BeanWarehousesType {
 
     private String description;
 
-
     @OneToOne(mappedBy = "beanWarehousesType")
     private BeanCostType beanCostType;
 

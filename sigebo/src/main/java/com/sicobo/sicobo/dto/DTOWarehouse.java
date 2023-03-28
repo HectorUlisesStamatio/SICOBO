@@ -1,8 +1,8 @@
 package com.sicobo.sicobo.dto;
 
-import com.sicobo.sicobo.model.BeanWarehouseImage;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,13 +26,14 @@ public class DTOWarehouse {
     private int status;
 
     @NotNull(message = "El campo no debe ser nulo")
-    @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
+    @Positive(message = "Tiene que ser un número positivo")
     private int beanSite;
 
     @NotNull(message = "El campo no debe ser nulo")
-    @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
+    @Positive(message = "Tiene que ser un número positivo")
     private int warehousesType;
 
     @NotNull(message = "El campo no debe ser nulo")
-    private List<BeanWarehouseImage> images;
+    @Size(min = 1, message = "Debes agregar al menos una imagen")
+    private List<MultipartFile> images;
 }

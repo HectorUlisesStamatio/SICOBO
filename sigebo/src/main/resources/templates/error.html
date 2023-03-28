@@ -21,8 +21,8 @@
     </div>
 </main>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-<input type="text" id="estado" th:value="${status}">
-<input type="text" id="mensaje" th:value="${message}" th:if="${message}">
+<input type="hidden" id="estado" th:value="${status}">
+<input type="hidden" id="mensaje" th:value="${message}" th:if="${message}">
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">

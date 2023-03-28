@@ -19,6 +19,12 @@ public class BeanWarehouseImage {
 
     private String url;
 
+    @Column(name = "secure_url")
+    private String secureUrl;
+
+    @Column(name = "public_id")
+    private String publicId;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
@@ -38,5 +44,18 @@ public class BeanWarehouseImage {
     @PreUpdate
     private void preUpdate(){
         this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "BeanWarehouseImage{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", secureUrl='" + secureUrl + '\'' +
+                ", publicId='" + publicId + '\'' +
+                ", beanWarehouse=" + beanWarehouse +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                '}';
     }
 }
