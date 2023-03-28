@@ -76,6 +76,7 @@ public final class Constantes {
 
         public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
         public static final String GESTOR_UPDATEWAREHOUSE = "gestorViews/updateWarehouse";
+        public static final String REDIRECT_GESTOR_LISTSITES = "redirect:/gestor/bodegas";
     }
 
     public static final class Stuff{

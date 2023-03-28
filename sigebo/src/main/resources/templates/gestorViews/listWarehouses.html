@@ -25,11 +25,11 @@
     </nav>
   </div>
 
-  <input name="status" id="status" type="hidden" th:if="${response}" th:value="${response.code}">
+  <input name="status" id="status" type="hidden" th:if="${message}" th:value="${message.code}">
   <section class="section">
     <div class="row">
       <div class="col-12">
-        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert" >
+        <div th:if="${message}" th:classappend="${message.code == 200} ? 'alert-success' : 'alert-danger'" class="alert alert-dismissible fade show" role="alert" >
           <strong>[[${message.title}]]</strong> [[${message.message}]]
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -45,6 +45,7 @@
                     <input type="hidden" name="idSite" th:value="${sitioId}">
                     <button type="submit" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></button>
                   </form>
+                </div>
               </div>
             </h5>
             <div class="container-fluid">
@@ -73,8 +74,8 @@
                             <div th:each="image, i : ${warehouse.images}"
                                  class="carousel-item"
                                  th:classappend="${i.index == 0} ? 'active'" data-bs-interval="3000">
-                              <div class="d-flex justify-content-center">
-                                <img th:src="${image.url}"  alt="..." style="max-width: 100%; max-height: 100px;">
+                              <div class="d-flex justify-content-center" style="width: 80px;">
+                                <img th:src="${image.url}" style="width: 80px; max-width: 100%">
                               </div>
                             </div>
                           </div>

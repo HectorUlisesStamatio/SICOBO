@@ -80,7 +80,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
         try{
             List<MultipartFile> images = dtoWarehouse.getImages();
 
-            if (images != null && images.size() > 0) {
+            if (images != null && !images.isEmpty()) {
                 BeanWarehouse beanWarehouse = new BeanWarehouse();
 
                 BeanSite beanSite = new BeanSite();
@@ -98,12 +98,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
                 BeanWarehouse beanWarehouseCreated = daoWarehouse.save(beanWarehouse);
 
-                int i = 0;
                 for (MultipartFile image : images) {
                         BeanWarehouseImage beanWarehouseImage = new BeanWarehouseImage();
                         beanWarehouseImage.setBeanWarehouse(beanWarehouse);
-                        System.out.println("Imagen "+i);
-                        i++;
                         Map<?, ?> uploadResult = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
                         String url = (String) uploadResult.get("url");
                         String secureUrl = (String) uploadResult.get("secure_url");
@@ -112,7 +109,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
                         beanWarehouseImage.setUrl(url);
                         beanWarehouseImage.setSecureUrl(secureUrl);
                         beanWarehouseImage.setPublicId(publicId);
-                        System.out.println(beanWarehouseImage);
                         daoWarehouseImage.save(beanWarehouseImage);
                 }
 

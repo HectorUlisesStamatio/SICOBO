@@ -12,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.sicobo.sicobo.util.Constantes.MessageBody.INTERNAL_ERROR;
 import static com.sicobo.sicobo.util.Constantes.MessageBody.SEARCH_SUCCESSFUL;
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.MessageType.SUCCESS;
-import static com.sicobo.sicobo.util.Constantes.Redirects.*;
-import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
-import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
-import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
 
@@ -32,7 +31,20 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, daoWarehousesType.findAll()), HttpStatus.OK);
+        try{
+            List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAllByBeanCostTypeIsNotNull();
+            assert beanWarehousesTypes != null;
+
+            if(!beanWarehousesTypes.isEmpty()){
+                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehousesTypes), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(new Message(FAILED_SEARCH,"No hay registros de tipos de bodegas", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+        }catch(Exception e){
+            log.error("Ocurrió un error en  WarehouseTypeServiceImpl - listar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @Override

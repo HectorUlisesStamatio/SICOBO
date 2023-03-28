@@ -65,9 +65,8 @@
                             <div class="col-12 mb-3">
                                 <label for="warehousesType" class="form-label">Tipo de bodega</label>
                                 <select class="form-select" th:field="*{warehousesType}" id="warehousesType" required onchange="mostrarCosto()">
-                                    <option value="0" disabled >Selecciona una opción...</option>
                                     <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
-                                            th:text="${tmpWarehouseType.description}"></option>
+                                            th:text="${tmpWarehouseType.description}" th:selected="${tmpWarehouseType.id == response.result[0].id}"></option>
                                 </select>
                                 <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
                                 <div th:if="${#fields.hasErrors('warehousesType')}" th:errors="*{warehousesType}" class="alert alert-danger mb-3 mt-3"></div>
@@ -76,7 +75,7 @@
                             <div class="col-12 mb-3">
                                 <label for="section" class="form-label">Costo</label>
                                 <div class="form-group has-validation" >
-                                    <input type="number" disabled th:field="*{finalCost}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,})?$" required>
+                                    <input type="number" disabled th:field="*{finalCost}" id="finalCost" class="form-control" min="0" minlength="1" step="any" pattern="/^(?!0+$)[1-9]\d*$/" required>
                                     <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
                                     <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
                                     <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
@@ -117,25 +116,13 @@
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 
 <script th:inline="javascript">
-    let section= document.getElementById("section");
-    let description= document.getElementById("description");
-    let warehousesType= document.getElementById("warehousesType");
-    let finalCost= document.getElementById("finalCost");
-    let images= document.getElementById("images");
+    let section
+    let description
+    let warehousesType
+    let finalCost
+    let images
 
-    function hideAllErrors(form) {
-        const inputs = form.querySelectorAll('input');
-        inputs.forEach(input => {
-            const errorMessages = input.parentNode.querySelectorAll('.invalid-feedback');
-            errorMessages.forEach(message => {
-                message.style.display = 'none';
-            });
-            input.classList.remove('is-invalid');
-            input.classList.remove('is-valid');
-        });
-    }
-
-    /*const hideErrorsInputSection = () =>{
+    const hideErrorsInputSection = () =>{
         document.getElementById("sectionRequired").style.display = "none";
         document.getElementById("sectionPattern").style.display = "none";
         document.getElementById("sectionMax").style.display = "none";
@@ -160,178 +147,215 @@
         document.getElementById("finalCostTypeMinLength").style.display = "none";
     }
 
-    const hideErrorsInputFinalCosto = () =>{
+    const hideErrorsInputImages = () =>{
         document.getElementById("imagesRequired").style.display = "none";
         document.getElementById("imagesAccept").style.display = "none";
-        document.getElementById("finalCostTypeMin").style.display = "none";
         document.getElementById("imagesMaxSize").style.display = "none";
-    }*/
-    const inputFields = [
-        {
-            element: document.querySelector("#section"),
-            name: "section",
-            validation: [
-                { type: "valueMissing", message: "This field is required", errorId: "sectionRequired" },
-                { type: "patternMismatch", message: "Invalid input format", errorId: "sectionPattern" },
-                { type: "tooLong", message: "Input too long", errorId: "sectionMax" },
-                { type: "tooShort", message: "Input too short", errorId: "sectionMin" },
-            ],
-        },
-        {
-            element: document.querySelector("#description"),
-            name: "description",
-            validation: [
-                { type: "valueMissing", message: "This field is required", errorId: "descriptionRequired" },
-                { type: "patternMismatch", message: "Invalid input format", errorId: "descriptionPattern" },
-                { type: "tooLong", message: "Input too long", errorId: "descriptionMax" },
-                { type: "tooShort", message: "Input too short", errorId: "descriptionMin" },
-            ],
-        },
-        {
-            element: document.querySelector("#warehousesType"),
-            name: "warehousesType",
-            validation: [
-                { type: "valueMissing", message: "This field is required", errorId: "warehousesTypeRequired" },
-            ],
-        },
-        {
-            element: document.querySelector("#finalCost"),
-            name: "finalCost",
-            validation: [
-                { type: "valueMissing", message: "This field is required", errorId: "finalCostRequired" },
-                { type: "typeMismatch", message: "Invalid input format", errorId: "finalCostType" },
-            ],
-        },
-        {
-            element: document.querySelector("#images"),
-            name: "images",
-            validation: [
-                { type: "valueMissing", message: "This field is required", errorId: "imagesRequired" },
-                { type: "typeMismatch", message: "Invalid file type", errorId: "imagesType" },
-                { type: "fileSize", message: "File too large", errorId: "imagesSize" },
-            ],
-        },
-    ];
+    }
 
-    section.addEventListener("input", function(event) {
-        hideErrorsInputSection();
-        if (section.validity.valueMissing) {
-            document.getElementById("sectionRequired").style.display = "block";
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-        }else if (section.validity.patternMismatch) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionPattern").style.display = "block";
-        }else  if (section.validity.tooLong) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionMax").style.display = "block";
-        }else if (section.validity.tooShort) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionMin").style.display = "block";
-        }else{
-            section.classList.remove('is-invalid');
-            section.classList.add('is-valid');
+    window.addEventListener('load', function() {
+        section= document.getElementById("section");
+        description= document.getElementById("description");
+        warehousesType= document.getElementById("warehousesType");
+        finalCost= document.getElementById("finalCost");
+        images= document.getElementById("images");
+        mostrarCosto()
+
+        section.addEventListener("input", function(event) {
             hideErrorsInputSection();
-        }
+            if (section.validity.valueMissing) {
+                document.getElementById("sectionRequired").style.display = "block";
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+            }else if (section.validity.patternMismatch) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionPattern").style.display = "block";
+            }else  if (section.validity.tooLong) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionMax").style.display = "block";
+            }else if (section.validity.tooShort) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionMin").style.display = "block";
+            }else{
+                section.classList.remove('is-invalid');
+                section.classList.add('is-valid');
+                hideErrorsInputSection();
+            }
+
+        });
+
+        section.oninvalid = function() {
+            document.getElementById("sectionRequired").style.display = section.validity.valueMissing ? "block" : "none";
+            document.getElementById("sectionPattern").style.display = section.validity.patternMismatch ? "block" : "none";
+            document.getElementById("sectionMax").style.display = section.validity.tooLong ? "block" : "none";
+            document.getElementById("sectionMin").style.display = section.validity.tooShort ? "block" : "none";
+
+            if (section.validity.valid)
+                hideErrorsInputSection();
+        };
+
+        description.oninvalid = function() {
+            document.getElementById("descriptionRequired").style.display = description.validity.valueMissing ? "block" : "none";
+            document.getElementById("descriptionPattern").style.display = description.validity.patternMismatch ? "block" : "none";
+            document.getElementById("descriptionMax").style.display = description.validity.tooLong ? "block" : "none";
+            document.getElementById("descriptionMin").style.display = description.validity.tooShort ? "block" : "none";
+
+            if (description.validity.valid)
+                hideErrorsInputDescription();
+        };
+
+        description.addEventListener("input", function(event) {
+            hideErrorsInputDescription();
+            if (description.validity.valueMissing) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionRequired").style.display = "block";
+            }else if (description.validity.patternMismatch) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionPattern").style.display = "block";
+            }else  if (description.validity.tooLong) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionMax").style.display = "block";
+            }else if (description.validity.tooShort) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionMin").style.display = "block";
+            }else{
+                description.classList.remove('is-invalid');
+                description.classList.add('is-valid');
+                hideErrorsInputDescription();
+            }
+        });
+
+        warehousesType.oninvalid = function() {
+            document.getElementById("warehousesTypeRequired").style.display = warehousesType.validity.valueMissing ? "block" : "none";
+
+            if (warehousesType.validity.valid)
+                hideErrorsInputWarehouseType();
+        };
+
+        warehousesType.addEventListener("input", function(event) {
+            hideErrorsInputWarehouseType();
+            if (warehousesType.validity.valueMissing) {
+                warehousesType.classList.remove('is-valid');
+                warehousesType.classList.add('is-invalid');
+                document.getElementById("warehousesTypeRequired").style.display = "block";
+            }if (parseInt(warehousesType.value) === 0) {
+                warehousesType.classList.remove('is-valid');
+                warehousesType.classList.add('is-invalid');
+                document.getElementById("warehousesTypeRequired").style.display = "block";
+            }else{
+                warehousesType.classList.remove('is-invalid');
+                warehousesType.classList.add('is-valid');
+                hideErrorsInputWarehouseType();
+            }
+        });
+
+        finalCost.addEventListener("input", function(event) {
+            hideErrorsInputFinalCosto();
+            if (finalCost.validity.valueMissing) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostRequired").style.display = "block";
+            }else if (finalCost.validity.patternMismatch) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostPattern").style.display = "block";
+            }else  if (finalCost.validity.rangeUnderflow) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostTypeMin").style.display = "block";
+            }else if (finalCost.validity.tooShort) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostTypeMinLength").style.display = "block";
+            }else{
+                finalCost.classList.remove('is-invalid');
+                finalCost.classList.add('is-valid');
+                hideErrorsInputFinalCosto();
+            }
+        });
+
+        finalCost.oninvalid = function() {
+            document.getElementById("finalCostRequired").style.display = finalCost.validity.valueMissing ? "block" : "none";
+            document.getElementById("finalCostPattern").style.display = finalCost.validity.patternMismatch ? "block" : "none";
+            document.getElementById("finalCostTypeMin").style.display = finalCost.validity.rangeUnderflow ? "block" : "none";
+            document.getElementById("finalCostTypeMinLength").style.display = finalCost.validity.tooShort ? "block" : "none";
+
+            if (finalCost.validity.valid)
+                hideErrorsInputFinalCosto();
+        };
+
+        images.oninvalid = function() {
+            document.getElementById("imagesRequired").style.display = images.validity.valueMissing ? "block" : "none";
+            document.getElementById("imagesAccept").style.display = images.validity.patternMismatch ? "block" : "none";
+
+            const input = document.getElementById("images");
+            const maxFileSize = input.getAttribute("maxsize");
+            const files = input.files;
+            let flag = false;
+            for (let i = 0; i < files.length; i++) {
+                const fileSize = files[i].size;
+                if (fileSize > maxFileSize) {
+                    flag = true;
+                    break;
+                }
+            }
+            document.getElementById("imagesMaxSize").style.display = flag ? "block" : "none";
+
+            if (images.validity.valid)
+                hideErrorsInputImages();
+        };
+
+        images.addEventListener("input", function(event) {
+            hideErrorsInputImages();
+            if (images.validity.valueMissing) {
+                images.classList.remove('is-valid');
+                images.classList.add('is-invalid');
+                document.getElementById("imagesRequired").style.display = "block";
+            }else if (images.validity.typeMismatch) {
+                images.classList.remove('is-valid');
+                images.classList.add('is-invalid');
+                document.getElementById("imagesAccept").style.display = "block";
+            }else {
+                const input = document.getElementById("images");
+                const maxFileSize = input.getAttribute("maxsize");
+                const files = input.files;
+                let flag = false;
+                for (let i = 0; i < files.length; i++) {
+                    const fileSize = files[i].size;
+                    if (fileSize > maxFileSize) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    images.setCustomValidity("Error en la cantidad de MB")
+                    images.classList.remove('is-valid');
+                    images.classList.add('is-invalid');
+                    document.getElementById("imagesMaxSize").style.display = "block";
+                } else {
+                    images.setCustomValidity("")
+                    images.classList.remove('is-invalid');
+                    images.classList.add('is-valid');
+                    hideErrorsInputImages();
+                }
+            }
+        });
 
     });
 
-    section.oninvalid = function() {
-        if (section.validity.valueMissing) {
-            document.getElementById("sectionRequired").style.display = "block";
-        }else{
-            document.getElementById("sectionRequired").style.display = "none";
-        }
+    function mostrarCosto (){
 
-        if (section.validity.patternMismatch) {
-            document.getElementById("sectionPattern").style.display = "block";
-        }else{
-            document.getElementById("sectionPattern").style.display = "none";
-        }
-
-        if (section.validity.tooLong) {
-            document.getElementById("sectionMax").style.display = "block";
-        }else{
-            document.getElementById("sectionMax").style.display = "none";
-        }
-
-        if (section.validity.tooShort) {
-            document.getElementById("sectionMin").style.display = "block";
-        }else{
-            document.getElementById("sectionMin").style.display = "none";
-        }
-
-        if (section.validity.valid) {
-            hideErrorsInputSection();
-        }
-
-    };
-
-    section.addEventListener("input", function(event) {
-        hideErrorsInputSection();
-        if (section.validity.valueMissing) {
-            document.getElementById("sectionRequired").style.display = "block";
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-        }else if (section.validity.patternMismatch) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionPattern").style.display = "block";
-        }else  if (section.validity.tooLong) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionMax").style.display = "block";
-        }else if (section.validity.tooShort) {
-            section.classList.remove('is-valid');
-            section.classList.add('is-invalid');
-            document.getElementById("sectionMin").style.display = "block";
-        }else{
-            section.classList.remove('is-invalid');
-            section.classList.add('is-valid');
-            hideErrorsInputSection();
-        }
-
-    });
-
-    section.oninvalid = function() {
-        if (section.validity.valueMissing) {
-            document.getElementById("sectionRequired").style.display = "block";
-        }else{
-            document.getElementById("sectionRequired").style.display = "none";
-        }
-
-        if (section.validity.patternMismatch) {
-            document.getElementById("sectionPattern").style.display = "block";
-        }else{
-            document.getElementById("sectionPattern").style.display = "none";
-        }
-
-        if (section.validity.tooLong) {
-            document.getElementById("sectionMax").style.display = "block";
-        }else{
-            document.getElementById("sectionMax").style.display = "none";
-        }
-
-        if (section.validity.tooShort) {
-            document.getElementById("sectionMin").style.display = "block";
-        }else{
-            document.getElementById("sectionMin").style.display = "none";
-        }
-
-        if (section.validity.valid) {
-            hideErrorsInputSection();
-        }
-
-    };
-
-    const mostrarCosto = () =>{
         let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
         if(warehouseTypeId == null || warehouseTypeId == 0) {
-            $('#beanCostType').prop('disabled', true);
-            $('#beanCostType').val("");
+            $('#finalCost').prop('disabled', true);
+            $('#finalCost').val("");
         } else {
             let warehouseTypes = [[${response.result}]]
             let warehousesType;
@@ -341,199 +365,32 @@
                     break;
                 }
             }
-            document.getElementById("beanCostType").value = warehousesType.beanCostType.amount;
-            $('#beanCostType').prop('disabled', false);
+            hideErrorsInputFinalCosto()
+            document.getElementById("finalCost").value = warehousesType.beanCostType.amount;
+            $('#finalCost').prop('disabled', false);
         }
     }
 
-    /*function mostrarCosto() {
-        let warehouseTypes = [[${response.result}]]
-        console.log(warehouseTypes);
-        // Obtener el valor seleccionado del select
-        let warehouseTypeId = document.getElementById("warehousesType").value;
+    $('#formValid').submit(function(event) {
+        event.preventDefault();
+        if(this.checkValidity() === true){
+            Swal.fire({
+                title: '¿Estás seguro de guardar los cambios?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const loader = document.getElementById("loader");
+                    loader.style.display = "block";
+                    this.submit();
 
-        // Buscar el BeanWarehouseType correspondiente
-        let warehousesType;
-        for (var i = 0; i < warehouseTypes.length; i++) {
-            if (warehouseTypes[i].warehousesType.id == warehouseTypeId) {
-                warehousesType = warehouseTypes[i].warehousesType;
-                break;
-            }
-        }
-
-        // Mostrar el BeanCostType.amount en el otro input
-        document.getElementById("beanCostType").value = warehouseType.beanCostType;
-    }*/
-   /* let name = document.getElementById("name");
-    let address = document.getElementById("address");
-    let beanState = document.getElementById("beanState");
-
-    const hideErrorsInputName = () =>{
-        document.getElementById("nameRequired").style.display = "none";
-        document.getElementById("namePattern").style.display = "none";
-        document.getElementById("nameMax").style.display = "none";
-        document.getElementById("nameMin").style.display = "none";
-    }
-
-    const hideErrorsInputAddress = () =>{
-        document.getElementById("addressRequired").style.display = "none";
-        document.getElementById("addressPattern").style.display = "none";
-        document.getElementById("addressMax").style.display = "none";
-        document.getElementById("addressMin").style.display = "none";
-    }
-
-    const hideErrorsInputBeanState = () =>{
-        document.getElementById("beanStateRequired").style.display = "none";
-    }
-
-    name.addEventListener("input", function(event) {
-        hideErrorsInputName();
-        if (name.validity.valueMissing) {
-            document.getElementById("nameRequired").style.display = "block";
-            name.classList.remove('valid');
-            name.classList.add('is-invalid');
-        }else if (name.validity.patternMismatch) {
-            name.classList.remove('valid');
-            name.classList.add('is-invalid');
-            document.getElementById("namePattern").style.display = "block";
-        }else  if (name.validity.tooShort) {
-            name.classList.remove('valid');
-            name.classList.add('is-invalid');
-            document.getElementById("nameMin").style.display = "block";
-        }else if (name.validity.tooShort) {
-            name.classList.remove('valid');
-            name.classList.add('is-invalid');
-            document.getElementById("nameMin").style.display = "block";
+                }
+            })
         }else{
-            name.classList.remove('is-invalid');
-            name.classList.add('is-valid');
-            hideErrorsInputName();
+            event.stopPropagation();
         }
+    })
 
-
-
-    });
-
-    name.oninvalid = function() {
-        if (name.validity.valueMissing) {
-            document.getElementById("nameRequired").style.display = "block";
-        }else{
-            document.getElementById("nameRequired").style.display = "none";
-        }
-
-        if (name.validity.patternMismatch) {
-            document.getElementById("namePattern").style.display = "block";
-        }else{
-            document.getElementById("namePattern").style.display = "none";
-        }
-
-        if (name.validity.tooLong) {
-            document.getElementById("nameMax").style.display = "block";
-        }else{
-            document.getElementById("nameMax").style.display = "none";
-        }
-
-        if (name.validity.tooShort) {
-            document.getElementById("nameMin").style.display = "block";
-        }else{
-            document.getElementById("nameMin").style.display = "none";
-        }
-
-        if (name.validity.valid) {
-            hideErrorsInputName();
-        }
-
-    };
-
-    address.addEventListener("input", function(event) {
-        hideErrorsInputAddress();
-        if (address.validity.valueMissing) {
-            document.getElementById("addressRequired").style.display = "block";
-            address.classList.remove('valid');
-            address.classList.add('is-invalid');
-        }else if (address.validity.patternMismatch) {
-            address.classList.remove('valid');
-            address.classList.add('is-invalid');
-            document.getElementById("addressPattern").style.display = "block";
-        }else  if (address.validity.tooShort) {
-            address.classList.remove('valid');
-            address.classList.add('is-invalid');
-            document.getElementById("addressMin").style.display = "block";
-        }else if (address.validity.tooShort) {
-            address.classList.remove('valid');
-            address.classList.add('is-invalid');
-            document.getElementById("addressMin").style.display = "block";
-        }else{
-            address.classList.remove('is-invalid');
-            address.classList.add('is-valid');
-            hideErrorsInputAddress();
-        }
-
-
-
-    });
-
-    address.oninvalid = function() {
-        if (address.validity.valueMissing) {
-            document.getElementById("addressRequired").style.display = "block";
-        }else{
-            document.getElementById("addressRequired").style.display = "none";
-        }
-
-        if (address.validity.patternMismatch) {
-            document.getElementById("addressPattern").style.display = "block";
-        }else{
-            document.getElementById("addressPattern").style.display = "none";
-        }
-
-        if (address.validity.tooLong) {
-            document.getElementById("addressMax").style.display = "block";
-        }else{
-            document.getElementById("addressMax").style.display = "none";
-        }
-
-        if (address.validity.tooShort) {
-            document.getElementById("addressMin").style.display = "block";
-        }else{
-            document.getElementById("addressMin").style.display = "none";
-        }
-
-        if (address.validity.valid) {
-            hideErrorsInputAddress();
-        }
-
-    };
-
-    beanState.addEventListener("input", function(event) {
-        hideErrorsInputBeanState();
-        if (beanState.validity.valueMissing) {
-            document.getElementById("beanStateRequired").style.display = "block";
-            beanState.classList.remove('valid');
-            beanState.classList.add('is-invalid');
-        }else{
-            beanState.classList.remove('is-invalid');
-            beanState.classList.add('is-valid');
-            hideErrorsInputBeanState();
-        }
-
-
-
-    });
-
-    beanState.oninvalid = function() {
-        if (beanState.validity.valueMissing) {
-            document.getElementById("beanStateRequired").style.display = "block";
-        }else{
-            document.getElementById("beanStateRequired").style.display = "none";
-        }
-
-
-        if (beanState.validity.valid) {
-            hideErrorsInputBeanState();
-        }
-
-    };
-*/
 </script>
 
 </body>
