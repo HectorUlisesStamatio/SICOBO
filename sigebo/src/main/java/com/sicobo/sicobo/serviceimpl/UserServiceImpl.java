@@ -4,17 +4,21 @@ import com.sicobo.sicobo.dao.DaoAuthorities;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanAuthorities;
+import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.service.IUserService;
 import com.sicobo.sicobo.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -44,8 +48,9 @@ public class UserServiceImpl implements IUserService
     private RFCValidator rfcValidator;
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return null;
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, "La consulta de gestores ha sido exitosa",SUCCESS, SUCCESS_CODE,daoUser.findAllByRoleEquals("ROLE_GESTOR")), HttpStatus.OK);
     }
 
     @Override
@@ -54,32 +59,31 @@ public class UserServiceImpl implements IUserService
         BeanUser beanUser = new BeanUser(dtoUser.getName(),dtoUser.getLastname(),dtoUser.getSurname(),dtoUser.getEmail(),dtoUser.getRfc(),dtoUser.getPhoneNumber(), dtoUser.getUsername(),dtoUser.getPassword(),"ROLE_USUARIO",0,dtoUser.getPolicyAcceptance(),1);
 
         if(daoUser.existsBeanUserByUsername(beanUser.getUsername())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El usuario que has elegido ya está en uso. Por favor, elige otro usuario y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(daoUser.existsBeanUserByEmail(beanUser.getEmail())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El correo que has elegido ya está en uso. Por favor, elige otro correo y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,EMAIL_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!passwordValidator.isValid(beanUser.getPassword())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"La contraseña que has elegido es inválida. Por favor, elige otra contraseña y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PASSWORD_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!rfcValidator.isValid(beanUser.getRfc())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El RFC que has ingresado es inválido. Por favor, escribe el RFC correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,RFC_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!textValidator.isValid(beanUser.getUsername())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El usuario que has ingresado es inválido. Por favor, escribe el usuario correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!textValidator.isValid(beanUser.getName())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El nombre que has ingresado es inválido. Por favor, escribe el nombre correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,NAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!textValidator.isValid(beanUser.getLastname())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El apellido paterno que has ingresado es inválido. Por favor, escribe el apellido correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,LASTNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         if(!textValidator.isValid(beanUser.getSurname())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El apellido materno que has ingresado es inválido. Por favor, escribe el apellido correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,SURNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
-        beanUser.setPhoneNumber(dtoUser.getExt() + beanUser.getPhoneNumber());
         if(!phoneValidator.isValid(beanUser.getPhoneNumber())){
-            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El teléfono que has ingresado es inválido. Por favor, escribe el teléfono correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PHONE_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         beanUser.setPassword(passwordEncrypter.encriptarPassword(beanUser.getPassword()));
         try{
@@ -94,24 +98,167 @@ public class UserServiceImpl implements IUserService
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> guardar(DTOUser dtoUser) {
-        return null;
+        BeanUser beanUser = new BeanUser(dtoUser.getName(),dtoUser.getLastname(),dtoUser.getSurname(),dtoUser.getEmail(),dtoUser.getRfc(),dtoUser.getPhoneNumber(), dtoUser.getUsername(),dtoUser.getPassword(),"ROLE_GESTOR",0,1,1);
+
+        if(daoUser.existsBeanUserByUsername(beanUser.getUsername())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(daoUser.existsBeanUserByEmail(beanUser.getEmail())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,EMAIL_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!passwordValidator.isValid(beanUser.getPassword())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PASSWORD_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!rfcValidator.isValid(beanUser.getRfc())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,RFC_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(beanUser.getUsername())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(beanUser.getName())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,NAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(beanUser.getLastname())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,LASTNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(beanUser.getSurname())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,SURNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!phoneValidator.isValid(beanUser.getPhoneNumber())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PHONE_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        beanUser.setPassword(passwordEncrypter.encriptarPassword(beanUser.getPassword()));
+        try{
+            BeanUser beanUserCreated = daoUser.save(beanUser);
+            BeanAuthorities beanAuthorities = new BeanAuthorities(beanUser.getUsername(),beanUser.getPassword(),beanUser.getEnabled(),beanUser.getRole());
+            daoAuthorities.save(beanAuthorities);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION, INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanUserCreated), HttpStatus.OK);
+        }catch(Exception e){
+            log.error("Ocurrió un error al guardar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public ResponseEntity<Object> editar(DTOUser dtoUser) {
-        return null;
+        Optional<BeanUser> userSearched = daoUser.findBeanUserById(dtoUser.getId());
+
+        if (!userSearched.isPresent()){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El gestor ha actualizar no se encuentra registrado en el sistema", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if(daoUser.existsBeanUserByUsernameAndIdNot(dtoUser.getUsername(),dtoUser.getId())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(daoUser.existsBeanUserByEmailAndIdNot(dtoUser.getEmail(),dtoUser.getId())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,EMAIL_EXISTS, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!passwordValidator.isValid(dtoUser.getPassword())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PASSWORD_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!rfcValidator.isValid(dtoUser.getRfc())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,RFC_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(dtoUser.getUsername())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,USER_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(dtoUser.getName())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,NAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(dtoUser.getLastname())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,LASTNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!textValidator.isValid(dtoUser.getSurname())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,SURNAME_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(!phoneValidator.isValid(dtoUser.getPhoneNumber())){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PHONE_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        dtoUser.setPassword(passwordEncrypter.encriptarPassword(dtoUser.getPassword()));
+
+        BeanUser userPrepared = userSearched.get();
+        userPrepared.setUsername(dtoUser.getUsername());
+        userPrepared.setEmail(dtoUser.getEmail());
+        userPrepared.setPassword(dtoUser.getPassword());
+        userPrepared.setRfc(dtoUser.getRfc());
+        userPrepared.setName(dtoUser.getName());
+        userPrepared.setLastname(dtoUser.getLastname());
+        userPrepared.setSurname(dtoUser.getSurname());
+        userPrepared.setPhoneNumber(dtoUser.getPhoneNumber());
+
+        try{
+            BeanUser beanUserCreated = daoUser.save(userPrepared);
+            Optional<BeanAuthorities> authSearched = daoAuthorities.findBeanAuthoritiesById(dtoUser.getId());
+            if (!authSearched.isPresent()){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El gestor ha actualizar no se encuentra registrado en el sistema", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+            BeanAuthorities beanAuthorities = authSearched.get();
+
+            beanAuthorities.setUsername(dtoUser.getUsername());
+            beanAuthorities.setPassword(dtoUser.getPassword());
+            beanAuthorities.setEnabled(dtoUser.getEnabled());
+            beanAuthorities.setAuthority("ROLE_GESTOR");
+
+            daoAuthorities.save(beanAuthorities);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanUserCreated), HttpStatus.OK);
+        }catch(Exception e){
+            log.error("Ocurrió un error al editar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public ResponseEntity<Object> eliminar(BeanUser beanUser) {
-        return null;
+        Optional<BeanUser> userSearched = daoUser.findBeanUserById(beanUser.getId());
+
+        if (!userSearched.isPresent()){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El gestor ha desactivar no se encuentra registrado en el sistema", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        BeanUser userEnabled = userSearched.get();
+        if (userEnabled.getEnabled() == 1){
+            userEnabled.setEnabled(0);
+        }else {
+            userEnabled.setEnabled(1);
+        }
+
+        try {
+            BeanUser beanUserEnabled = daoUser.save(userEnabled);
+            Optional<BeanAuthorities> authSearched = daoAuthorities.findBeanAuthoritiesById(beanUser.getId());
+            if (!authSearched.isPresent()){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El gestor ha actualizar no se encuentra registrado en el sistema", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+            BeanAuthorities beanAuthorities = authSearched.get();
+            if (beanAuthorities.getEnabled() == 1){
+                beanAuthorities.setEnabled(0);
+            }else{
+                beanAuthorities.setEnabled(1);
+            }
+            daoAuthorities.save(beanAuthorities);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanUserEnabled), HttpStatus.OK);
+        }catch (Exception e){
+            log.error("Ocurrió un error al deshabilitar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public ResponseEntity<Object> buscar(Long id) {
-        return null;
+        BeanUser user = new BeanUser();
+        if(!daoUser.existsBeanUserById(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra el gestor seleccionado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<BeanUser> userOptional = daoUser.findBeanUserById(id);
+
+        if(userOptional.isPresent()){
+            user = userOptional.get();
+        }
+
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,user ), HttpStatus.OK);
     }
+
 
     public ResponseEntity<Object> findBeanUserByUsername(String user) {
         if(!daoUser.existsBeanUserByUsername(user)){
@@ -128,4 +275,6 @@ public class UserServiceImpl implements IUserService
         }
 
     }
+
+
 }

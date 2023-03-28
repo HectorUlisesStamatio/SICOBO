@@ -19,7 +19,7 @@
         </li>
 
         <li class="nav-item">
-            <a th:classappend="${opcion}=='gestores' ? '' : 'collapsed'" class="nav-link" href="#">
+            <a th:classappend="${opcion}=='gestores' ? '' : 'collapsed'" class="nav-link" th:href="@{/admin/listarGestores}">
                 <i class="bi bi-people"></i>
                 <span>Gestores</span>
             </a>
