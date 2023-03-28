@@ -13,7 +13,6 @@ public class DTOCostType {
     @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
     private int status;
 
-    @NotNull(message = "El campo no debe ser nulo")
     @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
     private int beanWarehousesType;
 

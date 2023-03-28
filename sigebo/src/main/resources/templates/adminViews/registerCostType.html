@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title>SICOBO | Blanco</title>
+    <title>SICOBO | Blanco</title>
 </head>
 <head th:insert="~{layout/admin/head :: head}"></head>
 <body>
@@ -10,69 +10,146 @@
 
 <main id="main" class="main">
 
-  <div class="pagetitle">
-    <h1>Página en Blanco</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/dash}">Inicio</a></li>
-        <li class="breadcrumb-item">Páginas</li>
-        <li class="breadcrumb-item active">Página en Blanco</li>
-      </ol>
-    </nav>
-  </div>
-
-  <section class="section">
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Listado de costos por bodega</h5>
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col table-responsive">
-                  <table class="table table-borderless datatable" >
-                    <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Tipo bodega</th>
-                      <th scope="col">Costo</th>
-                      <th scope="col">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <form>
-                    <tr th:each="costo, index: ${response.result}" th:if="${#arrays.length(response.result) > 0}">
-                      <th scope="row" th:text="${index.index + 1 }"></th>
-                      <td th:text="${costo.description}"></td>
-                      <td>
-                        <input type="number" class="form-control" placeholder="Costo..."  required />
-
-                      </td>
-                      <td>
-                        <button type="submit" title="Agregar Costo" class="btn btn-success">Agregar</button>
-                      </td>
-
-                    </tr>
-                    <tr th:unless="${#arrays.length(response.result) > 0}">
-                      <td colspan="7" class="text-center fw-semibold">No hay tipo de bodegas registradas en el sistema.</td>
-                    </tr>
-                    </form>
-                    </tbody>
-                  </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <div class="pagetitle">
+        <h1>Página en Blanco</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Inicio</a></li>
+                <li class="breadcrumb-item">Tipos de costo de bodegas</li>
+            </ol>
+        </nav>
     </div>
-  </section>
+
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Listado de costos por bodega</h5>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12 ">
+                                    <form class="row needs-validation" th:action="@{/admin/modificarCosto}" method="POST" th:object="${cost}" novalidate>
+                                        <div class="col-12 col-sm-6 mb-3">
+                                            <label for="beanWarehousesType" class="form-label">TIpo de bodega:</label>
+                                            <select class="form-select" th:field="*{beanWarehousesType}" id="beanWarehousesType" required>
+                                                <option value="0" disabled >Selecciona una opción...</option>
+                                                <option th:each="tmpWarehouse: ${warehouseTypes}" th:value="${tmpWarehouse.id}"
+                                                        th:text="${tmpWarehouse.description}"></option>
+                                            </select>
+
+                                        </div>
+
+                                        <div class="col-12 col-sm-6 mb-3 " id="divCost" style="display: none">
+                                            <label for="costType" class="form-label">Costo:</label>
+                                            <input type="number" class="form-control" id="costType" th:field="*{amount}" placeholder="Costo..." min="1" required>
+                                            <div  th:text="#{registerCost.monto.errorRequired}" class="invalid-feedback" id="costRequired"></div>
+                                            <div  th:text="#{registerCost.monto.errorPattern}" class="invalid-feedback" id="costLong"></div>
+                                        </div>
+
+                                        <div class="col-12 text-end" id="divButton" style="display: none">
+                                            <button type="submit" class="btn btn-success" title="Guadar costo">Guardar</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                                <div class="col-12 text-center" id="firstAlert">
+                                    <div class="alert alert-warning" role="alert">
+                                        Selecciona el tipo de bodega
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </section>
 
 </main>
 
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script  th:inline="javascript">
+    $(document).ready(function() {
+        let warehouseType = document.getElementById("beanWarehousesType");
+        let inputCostType = document.getElementById("costType");
+        let warehouseTypes = [[${warehouseTypes}]];
+        let costTypes = [[${costTypes}]];
+
+        const hideErrorsCostType  = () =>{
+            document.getElementById("costRequired").style.display = "none";
+            document.getElementById("costLong").style.display = "none";
+        }
+
+        warehouseType.addEventListener("input", function () {
+            if(warehouseType.value != 0){
+                document.getElementById("firstAlert").style.display = "none";
+                document.getElementById("divCost").style.display = "block";
+                document.getElementById("divButton").style.display = "block";
+                let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseType.value)
+                inputCostType.value = parseFloat(costType.amount)
+            }else{
+                document.getElementById("firstAlert").style.display = "block";
+                document.getElementById("divCost").style.display = "none";
+                document.getElementById("divButton").style.display = "none";
+            }
+
+        })
+
+        inputCostType.addEventListener("input", function () {
+
+            hideErrorsCostType()
+            if (inputCostType.validity.valueMissing) {
+                document.getElementById("costRequired").style.display = "block";
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.add('is-invalid');
+            }else if (inputCostType.validity.rangeUnderflow) {
+                console.log("Entro a pattern")
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.add('is-invalid');
+                document.getElementById("costLong").style.display = "block";
+            }else{
+                inputCostType.classList.remove('is-invalid');
+                inputCostType.classList.add('is-valid');
+                hideErrorsCostType();
+            }
+        })
+
+    });
+
+
+    inputCostType.oninvalid = function() {
+        if (inputCostType.validity.valueMissing) {
+            document.getElementById("costRequired").style.display = "block";
+        }else{
+            document.getElementById("costRequired").style.display = "none";
+        }
+
+        if (inputCostType.validity.rangeUnderflow) {
+            document.getElementById("costLong").style.display = "block";
+        }else{
+            document.getElementById("costLong").style.display = "none";
+        }
+
+        if (inputCostType.validity.valid) {
+            hideErrorsCostType();
+        }
+
+    };
+
+
+
+
+
+</script>
+
 
 </body>
 

@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class BeanWarehousesType {
 
 
     @OneToMany(mappedBy = "beanWarehousesType")
+    @JsonIgnore
     private List<BeanCostType> beanCostTypes;
 
     private LocalDateTime fechaCreacion;

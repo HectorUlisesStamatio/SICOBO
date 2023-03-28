@@ -14,4 +14,5 @@ public interface IWarehousesType {
     public ResponseEntity<Object> eliminar(BeanWarehousesType beanWarehousesType);
 
     public ResponseEntity<Object> buscar(Long id);
+
 }

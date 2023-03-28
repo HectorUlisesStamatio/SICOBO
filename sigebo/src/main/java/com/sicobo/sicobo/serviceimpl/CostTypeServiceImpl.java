@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
-
+import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Service
 @Slf4j
 public class CostTypeServiceImpl implements ICostTypeService {
@@ -25,7 +29,8 @@ public class CostTypeServiceImpl implements ICostTypeService {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return new ResponseEntity(new Message("Usuario registrado","HOLA", "success",200, daoCostType.findAll()), HttpStatus.OK);
+        List<BeanCostType> costTypeList = daoCostType.findAllByStatusIs(1);
+        return new ResponseEntity(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, costTypeList), HttpStatus.OK);
     }
 
     @Override

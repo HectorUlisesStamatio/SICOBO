@@ -90,6 +90,10 @@ public final class Constantes {
         public static final String STATES = "states";
         public static final String SITE = "site";
 
+        public static final String WAREHOUSE_TYPES = "warehouseTypes";
+
+        public static final String COST_TYPES = "costTypes";
+
         public static final String COSTTYPES = "pagos";
     }
 

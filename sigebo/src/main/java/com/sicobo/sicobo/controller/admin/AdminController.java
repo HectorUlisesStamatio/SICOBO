@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.controller.admin;
 
 import com.sicobo.sicobo.dao.DaoWarehousesType;
+import com.sicobo.sicobo.dto.DTOCostType;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
@@ -45,6 +46,9 @@ public class AdminController {
 
     @Autowired
     private WarehousesTypeServiceImpl warehousesTypeService;
+
+    @Autowired
+    private CostTypeServiceImpl costTypeService;
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
@@ -215,18 +219,35 @@ public class AdminController {
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/costos")
-    public String redirectCostType(Model model){
+    public String redirectCostType(Model model, DTOCostType costType){
         model.addAttribute(OPTION, COSTTYPES);
-        Message message = (Message) warehousesTypeService.listar().getBody();
-        assert message != null;
-        model.addAttribute(RESPONSE, message);
+        Message warehouseTypes = (Message) warehousesTypeService.listar().getBody();
+        assert warehouseTypes != null;
+        Message costTypes = (Message) costTypeService.listar().getBody();
+        assert costTypes != null;
+        model.addAttribute(WAREHOUSE_TYPES, warehouseTypes.getResult());
+        model.addAttribute(COST_TYPES, costTypes.getResult());
+        model.addAttribute("cost", costType);
         return ADMIN_REGISTERCOSTTYPE;
     }
 
     @Secured({ROLE_ADMIN})
     @PostMapping("/montoBodega")
-    public String findMontoByBodega(@RequestBody Long idWarehouseType){
-        System.out.println(idWarehouseType);
+    public String findAmountByWarehouse(Model model, DTOCostType costType){
+
+
+        return ADMIN_REGISTERCOSTTYPE;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/modificarCosto")
+    public String saveCost(@Valid @ModelAttribute("cost") DTOCostType cost, BindingResult result, Model model){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                log.error("Error: " + error.getDefaultMessage());
+            }
+            return ADMIN_REGISTERCOSTTYPE;
+        }
 
         return ADMIN_REGISTERCOSTTYPE;
     }

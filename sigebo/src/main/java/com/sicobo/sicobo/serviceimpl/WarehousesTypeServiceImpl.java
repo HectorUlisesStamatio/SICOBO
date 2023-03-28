@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.serviceimpl;
 
+import com.sicobo.sicobo.dao.DaoCostType;
 import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOWarehousesType;
 import com.sicobo.sicobo.model.BeanWarehousesType;
@@ -23,11 +24,15 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
 
     @Autowired
     private DaoWarehousesType daoWarehousesType;
+    @Autowired
+    private DaoCostType daoCostType;
+
     @Override
     public ResponseEntity<Object> listar() {
         List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAll();
         return new ResponseEntity(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehousesTypes), HttpStatus.OK);
     }
+    
 
     @Override
     public ResponseEntity<Object> guardar(DTOWarehousesType dtoWarehousesType) {
@@ -48,4 +53,6 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     public ResponseEntity<Object> buscar(Long id) {
         return null;
     }
+
+
 }
