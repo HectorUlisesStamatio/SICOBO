@@ -49,6 +49,7 @@ public final class Constantes {
         public static final String ERROR_ADDRESS = "Ingresa un valor válido en el campo direccion";
 
         public static final String ERROR_STATE = "Ingresa un valor válido en el campo estado";
+        public static final String ERROR_IMAGES = "Ingresa un valor válido en el campo imágenes";
 
     }
 
@@ -66,12 +67,16 @@ public final class Constantes {
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
-        public static final String GESTOR_BODEGAS = "gestorViews/listWarehouses";
+        public static final String GESTOR_WAREHOUSES = "gestorViews/listWarehouses";
         public static final String REDIRECT_ERROR = "redirect:/error";
         public static final String ADMIN_LISTSITES = "adminViews/listSites";
         public static final String ADMIN_REGISTERSITE = "adminViews/registerSite";
         public static final String REDIRECT_ADMIN_LISTSITES = "redirect:/admin/sitios";
         public static final String ADMIN_UPDATESITE = "adminViews/updateSite";
+
+        public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
+        public static final String GESTOR_UPDATEWAREHOUSE = "gestorViews/updateWarehouse";
+        public static final String REDIRECT_GESTOR_LISTSITES = "redirect:/gestor/bodegas";
     }
 
     public static final class Stuff{
@@ -82,6 +87,7 @@ public final class Constantes {
         public static final String USER = "user";
         public static final String ERRORS = "Error: ";
         public static final String STATUS = "status";
+        public static final String SITIOID = "sitioId";
         public static final String OPTION = "opcion";
         public static final String RESPONSE = "response";
         public static final String SITES = "sitios";
