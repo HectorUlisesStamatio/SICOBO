@@ -1,4 +1,4 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOWarehousesType;

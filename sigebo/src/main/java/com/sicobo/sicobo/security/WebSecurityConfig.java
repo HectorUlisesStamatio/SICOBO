@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
 
-        http.authorizeHttpRequests((request) ->{
+        http.authorizeHttpRequests(request ->{
             request.requestMatchers("/", "/home","/index","/register","/registrarUsuario").permitAll();
             request.requestMatchers("/css/**", "/js/**", "/img/**", "/scss/**", "/vendor/**").permitAll();
             request.requestMatchers("/usuario/**").hasRole("USUARIO");
@@ -44,12 +44,12 @@ public class WebSecurityConfig {
         });
 
 
-        http.formLogin((login) ->{
+        http.formLogin(login ->{
             login.loginPage("/login").permitAll();
             login.defaultSuccessUrl("/");
         });
 
-        http.logout((logout) ->{
+        http.logout(logout ->{
                     logout.permitAll();
                 }
         );

@@ -31,7 +31,7 @@ public class DTOUser {
     @Length(max = 12,message = "Solo se permite máximo 12 caracteres")
     @NotBlank(message = "El campo no puede estar vacío")
     @Pattern(regexp = "[0-9]{1,12}", message = "Ingresa un teléfono válido")
-    private String phone_number;
+    private String phoneNumber;
 
     @Length(max = 3, message = "Solo se permite máximo 3 caracteres")
     @Pattern(regexp = "[0-9]{0,3}", message = "Ingresa una extensión válida")
@@ -51,10 +51,10 @@ public class DTOUser {
 
     private String role;
 
-    private int number_attempts;
+    private int numberAttempts;
 
     @NotNull(message = "Tienes que aceptar los términos y condiciones")
-    private int policy_acceptance;
+    private int policyAcceptance;
 
 
 

@@ -3,7 +3,7 @@ package com.sicobo.sicobo.controller;
 
 
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.serviceImpl.UserServiceImpl;
+import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class HomeController {
 
         if(result.hasErrors()){
             for (ObjectError error: result.getAllErrors()){
-                log.error(ERRORS + error.getDefaultMessage());
+                log.error(ERRORS, error.getDefaultMessage());
             }
             return REGISTER;
         }

@@ -1,4 +1,4 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoPayment;
 import com.sicobo.sicobo.dao.DaoSite;
@@ -8,7 +8,6 @@ import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
 import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.service.ISiteService;
 import com.sicobo.sicobo.util.Message;
 import com.sicobo.sicobo.util.SiteValidator;
@@ -27,7 +26,6 @@ import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
 import static com.sicobo.sicobo.util.Constantes.MessageType.*;
-import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
 @Service
 @Slf4j
@@ -157,6 +155,7 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
+        BeanSite site = new BeanSite();
         if(!daoSite.existsBeanSiteById(id)){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra el sitio seleccionado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
@@ -164,7 +163,12 @@ public class SiteServiceImpl implements ISiteService {
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,ERROR_STATE, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-        BeanSite site = daoSite.findBeanSiteById(id).get();
+        Optional<BeanSite> siteOptional = daoSite.findBeanSiteById(id);
+
+        if(siteOptional.isPresent()){
+             site = siteOptional.get();
+        }
+
         return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,site ), HttpStatus.OK);
     }
 

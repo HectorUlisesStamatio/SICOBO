@@ -3,8 +3,8 @@ package com.sicobo.sicobo.controller.admin;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
-import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
-import com.sicobo.sicobo.serviceImpl.StateServiceImpl;
+import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
+import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -182,19 +182,21 @@ public class AdminController {
     @PostMapping("/cambiarEstadoSitio")
     public String changeStateSite(@RequestParam("idSite") Optional<Long> idSite, @RequestParam("statusSite") Optional<Boolean> statusSite, Model model, RedirectAttributes attributes) {
         model.addAttribute(OPTION, SITES);
-        try{
-            if (!idSite.isPresent() || !statusSite.isPresent()) {
-                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
-                return "redirect:/admin/sitios";
-            }
-
+        try {
             BeanSite beanSite = new BeanSite();
-            beanSite.setId(idSite.get());
-            beanSite.setStatus(statusSite.get() ? 0 : 1);
-            Message message = (Message) siteService.eliminar(beanSite).getBody();
-            assert message !=null;
-            attributes.addFlashAttribute(MESSAGE, message);
-
+            if (idSite.isPresent() && statusSite.isPresent()) {
+                beanSite.setId(idSite.get());
+                if(statusSite.get().booleanValue()){
+                    beanSite.setStatus(0);
+                }else{
+                    beanSite.setStatus(1);
+                }
+                Message message = (Message) siteService.eliminar(beanSite).getBody();
+                assert message !=null;
+                attributes.addFlashAttribute(MESSAGE, message);
+            } else {
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            }
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en AdminController - changeStateSite" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);

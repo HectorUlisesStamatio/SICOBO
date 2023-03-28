@@ -4,7 +4,6 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 
 public interface IWarehouseService {
     public ResponseEntity<Object> listar();

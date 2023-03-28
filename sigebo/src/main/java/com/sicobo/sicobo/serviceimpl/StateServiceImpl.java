@@ -1,6 +1,5 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
-import com.sicobo.sicobo.dao.DaoSite;
 import com.sicobo.sicobo.dao.DaoState;
 import com.sicobo.sicobo.dto.DTOState;
 import com.sicobo.sicobo.model.BeanState;
