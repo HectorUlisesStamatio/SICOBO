@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Página en Blanco</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/dash}">Inicio</a></li>
+        <li class="breadcrumb-item">Páginas</li>
+        <li class="breadcrumb-item active">Página en Blanco</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Listado de costos por bodega</h5>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col table-responsive">
+                  <table class="table table-borderless datatable" >
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Tipo bodega</th>
+                      <th scope="col">Costo</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <form>
+                    <tr th:each="costo, index: ${response.result}" th:if="${#arrays.length(response.result) > 0}">
+                      <th scope="row" th:text="${index.index + 1 }"></th>
+                      <td th:text="${costo.description}"></td>
+                      <td>
+                        <input type="number" class="form-control" placeholder="Costo..."  required />
+
+                      </td>
+                      <td>
+                        <button type="submit" title="Agregar Costo" class="btn btn-success">Agregar</button>
+                      </td>
+
+                    </tr>
+                    <tr th:unless="${#arrays.length(response.result) > 0}">
+                      <td colspan="7" class="text-center fw-semibold">No hay tipo de bodegas registradas en el sistema.</td>
+                    </tr>
+                    </form>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>

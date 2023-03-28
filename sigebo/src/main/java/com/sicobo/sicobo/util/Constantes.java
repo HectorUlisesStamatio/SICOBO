@@ -72,6 +72,8 @@ public final class Constantes {
         public static final String ADMIN_REGISTERSITE = "adminViews/registerSite";
         public static final String REDIRECT_ADMIN_LISTSITES = "redirect:/admin/sitios";
         public static final String ADMIN_UPDATESITE = "adminViews/updateSite";
+
+        public static final String ADMIN_REGISTERCOSTTYPE = "adminViews/registerCostType";
     }
 
     public static final class Stuff{
@@ -85,10 +87,10 @@ public final class Constantes {
         public static final String OPTION = "opcion";
         public static final String RESPONSE = "response";
         public static final String SITES = "sitios";
-
         public static final String STATES = "states";
         public static final String SITE = "site";
-        public static final String MAP_ERROR = "error";
+
+        public static final String COSTTYPES = "pagos";
     }
 
     public static class ObjectMessages{

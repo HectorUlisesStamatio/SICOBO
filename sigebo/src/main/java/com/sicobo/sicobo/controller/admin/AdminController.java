@@ -1,10 +1,13 @@
 package com.sicobo.sicobo.controller.admin;
 
+import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
+import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
 import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
+import com.sicobo.sicobo.serviceimpl.WarehousesTypeServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,9 @@ public class AdminController {
 
     @Autowired
     private StateServiceImpl stateService;
+
+    @Autowired
+    private WarehousesTypeServiceImpl warehousesTypeService;
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
@@ -205,6 +211,16 @@ public class AdminController {
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_ADMIN_LISTSITES;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @GetMapping("/costos")
+    public String redirectCostType(Model model){
+        model.addAttribute(OPTION, COSTTYPES);
+        Message message = (Message) warehousesTypeService.listar().getBody();
+        assert message != null;
+        model.addAttribute(RESPONSE, message);
+        return ADMIN_REGISTERCOSTTYPE;
     }
 
 
