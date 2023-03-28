@@ -19,7 +19,7 @@ public class BeanCostType {
     private int status;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "warehouses_type_id")
     private BeanWarehousesType beanWarehousesType;
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,8 +18,8 @@ public class BeanWarehousesType {
     private String description;
 
 
-    @OneToOne(mappedBy = "beanWarehousesType")
-    private BeanCostType beanCostType;
+    @OneToMany(mappedBy = "beanWarehousesType")
+    private List<BeanCostType> beanCostTypes;
 
     private LocalDateTime fechaCreacion;
 

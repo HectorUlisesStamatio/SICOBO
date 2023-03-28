@@ -223,5 +223,13 @@ public class AdminController {
         return ADMIN_REGISTERCOSTTYPE;
     }
 
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/montoBodega")
+    public String findMontoByBodega(@RequestBody Long idWarehouseType){
+        System.out.println(idWarehouseType);
+
+        return ADMIN_REGISTERCOSTTYPE;
+    }
+
 
 }
