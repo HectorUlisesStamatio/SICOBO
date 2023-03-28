@@ -1,11 +1,10 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoSiteAssigment;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dao.DaoWarehouse;
 import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.BeanSite;
-import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;

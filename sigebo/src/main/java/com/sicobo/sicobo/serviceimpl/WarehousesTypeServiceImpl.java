@@ -1,9 +1,9 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class WarehouseImageServiceImpl {
+public class WarehousesTypeServiceImpl {
 }

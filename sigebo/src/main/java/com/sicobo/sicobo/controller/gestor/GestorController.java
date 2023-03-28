@@ -2,9 +2,9 @@ package com.sicobo.sicobo.controller.gestor;
 
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.serviceImpl.SiteServiceImpl;
-import com.sicobo.sicobo.serviceImpl.UserServiceImpl;
-import com.sicobo.sicobo.serviceImpl.WarehouseServiceImpl;
+import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
+import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
+import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.security.Principal;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;

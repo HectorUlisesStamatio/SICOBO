@@ -1,4 +1,4 @@
-package com.sicobo.sicobo.serviceImpl;
+package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoAuthorities;
 import com.sicobo.sicobo.dao.DaoUser;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements IUserService
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> registrar(DTOUser dtoUser) {
-        BeanUser beanUser = new BeanUser(dtoUser.getName(),dtoUser.getLastname(),dtoUser.getSurname(),dtoUser.getEmail(),dtoUser.getRfc(),dtoUser.getPhone_number(), dtoUser.getUsername(),dtoUser.getPassword(),"ROLE_USUARIO",0,dtoUser.getPolicy_acceptance(),1);
+        BeanUser beanUser = new BeanUser(dtoUser.getName(),dtoUser.getLastname(),dtoUser.getSurname(),dtoUser.getEmail(),dtoUser.getRfc(),dtoUser.getPhoneNumber(), dtoUser.getUsername(),dtoUser.getPassword(),"ROLE_USUARIO",0,dtoUser.getPolicyAcceptance(),1);
 
         if(daoUser.existsBeanUserByUsername(beanUser.getUsername())){
             return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El usuario que has elegido ya está en uso. Por favor, elige otro usuario y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
@@ -77,8 +77,8 @@ public class UserServiceImpl implements IUserService
         if(!textValidator.isValid(beanUser.getSurname())){
             return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El apellido materno que has ingresado es inválido. Por favor, escribe el apellido correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
-        beanUser.setPhone_number(dtoUser.getExt() + beanUser.getPhone_number());
-        if(!phoneValidator.isValid(beanUser.getPhone_number())){
+        beanUser.setPhoneNumber(dtoUser.getExt() + beanUser.getPhoneNumber());
+        if(!phoneValidator.isValid(beanUser.getPhoneNumber())){
             return new ResponseEntity<>(new Message(FAILED_REGISTRATION,"El teléfono que has ingresado es inválido. Por favor, escribe el teléfono correctamente y vuelve a intentarlo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         beanUser.setPassword(passwordEncrypter.encriptarPassword(beanUser.getPassword()));

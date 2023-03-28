@@ -1,7 +1,6 @@
 package com.sicobo.sicobo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -26,8 +25,10 @@ public class BeanUser {
     @Length(max = 13)
     private String rfc;
 
+
     @Length(max = 15)
-    private String phone_number;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     private String username;
 
@@ -36,10 +37,12 @@ public class BeanUser {
 
     private String role;
 
-    private int number_attempts;
 
-    @Column(columnDefinition = "integer default 1")
-    private int policy_acceptance;
+    @Column(name = "number_attempts")
+    private int numberAttempts;
+
+    @Column(columnDefinition = "integer default 1", name = "policy_acceptance")
+    private int policyAcceptance;
 
     @Column(columnDefinition = "integer default 1")
     private int enabled;
@@ -57,18 +60,18 @@ public class BeanUser {
 
     }
 
-    public BeanUser(String name, String lastname, String surname, String email, String rfc, String phone_number, String username, String password, String role, int number_attempts, int policy_acceptance, int enabled) {
+    public BeanUser(String name, String lastname, String surname, String email, String rfc, String phoneNumber, String username, String password, String role, int numberAttempts, int policyAcceptance, int enabled) {
         this.name = name;
         this.lastname = lastname;
         this.surname = surname;
         this.email = email;
         this.rfc = rfc;
-        this.phone_number = phone_number;
+        this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
         this.role = role;
-        this.number_attempts = number_attempts;
-        this.policy_acceptance = policy_acceptance;
+        this.numberAttempts = numberAttempts;
+        this.policyAcceptance = policyAcceptance;
         this.enabled = enabled;
     }
 

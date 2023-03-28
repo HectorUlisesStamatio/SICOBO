@@ -68,9 +68,9 @@
 
                                     <div class="col-8 col-sm-7">
                                         <label for="phone_number" class="form-label">Número de Teléfono</label>
-                                        <input th:field="*{phone_number}" type="number" class="form-control" id="phone_number" pattern="[0-9]{1,12}" required>
-                                        <div th:if="${#fields.hasErrors('phone_number')}" th:errors="*{rfc}" class="alert alert-danger mb-3 mt-3"></div>
-                                        <div th:unless="${#fields.hasErrors('phone_number')}" th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
+                                        <input th:field="*{phoneNumber}" type="number" class="form-control" id="phone_number" pattern="[0-9]{1,12}" required>
+                                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('phoneNumber')}" th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-4 col-sm-5">
@@ -104,10 +104,10 @@
 
                                     <div class="col-12">
                                         <div class="form-check">
-                                            <input th:field="*{policy_acceptance}" class="form-check-input" type="checkbox" value="1" id="policy_acceptance" required>
+                                            <input th:field="*{policyAcceptance}" class="form-check-input" type="checkbox" value="1" id="policy_acceptance" required>
                                             <label class="form-check-label" for="policy_acceptance">Estoy de acuerdo y acepto los <a href="#">Términos y Condiciones</a></label>
-                                            <div th:if="${#fields.hasErrors('policy_acceptance')}" th:text="#{register.terms.error}" class="alert alert-danger mb-3 mt-3"></div>
-                                            <div th:unless="${#fields.hasErrors('policy_acceptance')}" th:text="#{register.terms.error}" class="invalid-feedback"></div>
+                                            <div th:if="${#fields.hasErrors('policyAcceptance')}" th:text="#{register.terms.error}" class="alert alert-danger mb-3 mt-3"></div>
+                                            <div th:unless="${#fields.hasErrors('policyAcceptance')}" th:text="#{register.terms.error}" class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
