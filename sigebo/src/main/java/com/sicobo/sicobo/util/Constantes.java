@@ -95,6 +95,8 @@ public final class Constantes {
         public static final String STATES = "states";
         public static final String SITE = "site";
         public static final String MAP_ERROR = "error";
+        public static final String WAREHOUSES_TYPES = "warehousesTypes";
+        public static final String WAREHOUSE = "warehouses";
     }
 
     public static class ObjectMessages{

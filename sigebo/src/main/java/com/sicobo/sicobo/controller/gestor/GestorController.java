@@ -73,6 +73,42 @@ public class GestorController {
     }
 
     @Secured({ROLE_GESTOR})
+    @PostMapping("/prepararModificacion")
+    public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("idWarehouse") @NotNull long idWarehouse, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
+        try {
+            ResponseEntity<?> responseEntity = warehouseService.buscar(idSite);
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+            if (message.getType().equals(FAILED)) {
+                redirectAttributes.addFlashAttribute(MESSAGE, message);
+                int status = responseEntity.getStatusCode().value();
+                redirectAttributes.addFlashAttribute(STATUS, status);
+                return REDIRECT_GESTOR_LISTSITES;
+            }
+
+            responseEntity = warehousesTypeService.listar();
+            Message message2 = (Message) responseEntity.getBody();
+            assert message2 != null;
+            if (message2.getType().equals(FAILED)) {
+                redirectAttributes.addFlashAttribute(MESSAGE, message2);
+                int status = responseEntity.getStatusCode().value();
+                redirectAttributes.addFlashAttribute(STATUS, status);
+                return REDIRECT_GESTOR_LISTSITES;
+            }
+
+            model.addAttribute(WAREHOUSES_TYPES, message2);
+            model.addAttribute(SITIOID, idSite);
+            model.addAttribute(WAREHOUSE, message.getResult());
+
+            return GESTOR_UPDATEWAREHOUSE;
+        }catch (Exception e){
+            log.error("Ocurrio un error en GestorController - prepareUpdateWarehouse" + e.getMessage());
+            redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
+            return REDIRECT_ERROR;
+        }
+    }
+
+    @Secured({ROLE_GESTOR})
     @PostMapping("/guardarBodega")
     public String saveSite(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         try{

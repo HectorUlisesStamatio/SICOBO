@@ -98,8 +98,9 @@
                               th:classappend="${warehouse.status == 0 ? 'bg-danger' : (warehouse.status == 1 ? 'bg-success' : 'bg-warning')}"></span>
                       </td>
                       <td class="text-center">
-                        <form th:action="@{/gestor/bodega}" method="POST">
-                          <input type="hidden" name="idSite" th:value="${warehouse.id}">
+                        <form th:action="@{/gestor/prepararModificacion}" method="POST">
+                          <input type="hidden" name="idSite" th:value="${sitioId}">
+                          <input type="hidden" name="idWarehouse" th:value="${warehouse.id}">
                           <button type="submit" class="btn btn-outline-warning"><i
                                   class="bi bi-pencil-fill"></i></button>
                         </form>

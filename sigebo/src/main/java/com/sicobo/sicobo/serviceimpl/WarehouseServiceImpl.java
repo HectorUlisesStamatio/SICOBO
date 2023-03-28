@@ -10,8 +10,11 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
+import com.sicobo.sicobo.util.SiteValidator;
+import com.sicobo.sicobo.util.WarehouseValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -45,6 +49,8 @@ public class WarehouseServiceImpl implements IWarehouseService {
     DaoWarehouseImage daoWarehouseImage;
 
     private Cloudinary cloudinary;
+
+    private WarehouseValidator warehouseValidator = new WarehouseValidator();
 
     public WarehouseServiceImpl() {
         this.cloudinary = new Cloudinary(ObjectUtils.asMap(
@@ -133,7 +139,25 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
-        return null;
+        BeanWarehouse beanWarehouse;
+        if(!daoWarehouse.existsBeanWarehouseById(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra la bodega seleccionada", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No es posible modificar una bodega en renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
+
+        if(beanWarehouseOptional.isPresent()){
+            beanWarehouse = beanWarehouseOptional.get();
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouse ), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para modificaci[on", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 }
