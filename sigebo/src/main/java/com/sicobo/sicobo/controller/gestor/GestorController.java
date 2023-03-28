@@ -81,30 +81,29 @@ public class GestorController {
             Message message = (Message) responseEntity.getBody();
             assert message != null;
 
-            String error = handleErrorMessage(message, redirectAttributes);
-            if (error != null)
+            responseEntity = warehouseService.guardar(warehouse);
+            Message message2 = (Message) responseEntity.getBody();
+            assert message2 != null;
+
+            String error = handleErrorMessage(message2, redirectAttributes);
+            if (error != null){
                 model.addAttribute(RESPONSE, message);
                 int status = responseEntity.getStatusCode().value();
                 model.addAttribute(STATUS, status);
-                warehouse.setBeanSite( warehouse.getBeanSite());
+                warehouse.setBeanSite(warehouse.getBeanSite());
                 warehouse.setStatus(1);
                 model.addAttribute("warehouse", warehouse);
                 return GESTOR_REGISTERWAREHOUSE;
-            // aqui habria que ver como se va a hacer ya que primero se debe subir las imagenes y
-            // de acuerdo se van a regresar los id y url de donde se inserto para en el futuro actualizar
-            Message response = (Message) siteService.guardar(site).getBody();
-            assert response != null;
-            if (response.getType().equals(FAILED)) {
-                model.addAttribute(MESSAGE, response);
-                model.addAttribute(STATES, states);
-                return ADMIN_REGISTERSITE;
             }
-            attributes.addFlashAttribute(MESSAGE, response);
+
+            redirectAttributes.addFlashAttribute(MESSAGE, message2);
+            redirectAttributes.addFlashAttribute(STATUS, responseEntity.getStatusCode().value());
+            return "redirect:/gestor/bodegas";
         }catch (AssertionError e) {
-            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
             log.error("Ocurrio un error en AdminController - saveSite" + e.getMessage());
+            redirectAttributes.addFlashAttribute(STATUS, SERVER_FAIL_CODE);
+            return REDIRECT_ERROR;
         }
-        return REDIRECT_ADMIN_LISTSITES;
     }
 
     @Secured({ROLE_GESTOR})

@@ -49,6 +49,7 @@ public final class Constantes {
         public static final String ERROR_ADDRESS = "Ingresa un valor válido en el campo direccion";
 
         public static final String ERROR_STATE = "Ingresa un valor válido en el campo estado";
+        public static final String ERROR_IMAGES = "Ingresa un valor válido en el campo imágenes";
 
     }
 
