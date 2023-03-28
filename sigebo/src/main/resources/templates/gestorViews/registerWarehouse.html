@@ -34,11 +34,11 @@
             </div>
             <div class="col-12">
                 <form class="row g-3 needs-validation" th:action="@{/gestor/guardarBodega}" th:object="${warehouse}" method="post" novalidate id="formValid" enctype="multipart/form-data">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Registrar Bodega</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Registrar Bodega</h5>
 
-                        <div class="col-12 mb-3">
+                            <div class="col-12 mb-3">
                                 <label for="section" class="form-label">Sección</label>
                                 <div class="form-group has-validation" >
                                     <input type="text" th:field="*{section}" id="section" class="form-control" required maxlength="100" minlength="5" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                        <div class="col-12 mb-3">
+                            <div class="col-12 mb-3">
                                 <label for="description" class="form-label">Descripción</label>
                                 <div class="form-group has-validation">
                                     <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"/>
@@ -62,46 +62,48 @@
                                 </div>
                             </div>
 
-                        <div class="col-12 mb-3">
+                            <div class="col-12 mb-3">
                                 <label for="warehousesType" class="form-label">Tipo de bodega</label>
                                 <select class="form-select" th:field="*{warehousesType}" id="warehousesType" required onchange="mostrarCosto()">
                                     <option value="0" disabled >Selecciona una opción...</option>
                                     <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
-                                     th:text="${tmpWarehouseType.description}"></option>
+                                            th:text="${tmpWarehouseType.description}"></option>
                                 </select>
                                 <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
                                 <div th:if="${#fields.hasErrors('warehousesType')}" th:errors="*{warehousesType}" class="alert alert-danger mb-3 mt-3"></div>
-                        </div>
+                            </div>
 
-                        <div class="col-12 mb-3">
-                                    <label for="section" class="form-label">Costo</label>
-                                    <div class="form-group has-validation" >
-                                        <input type="number" disabled th:field="*{finalCost}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,2})?$" required>
-                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
-                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
-                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
-                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMinLength}" class="invalid-feedback" id="finalCostTypeMinLength"></div>
-                                        <div th:if="${#fields.hasErrors('finalCost')}" th:errors="*{finalCost}" class="alert alert-danger mb-3 mt-3"></div>
-                                    </div>
+                            <div class="col-12 mb-3">
+                                <label for="section" class="form-label">Costo</label>
+                                <div class="form-group has-validation" >
+                                    <input type="number" disabled th:field="*{finalCost}" id="beanCostType" class="form-control" min="0" minlength="1" step="any" pattern="^[0-9]{1,3}(?:\.[0-9]{1,})?$" required>
+                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
+                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
+                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMinLength}" class="invalid-feedback" id="finalCostTypeMinLength"></div>
+                                    <div th:if="${#fields.hasErrors('finalCost')}" th:errors="*{finalCost}" class="alert alert-danger mb-3 mt-3"></div>
                                 </div>
-                        <div  class="col-12 mb-3">
-                            <label for="images" class="form-label">Imágen(es):</label>
-                            <div class="form-group has-validation" >
-                                <input type="file" id="images"  class="form-control" th:field="*{images}" name="images" multiple maxsize="2097152" accept="image/*" required>
-                                <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
-                                <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.accept}" class="invalid-feedback" id="imagesAccept"></div>
-                                <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.maxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
-                                <div th:if="${#fields.hasErrors('images')}" th:errors="*{images}" class="alert alert-danger mb-3 mt-3"></div>
+                            </div>
+                            <div  class="col-12 mb-3">
+                                <label for="images" class="form-label">Imágen(es):</label>
+                                <div class="form-group has-validation" >
+                                    <input type="file" id="images"  class="form-control" th:field="*{images}" name="images" multiple maxsize="2097152" accept="image/*" required>
+                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
+                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorAccept}" class="invalid-feedback" id="imagesAccept"></div>
+                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
+                                    <div th:if="${#fields.hasErrors('images')}" th:errors="*{images}" class="alert alert-danger mb-3 mt-3"></div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" class="form-control" id="beanSite" name="beanSite" th:field="*{beanSite}" >
+                            <input type="hidden" class="form-control" id="status" name="status" th:field="*{status}" >
+
+                            <div class="card-footer text-end">
+                                <a th:href="@{/gestor/bodegas}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
+                                <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
                             </div>
                         </div>
-                        <input type="text" class="form-control" id="beanSite" name="beanSite" th:field="*{beanSite}" >
-                        <input type="text" class="form-control" id="status" name="status" th:field="*{status}" >
-                        <div class="card-footer text-end">
-                            <a th:href="@{/gestor/bodegas}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
-                            <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
-                        </div>
                     </div>
-                </div>
                 </form>
             </div>
 
@@ -111,12 +113,221 @@
 </main>
 
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-        class="bi bi-arrow-up-short"></i></a>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 
 <script th:inline="javascript">
-    function mostrarCosto() {
+    let section= document.getElementById("section");
+    let description= document.getElementById("description");
+    let warehousesType= document.getElementById("warehousesType");
+    let finalCost= document.getElementById("finalCost");
+    let images= document.getElementById("images");
+
+    function hideAllErrors(form) {
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+            const errorMessages = input.parentNode.querySelectorAll('.invalid-feedback');
+            errorMessages.forEach(message => {
+                message.style.display = 'none';
+            });
+            input.classList.remove('is-invalid');
+            input.classList.remove('is-valid');
+        });
+    }
+
+    /*const hideErrorsInputSection = () =>{
+        document.getElementById("sectionRequired").style.display = "none";
+        document.getElementById("sectionPattern").style.display = "none";
+        document.getElementById("sectionMax").style.display = "none";
+        document.getElementById("sectionMin").style.display = "none";
+    }
+
+    const hideErrorsInputDescription = () =>{
+        document.getElementById("descriptionRequired").style.display = "none";
+        document.getElementById("descriptionPattern").style.display = "none";
+        document.getElementById("descriptionMax").style.display = "none";
+        document.getElementById("descriptionMin").style.display = "none";
+    }
+
+    const hideErrorsInputWarehouseType = () =>{
+        document.getElementById("warehousesTypeRequired").style.display = "none";
+    }
+
+    const hideErrorsInputFinalCosto = () =>{
+        document.getElementById("finalCostRequired").style.display = "none";
+        document.getElementById("finalCostPattern").style.display = "none";
+        document.getElementById("finalCostTypeMin").style.display = "none";
+        document.getElementById("finalCostTypeMinLength").style.display = "none";
+    }
+
+    const hideErrorsInputFinalCosto = () =>{
+        document.getElementById("imagesRequired").style.display = "none";
+        document.getElementById("imagesAccept").style.display = "none";
+        document.getElementById("finalCostTypeMin").style.display = "none";
+        document.getElementById("imagesMaxSize").style.display = "none";
+    }*/
+    const inputFields = [
+        {
+            element: document.querySelector("#section"),
+            name: "section",
+            validation: [
+                { type: "valueMissing", message: "This field is required", errorId: "sectionRequired" },
+                { type: "patternMismatch", message: "Invalid input format", errorId: "sectionPattern" },
+                { type: "tooLong", message: "Input too long", errorId: "sectionMax" },
+                { type: "tooShort", message: "Input too short", errorId: "sectionMin" },
+            ],
+        },
+        {
+            element: document.querySelector("#description"),
+            name: "description",
+            validation: [
+                { type: "valueMissing", message: "This field is required", errorId: "descriptionRequired" },
+                { type: "patternMismatch", message: "Invalid input format", errorId: "descriptionPattern" },
+                { type: "tooLong", message: "Input too long", errorId: "descriptionMax" },
+                { type: "tooShort", message: "Input too short", errorId: "descriptionMin" },
+            ],
+        },
+        {
+            element: document.querySelector("#warehousesType"),
+            name: "warehousesType",
+            validation: [
+                { type: "valueMissing", message: "This field is required", errorId: "warehousesTypeRequired" },
+            ],
+        },
+        {
+            element: document.querySelector("#finalCost"),
+            name: "finalCost",
+            validation: [
+                { type: "valueMissing", message: "This field is required", errorId: "finalCostRequired" },
+                { type: "typeMismatch", message: "Invalid input format", errorId: "finalCostType" },
+            ],
+        },
+        {
+            element: document.querySelector("#images"),
+            name: "images",
+            validation: [
+                { type: "valueMissing", message: "This field is required", errorId: "imagesRequired" },
+                { type: "typeMismatch", message: "Invalid file type", errorId: "imagesType" },
+                { type: "fileSize", message: "File too large", errorId: "imagesSize" },
+            ],
+        },
+    ];
+
+    section.addEventListener("input", function(event) {
+        hideErrorsInputSection();
+        if (section.validity.valueMissing) {
+            document.getElementById("sectionRequired").style.display = "block";
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+        }else if (section.validity.patternMismatch) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionPattern").style.display = "block";
+        }else  if (section.validity.tooLong) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionMax").style.display = "block";
+        }else if (section.validity.tooShort) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionMin").style.display = "block";
+        }else{
+            section.classList.remove('is-invalid');
+            section.classList.add('is-valid');
+            hideErrorsInputSection();
+        }
+
+    });
+
+    section.oninvalid = function() {
+        if (section.validity.valueMissing) {
+            document.getElementById("sectionRequired").style.display = "block";
+        }else{
+            document.getElementById("sectionRequired").style.display = "none";
+        }
+
+        if (section.validity.patternMismatch) {
+            document.getElementById("sectionPattern").style.display = "block";
+        }else{
+            document.getElementById("sectionPattern").style.display = "none";
+        }
+
+        if (section.validity.tooLong) {
+            document.getElementById("sectionMax").style.display = "block";
+        }else{
+            document.getElementById("sectionMax").style.display = "none";
+        }
+
+        if (section.validity.tooShort) {
+            document.getElementById("sectionMin").style.display = "block";
+        }else{
+            document.getElementById("sectionMin").style.display = "none";
+        }
+
+        if (section.validity.valid) {
+            hideErrorsInputSection();
+        }
+
+    };
+
+    section.addEventListener("input", function(event) {
+        hideErrorsInputSection();
+        if (section.validity.valueMissing) {
+            document.getElementById("sectionRequired").style.display = "block";
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+        }else if (section.validity.patternMismatch) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionPattern").style.display = "block";
+        }else  if (section.validity.tooLong) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionMax").style.display = "block";
+        }else if (section.validity.tooShort) {
+            section.classList.remove('is-valid');
+            section.classList.add('is-invalid');
+            document.getElementById("sectionMin").style.display = "block";
+        }else{
+            section.classList.remove('is-invalid');
+            section.classList.add('is-valid');
+            hideErrorsInputSection();
+        }
+
+    });
+
+    section.oninvalid = function() {
+        if (section.validity.valueMissing) {
+            document.getElementById("sectionRequired").style.display = "block";
+        }else{
+            document.getElementById("sectionRequired").style.display = "none";
+        }
+
+        if (section.validity.patternMismatch) {
+            document.getElementById("sectionPattern").style.display = "block";
+        }else{
+            document.getElementById("sectionPattern").style.display = "none";
+        }
+
+        if (section.validity.tooLong) {
+            document.getElementById("sectionMax").style.display = "block";
+        }else{
+            document.getElementById("sectionMax").style.display = "none";
+        }
+
+        if (section.validity.tooShort) {
+            document.getElementById("sectionMin").style.display = "block";
+        }else{
+            document.getElementById("sectionMin").style.display = "none";
+        }
+
+        if (section.validity.valid) {
+            hideErrorsInputSection();
+        }
+
+    };
+
+    const mostrarCosto = () =>{
         let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
         if(warehouseTypeId == null || warehouseTypeId == 0) {
             $('#beanCostType').prop('disabled', true);
