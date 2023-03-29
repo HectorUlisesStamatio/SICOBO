@@ -30,10 +30,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
+import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
@@ -58,12 +61,15 @@ public class GestorController {
             Message message = (Message) responseEntity.getBody();
             assert message != null;
 
-            String error = handleErrorMessage(message, redirectAttributes);
+            String error = handleErrorMessage(message);
             if (error != null){
-                redirectAttributes.addFlashAttribute(MESSAGE, message);
+                System.out.println("error prepararRegistro");
+                model.addAttribute(SITIOID, idSite);
+                model.addAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
-                redirectAttributes.addFlashAttribute(STATUS, status);
-                return REDIRECT_GESTOR_LISTSITES;
+                model.addAttribute(STATUS, status);
+                model.addAttribute(RESPONSE, RESPONSE);
+                return GESTOR_WAREHOUSES;
             }
             model.addAttribute(RESPONSE, message);
             int status = responseEntity.getStatusCode().value();
@@ -89,9 +95,11 @@ public class GestorController {
             Message message = (Message) responseEntity.getBody();
             assert message != null;
             if (message.getType().equals(FAILED)) {
+                redirectAttributes.addFlashAttribute(SITIOID, idSite);
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
+                redirectAttributes.addFlashAttribute(RESPONSE, RESPONSE);
                 return REDIRECT_GESTOR_LISTSITES;
             }else{
                 BeanWarehouse beanWarehouse = (BeanWarehouse) message.getResult();
@@ -108,10 +116,11 @@ public class GestorController {
             Message message2 = (Message) responseEntity.getBody();
             assert message2 != null;
             if (message2.getType().equals(FAILED)) {
-
+                redirectAttributes.addFlashAttribute(SITIOID, idSite);
                 redirectAttributes.addFlashAttribute(MESSAGE, message2);
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
+                redirectAttributes.addFlashAttribute(RESPONSE, RESPONSE);
                 return REDIRECT_GESTOR_LISTSITES;
             }
 
@@ -129,13 +138,13 @@ public class GestorController {
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/guardarBodega")
-    public String saveSite(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
+    public String saveWarehouse(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         try{
             ResponseEntity<?> responseEntity = warehousesTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
 
-            String error = handleErrorMessage(message, redirectAttributes);
+            String error = handleErrorMessage(message);
             if (error != null){
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
@@ -147,6 +156,7 @@ public class GestorController {
                 for (ObjectError errors : result.getAllErrors()) {
                     log.error("Error: " + errors.getDefaultMessage());
                 }
+
                 model.addAttribute(RESPONSE, message);
                 int status = responseEntity.getStatusCode().value();
                 model.addAttribute(STATUS, status);
@@ -159,7 +169,7 @@ public class GestorController {
                 Message message2 = (Message) responseEntity.getBody();
                 assert message2 != null;
 
-                error = handleErrorMessage(message2, redirectAttributes);
+                error = handleErrorMessage(message2);
                 if (error != null){
                     redirectAttributes.addFlashAttribute(RESPONSE, message);
                     int status = responseEntity.getStatusCode().value();
@@ -175,7 +185,7 @@ public class GestorController {
                 message2 = (Message) responseEntity.getBody();
                 assert message2 != null;
 
-                error = handleErrorMessage(message2, redirectAttributes);
+                error = handleErrorMessage(message2);
                 if (error != null){
                     model.addAttribute(MESSAGE, message2);
                     model.addAttribute(RESPONSE, message);
@@ -192,7 +202,7 @@ public class GestorController {
             Message message2 = (Message) responseEntity.getBody();
             assert message2 != null;
 
-            error = handleErrorMessage(message2, redirectAttributes);
+            error = handleErrorMessage(message2);
             if (error != null){
                 model.addAttribute(MESSAGE, message2);
                 model.addAttribute(RESPONSE, message);
@@ -224,7 +234,7 @@ public class GestorController {
             Message message = (Message) responseEntity.getBody();
             assert message != null;
 
-            String error = handleErrorMessage(message, redirectAttributes);
+            String error = handleErrorMessage(message);
             if (error != null) {
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
@@ -237,11 +247,12 @@ public class GestorController {
             message = (Message) responseEntity.getBody();
             assert message != null;
 
-            error = handleErrorMessage(message, redirectAttributes);
+            error = handleErrorMessage(message);
             if (error != null){
                 model.addAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
                 model.addAttribute(STATUS, status);
+                model.addAttribute(RESPONSE, null);
                 return GESTOR_WAREHOUSES;
             }
             BeanSite beanSite = (BeanSite) message.getResult();
@@ -250,11 +261,14 @@ public class GestorController {
             message = (Message) responseEntity.getBody();
             assert message != null;
 
-            error = handleErrorMessage(message, redirectAttributes);
+            error = handleErrorMessage(message);
             if (error != null){
+                System.out.println("asdasdasdsad");
+                model.addAttribute(SITIOID,  beanSite.getId());
                 model.addAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
                 model.addAttribute(STATUS, status);
+                model.addAttribute(RESPONSE, RESPONSE);
                 return GESTOR_WAREHOUSES;
             }
 
@@ -271,11 +285,49 @@ public class GestorController {
         }
     }
 
-    private String handleErrorMessage(Message message, RedirectAttributes redirectAttributes) {
-        if(message.getType().equals(FAILED)) {
-            redirectAttributes.addFlashAttribute(MESSAGE,message.getMessage());
-            redirectAttributes.addFlashAttribute(STATUS,FAIL_CODE);
+    @Secured({ROLE_GESTOR})
+    @PostMapping("/cambiarEstadoBodega")
+    public String changeStateWarehouse(@RequestParam("idWarehouse") Optional<Long> idWarehouse, @RequestParam("statusWarehouse") Optional<Boolean> statusWarehouse, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            BeanWarehouse beanWarehouse = new BeanWarehouse();
+            if (idWarehouse.isPresent() && statusWarehouse.isPresent()) {
+                beanWarehouse.setId(idWarehouse.get());
+                if(statusWarehouse.get().booleanValue()){
+                    beanWarehouse.setStatus(0);
+                }else{
+                    beanWarehouse.setStatus(1);
+                }
+
+                ResponseEntity<?> responseEntity = warehouseService.eliminar(beanWarehouse);
+                Message message = (Message) responseEntity.getBody();
+                assert message != null;
+
+                String error = handleErrorMessage(message);
+                if (error != null){
+                    redirectAttributes.addFlashAttribute(MESSAGE, message);
+                    int status = responseEntity.getStatusCode().value();
+                    redirectAttributes.addFlashAttribute(STATUS, status);
+                    return REDIRECT_GESTOR_LISTSITES;
+                }
+
+                redirectAttributes.addFlashAttribute(MESSAGE, message);
+                redirectAttributes.addFlashAttribute(STATUS, responseEntity.getStatusCode().value());
+            } else {
+                redirectAttributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+
+            }
+            return REDIRECT_GESTOR_LISTSITES;
+        }catch(Exception e){
+            log.error("Ocurrio un error en GestorController - changeStateWarehouse" + e.getMessage());
+            redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
             return REDIRECT_ERROR;
+        }
+
+    }
+
+    private String handleErrorMessage(Message message) {
+        if(message.getType().equals(FAILED)) {
+            return ERRORS;
         }
         return null;
     }
