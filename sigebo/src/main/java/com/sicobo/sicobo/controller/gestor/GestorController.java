@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -141,6 +143,52 @@ public class GestorController {
                 return REDIRECT_GESTOR_LISTSITES;
             }
 
+            if (result.hasErrors()) {
+                for (ObjectError errors : result.getAllErrors()) {
+                    log.error("Error: " + errors.getDefaultMessage());
+                }
+                model.addAttribute(RESPONSE, message);
+                int status = responseEntity.getStatusCode().value();
+                model.addAttribute(STATUS, status);
+                model.addAttribute(WAREHOUSE, warehouse);
+                return GESTOR_REGISTERWAREHOUSE;
+            }
+
+            if (warehouse.getId() != 0) { // update
+                System.out.println("entro update "+warehouse.getId());
+                responseEntity = warehouseService.buscar(warehouse.getId());
+                Message message2 = (Message) responseEntity.getBody();
+                assert message2 != null;
+
+                error = handleErrorMessage(message2, redirectAttributes);
+                if (error != null){
+                    redirectAttributes.addFlashAttribute(RESPONSE, message);
+                    int status = responseEntity.getStatusCode().value();
+                    redirectAttributes.addFlashAttribute(STATUS, status);
+                    return REDIRECT_GESTOR_LISTSITES;
+                }
+
+                BeanWarehouse beanWarehouse = (BeanWarehouse) message2.getResult();
+                warehouse.setStatus(beanWarehouse.getStatus());
+                warehouse.setFechaCreacion(beanWarehouse.getFechaCreacion());
+
+                responseEntity = warehouseService.eliminarImagenes(warehouse.getId());
+                message2 = (Message) responseEntity.getBody();
+                assert message2 != null;
+
+                error = handleErrorMessage(message2, redirectAttributes);
+                if (error != null){
+                    model.addAttribute(MESSAGE, message2);
+                    model.addAttribute(RESPONSE, message);
+                    int status = responseEntity.getStatusCode().value();
+                    model.addAttribute(STATUS, status);
+                    model.addAttribute(WAREHOUSE, warehouse);
+                    return GESTOR_REGISTERWAREHOUSE;
+                }
+            }else{
+                warehouse.setStatus(1);
+                warehouse.setBeanSite(warehouse.getBeanSite());
+            }
             responseEntity = warehouseService.guardar(warehouse);
             Message message2 = (Message) responseEntity.getBody();
             assert message2 != null;
@@ -151,9 +199,7 @@ public class GestorController {
                 model.addAttribute(RESPONSE, message);
                 int status = responseEntity.getStatusCode().value();
                 model.addAttribute(STATUS, status);
-                warehouse.setBeanSite(warehouse.getBeanSite());
-                warehouse.setStatus(1);
-                model.addAttribute("warehouse", warehouse);
+                model.addAttribute(WAREHOUSE, warehouse);
                 return GESTOR_REGISTERWAREHOUSE;
             }
 

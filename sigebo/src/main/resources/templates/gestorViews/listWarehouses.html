@@ -51,7 +51,7 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col table-responsive">
-                  <table class="table table-borderless datatable">
+                  <table class="table table-borderless datatable" id="warehousesTable">
                     <thead>
                     <tr>
                       <th scope="col">#</th>
@@ -74,16 +74,16 @@
                             <div th:each="image, i : ${warehouse.images}"
                                  class="carousel-item"
                                  th:classappend="${i.index == 0} ? 'active'" data-bs-interval="3000">
-                              <div class="d-flex justify-content-center" style="width: 80px;">
-                                <img th:src="${image.url}" style="width: 80px; max-width: 100%">
+                              <div class="d-flex justify-content-center" style="max-width: 200px; max-height: 90px;">
+                                <img th:src="${image.url}" class="img-fluid" style="width: 200px; height: 90px;">
                               </div>
                             </div>
                           </div>
-                          <button class="carousel-control-prev" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="prev">
+                          <button th:if="${#lists.size(warehouse.images) > 1}" class="carousel-control-prev" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
                           </button>
-                          <button class="carousel-control-next" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="next">
+                          <button th:if="${#lists.size(warehouse.images) > 1}"  class="carousel-control-next" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                           </button>
@@ -94,15 +94,15 @@
                       <td th:text="${warehouse.description}"></td>
                       <td th:text="${warehouse.finalCost}"></td>
                       <td>
-                        <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Habilitada' : 'En renta')}"
+                        <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Disponible' : 'En renta')}"
                               th:classappend="${warehouse.status == 0 ? 'bg-danger' : (warehouse.status == 1 ? 'bg-success' : 'bg-warning')}"></span>
                       </td>
                       <td class="text-center">
-                        <form th:action="@{/gestor/prepararModificacion}" method="POST">
+                        <form id="formUpdate" th:action="@{/gestor/prepararModificacion}" method="POST"  th:if="${warehouse.status == 0 || warehouse.status == 1 }">
                           <input type="hidden" name="idSite" th:value="${sitioId}">
                           <input type="hidden" name="idWarehouse" th:value="${warehouse.id}">
-                          <button type="submit" class="btn btn-outline-warning"><i
-                                  class="bi bi-pencil-fill"></i></button>
+                          <button type="submit" class="btn btn-outline-warning"  data-action="modificar"><i
+                                  class="bi bi-pencil-fill" data-action="modificar"></i></button>
                         </form>
 
                       </td>

@@ -25,6 +25,8 @@ public final class Constantes {
         public static final String SUCCESSFUL_SEARCH = "Búsqueda exitosa";
 
         public static final String SUCCESSFUL_UPDATE = "Actualización exitosa";
+
+        public static final String SUCCESSFUL_DELETE = "Eliminación exitosa";
         public static final String FAILED_SEARCH = "Búsqueda fallida";
     }
 
@@ -70,6 +72,7 @@ public final class Constantes {
         public static final String PHONE_INVALID = "El teléfono que has ingresado es inválido. Por favor, escribe el teléfono correctamente y vuelve a intentarlo";
 
 
+        public static final String DELETE_SUCCESSFUL="Se ha realizado la eliminación exitosamente";
 
     }
 
@@ -98,7 +101,6 @@ public final class Constantes {
         public static final String ADMIN_REGISTERGESTORES = "adminViews/registerGestores";
         public static final String ADMIN_UPDATEGESTORES = "adminViews/updateGestor";
         public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
-        public static final String GESTOR_UPDATEWAREHOUSE = "gestorViews/updateWarehouse";
         public static final String REDIRECT_GESTOR_LISTSITES = "redirect:/gestor/bodegas";
     }
 
@@ -119,7 +121,6 @@ public final class Constantes {
         public static final String STATES = "states";
         public static final String SITE = "site";
         public static final String MAP_ERROR = "error";
-        public static final String WAREHOUSES_TYPES = "warehousesTypes";
         public static final String WAREHOUSE = "warehouse";
     }
 
