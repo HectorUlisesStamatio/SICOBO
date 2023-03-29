@@ -51,6 +51,26 @@ public final class Constantes {
         public static final String ERROR_STATE = "Ingresa un valor válido en el campo estado";
         public static final String ERROR_IMAGES = "Ingresa un valor válido en el campo imágenes";
 
+        public static final String USER_EXISTS = "El usuario que has elegido ya está en uso. Por favor, elige otro usuario y vuelve a intentarlo";
+
+        public static final String EMAIL_EXISTS = "El correo que has elegido ya está en uso. Por favor, elige otro correo y vuelve a intentarlo";
+
+        public static final String PASSWORD_INVALID = "La contraseña que has elegido es inválida. Por favor, elige otra contraseña y vuelve a intentarlo";
+
+        public static final String RFC_INVALID = "El RFC que has ingresado es inválido. Por favor, escribe el RFC correctamente y vuelve a intentarlo";
+
+        public static final String USER_INVALID = "El usuario que has ingresado es inválido. Por favor, escribe el usuario correctamente y vuelve a intentarlo";
+
+        public static final String NAME_INVALID  = "El nombre que has ingresado es inválido. Por favor, escribe el nombre correctamente y vuelve a intentarlo";
+
+        public static final String LASTNAME_INVALID = "El apellido paterno que has ingresado es inválido. Por favor, escribe el apellido correctamente y vuelve a intentarlo";
+
+        public static final String SURNAME_INVALID = "El apellido materno que has ingresado es inválido. Por favor, escribe el apellido correctamente y vuelve a intentarlo";
+
+        public static final String PHONE_INVALID = "El teléfono que has ingresado es inválido. Por favor, escribe el teléfono correctamente y vuelve a intentarlo";
+
+
+
     }
 
     public static final class MessageType{
@@ -73,7 +93,10 @@ public final class Constantes {
         public static final String ADMIN_REGISTERSITE = "adminViews/registerSite";
         public static final String REDIRECT_ADMIN_LISTSITES = "redirect:/admin/sitios";
         public static final String ADMIN_UPDATESITE = "adminViews/updateSite";
-
+        public static final String ADMIN_LISTGESTORES = "adminViews/listGestores";
+        public static final String REDIRECT_ADMIN_LISTGESTORES = "redirect:/admin/listarGestores";
+        public static final String ADMIN_REGISTERGESTORES = "adminViews/registerGestores";
+        public static final String ADMIN_UPDATEGESTORES = "adminViews/updateGestor";
         public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
         public static final String GESTOR_UPDATEWAREHOUSE = "gestorViews/updateWarehouse";
         public static final String REDIRECT_GESTOR_LISTSITES = "redirect:/gestor/bodegas";
@@ -92,6 +115,7 @@ public final class Constantes {
         public static final String RESPONSE = "response";
         public static final String SITES = "sitios";
 
+        public static final String GESTORES = "gestores";
         public static final String STATES = "states";
         public static final String SITE = "site";
         public static final String MAP_ERROR = "error";

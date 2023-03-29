@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Registro de gestor</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="pagetitle">
+        <h1>Gestores</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Gestores</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/listarGestores}">Lista de gestores</a></li>
+                <li class="breadcrumb-item active">Registro</li>
+            </ol>
+        </nav>
+    </div>
+    <input th:if="${message != null}" name="status" id="status" type="hidden" th:value="${message.code}">
+    <input th:unless="${message != null}" name="status" id="status" type="hidden" value="200">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${message != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="col-12">
+                <form class="row g-3 needs-validation" th:action="@{/admin/guardarGestor}" th:object="${user}"
+                      method="post" novalidate id="formValid">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Registrar Gestor</h5>
+
+                            <div class="col-12">
+                                <label for="name" class="form-label">Nombre(s)</label>
+                                <input th:field="*{name}" type="text" class="form-control" id="name"
+                                       pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('name')}" th:text="#{register.name.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="lastname" class="form-label">Apellido Paterno</label>
+                                <input th:field="*{lastname}" type="text" class="form-control" id="lastname"
+                                       pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                <div th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('lastname')}" th:text="#{register.lastname.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="surname" class="form-label">Apellido Materno</label>
+                                <input th:field="*{surname}" type="text" class="form-control" id="surname"
+                                       pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('surname')}" th:text="#{register.surname.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="rfc" class="form-label">RFC</label>
+                                <input th:field="*{rfc}" type="text" class="form-control" id="rfc"
+                                       pattern="^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$"
+                                       required>
+                                <div th:if="${#fields.hasErrors('rfc')}" th:errors="*{rfc}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('rfc')}" th:text="#{register.rfc.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="phone_number" class="form-label">Número de Teléfono</label>
+                                <input th:field="*{phoneNumber}" type="number" class="form-control" id="phone_number"
+                                       pattern="[0-9]{1,12}" required>
+                                <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('phoneNumber')}"
+                                     th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <label for="username" class="form-label">Usuario</label>
+                                <input th:field="*{username}" type="text" class="form-control" id="username"
+                                       pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('username')}" th:text="#{register.usuario.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="email" class="form-label">Correo</label>
+                                <input th:field="*{email}" type="email" class="form-control" id="email" name="email"
+                                       required>
+                                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('email')}" th:text="#{register.correo.error}"
+                                     class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input th:field="*{password}" type="password" class="form-control" id="password"
+                                       pattern="^(?=^.{10,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+                                       minlength="10" required>
+                                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                                     class="alert alert-danger mb-3 mt-3"></div>
+                                <div th:unless="${#fields.hasErrors('password')}" th:text="#{register.password.error}"
+                                     class="invalid-feedback"></div>
+                                <div th:text="#{register.password.error.hint}" class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="card-footer text-end">
+                                    <a th:href="@{/admin/listarGestores}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
+                                </div>
+                            </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script>
+
+
+    $('#formValid').submit(function (event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: '¿Estás seguro de guardar los cambios?',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        })
+
+    })
+
+</script>
+
+</body>
+
+</html>
