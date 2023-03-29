@@ -9,6 +9,8 @@ import java.util.List;
 @Data
 public class DTOWarehouse {
 
+    private long id;
+
     @NotBlank(message = "El campo no debe estar en blanco")
     @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9&%#\\s]+$", message = "Ingresa un valor válido")
     @Size(min = 3, max = 255, message = "El campo debe tener entre 3 y 255 caracteres")

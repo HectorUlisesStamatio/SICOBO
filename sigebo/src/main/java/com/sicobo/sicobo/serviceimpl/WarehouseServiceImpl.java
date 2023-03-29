@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.serviceimpl;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.sicobo.sicobo.dao.DaoSiteAssigment;
 import com.sicobo.sicobo.dao.DaoUser;
@@ -10,18 +11,17 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
-import com.sicobo.sicobo.util.SiteValidator;
 import com.sicobo.sicobo.util.WarehouseValidator;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -157,7 +157,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }else{
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para modificaci[on", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
-
-
     }
+
 }

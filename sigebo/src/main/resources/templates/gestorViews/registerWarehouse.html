@@ -17,7 +17,7 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/gestor/bodegas}">Listar Bodegas</a></li>
-                <li class="breadcrumb-item active">Registro</li>
+                <li class="breadcrumb-item active" th:text="${warehouse.id} ? 'Modificación': 'Registro'"></li>
             </ol>
         </nav>
     </div>
@@ -36,7 +36,7 @@
                 <form class="row g-3 needs-validation" th:action="@{/gestor/guardarBodega}" th:object="${warehouse}" method="post" novalidate id="formValid" enctype="multipart/form-data">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Registrar Bodega</h5>
+                            <h5 class="card-title" th:text="${warehouse.id} ? 'Modificar bodega': 'Registrar bodega'">Registrar Bodega</h5>
 
                             <div class="col-12 mb-3">
                                 <label for="section" class="form-label">Sección</label>
@@ -94,6 +94,7 @@
                                 </div>
                             </div>
 
+                            <input type="hidden" class="form-control" id="id" name="id" th:field="*{id}" >
                             <input type="hidden" class="form-control" id="beanSite" name="beanSite" th:field="*{beanSite}" >
                             <input type="hidden" class="form-control" id="status" name="status" th:field="*{status}" >
 
@@ -159,7 +160,12 @@
         warehousesType= document.getElementById("warehousesType");
         finalCost= document.getElementById("finalCost");
         images= document.getElementById("images");
-        mostrarCosto()
+
+        if(finalCost.value === "") {
+            mostrarCosto()
+        }else{
+            $('#finalCost').prop('disabled', false);
+        }
 
         section.addEventListener("input", function(event) {
             hideErrorsInputSection();

@@ -3,6 +3,8 @@ package com.sicobo.sicobo.controller.gestor;
 import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanUser;
+import com.sicobo.sicobo.model.BeanWarehouse;
+import com.sicobo.sicobo.model.BeanWarehouseImage;
 import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
@@ -21,7 +23,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
@@ -62,7 +68,7 @@ public class GestorController {
             model.addAttribute(STATUS, status);
             warehouse.setBeanSite( (int) idSite);
             warehouse.setStatus(1);
-            model.addAttribute("warehouse", warehouse);
+            model.addAttribute(WAREHOUSE, warehouse);
 
             return GESTOR_REGISTERWAREHOUSE;
         }catch (Exception e){
@@ -74,9 +80,10 @@ public class GestorController {
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararModificacion")
-    public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("idWarehouse") @NotNull long idWarehouse, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
+    public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("idWarehouse") @NotNull long idWarehouse,
+                                         Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
-            ResponseEntity<?> responseEntity = warehouseService.buscar(idSite);
+            ResponseEntity<?> responseEntity = warehouseService.buscar(idWarehouse);
             Message message = (Message) responseEntity.getBody();
             assert message != null;
             if (message.getType().equals(FAILED)) {
@@ -84,23 +91,33 @@ public class GestorController {
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
                 return REDIRECT_GESTOR_LISTSITES;
+            }else{
+                BeanWarehouse beanWarehouse = (BeanWarehouse) message.getResult();
+                warehouse.setId(beanWarehouse.getId());
+                warehouse.setDescription(beanWarehouse.getDescription());
+                warehouse.setSection(beanWarehouse.getSection());
+                warehouse.setFinalCost(beanWarehouse.getFinalCost());
+                warehouse.setStatus(beanWarehouse.getStatus());
+                warehouse.setBeanSite(Long.valueOf(beanWarehouse.getBeanSite().getId()).intValue());
+                warehouse.setWarehousesType(Long.valueOf(beanWarehouse.getWarehousesType().getId()).intValue());
             }
 
             responseEntity = warehousesTypeService.listar();
             Message message2 = (Message) responseEntity.getBody();
             assert message2 != null;
             if (message2.getType().equals(FAILED)) {
+
                 redirectAttributes.addFlashAttribute(MESSAGE, message2);
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
                 return REDIRECT_GESTOR_LISTSITES;
             }
 
-            model.addAttribute(WAREHOUSES_TYPES, message2);
+            model.addAttribute(RESPONSE, message2);
             model.addAttribute(SITIOID, idSite);
-            model.addAttribute(WAREHOUSE, message.getResult());
+            model.addAttribute(WAREHOUSE, warehouse);
 
-            return GESTOR_UPDATEWAREHOUSE;
+            return GESTOR_REGISTERWAREHOUSE;
         }catch (Exception e){
             log.error("Ocurrio un error en GestorController - prepareUpdateWarehouse" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
