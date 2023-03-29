@@ -50,8 +50,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     private Cloudinary cloudinary;
 
-    private WarehouseValidator warehouseValidator = new WarehouseValidator();
-
     public WarehouseServiceImpl() {
         this.cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dg4kl7fvl",

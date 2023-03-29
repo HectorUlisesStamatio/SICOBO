@@ -155,7 +155,6 @@ public class GestorController {
             }
 
             if (warehouse.getId() != 0) { // update
-                System.out.println("entro update "+warehouse.getId());
                 responseEntity = warehouseService.buscar(warehouse.getId());
                 Message message2 = (Message) responseEntity.getBody();
                 assert message2 != null;

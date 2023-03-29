@@ -4,7 +4,6 @@ package com.sicobo.sicobo.dto;
 import com.sicobo.sicobo.util.ImageList;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
