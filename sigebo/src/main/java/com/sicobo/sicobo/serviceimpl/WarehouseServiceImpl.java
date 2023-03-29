@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.serviceimpl;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.sicobo.sicobo.dao.DaoSiteAssigment;
 import com.sicobo.sicobo.dao.DaoUser;
@@ -10,7 +11,9 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
+import com.sicobo.sicobo.util.WarehouseValidator;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -79,10 +83,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
     public ResponseEntity<Object> guardar(DTOWarehouse dtoWarehouse) {
         try{
             List<MultipartFile> images = dtoWarehouse.getImages();
-
+            boolean flag = dtoWarehouse.getId() != 0;
             if (images != null && !images.isEmpty()) {
                 BeanWarehouse beanWarehouse = new BeanWarehouse();
-
+                if (flag){
+                    beanWarehouse.setId(dtoWarehouse.getId());
+                    beanWarehouse.setFechaCreacion(dtoWarehouse.getFechaCreacion());
+                }
                 BeanSite beanSite = new BeanSite();
                 beanSite.setId((long) dtoWarehouse.getBeanSite());
                 beanWarehouse.setBeanSite(beanSite);
@@ -91,7 +98,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 beanWarehousesType.setId((long) dtoWarehouse.getWarehousesType());
                 beanWarehouse.setWarehousesType(beanWarehousesType);
 
-                beanWarehouse.setStatus(1);
+                beanWarehouse.setStatus(dtoWarehouse.getStatus());
                 beanWarehouse.setSection(dtoWarehouse.getSection());
                 beanWarehouse.setDescription(dtoWarehouse.getDescription());
                 beanWarehouse.setFinalCost(dtoWarehouse.getFinalCost());
@@ -111,8 +118,12 @@ public class WarehouseServiceImpl implements IWarehouseService {
                         beanWarehouseImage.setPublicId(publicId);
                         daoWarehouseImage.save(beanWarehouseImage);
                 }
+                if (flag){
+                    return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanWarehouseCreated), HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION, INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanWarehouseCreated), HttpStatus.OK);
+                }
 
-                return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION, INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE, beanWarehouseCreated), HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(new Message(FAILED_REGISTRATION,ERROR_IMAGES, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
@@ -133,7 +144,39 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
-        return null;
+        BeanWarehouse beanWarehouse;
+        if(!daoWarehouse.existsBeanWarehouseById(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra la bodega seleccionada", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+        if(daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No es posible modificar una bodega en renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
+
+        if(beanWarehouseOptional.isPresent()){
+            beanWarehouse = beanWarehouseOptional.get();
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouse ), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para modificaci[on", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> eliminarImagenes(Long id) {
+        List<BeanWarehouseImage> beanWarehouseImages = daoWarehouseImage.findAllByBeanWarehouse_Id(id);
+
+        for (BeanWarehouseImage beanWarehouseImage : beanWarehouseImages){
+            try {
+                cloudinary.uploader().destroy(beanWarehouseImage.getPublicId(), ObjectUtils.emptyMap());
+                daoWarehouseImage.deleteById(beanWarehouseImage.getId());
+            } catch (Exception e) {
+                log.error("Ocurrio un error en WarehouseServiceImpl - eliminarImagenes" + e.getMessage());
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(new Message(SUCCESSFUL_DELETE,DELETE_SUCCESSFUL, SUCCESS,SUCCESS_CODE,null ), HttpStatus.OK);
     }
 }
