@@ -98,7 +98,7 @@ public final class Constantes {
         public static final String ADMIN_REGISTERGESTORES = "adminViews/registerGestores";
         public static final String ADMIN_UPDATEGESTORES = "adminViews/updateGestor";
         public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
-        public static final String REDIRECT_GESTOR_LISTSITES = "redirect:/gestor/bodegas";
+        public static final String REDIRECT_GESTOR_LISTWAREHOUSES = "redirect:/gestor/bodegas";
     }
 
     public static final class Stuff{

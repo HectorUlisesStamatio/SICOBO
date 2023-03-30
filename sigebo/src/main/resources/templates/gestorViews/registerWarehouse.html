@@ -397,15 +397,11 @@
             $('#finalCost').val("");
         } else {
             let warehouseTypes = [[${response.result}]]
-            let warehousesType;
-            for (let i = 0; i < warehouseTypes.length; i++) {
-                if (warehouseTypes[i].id === warehouseTypeId) {
-                    warehousesType = warehouseTypes[i];
-                    break;
-                }
-            }
+            let costTypes = [[${costTypes}]];
+            let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseTypeId)
+
             hideErrorsInputFinalCosto()
-            document.getElementById("finalCost").value = warehousesType.beanCostType.amount;
+            document.getElementById("finalCost").value = costType.amount;
             $('#finalCost').prop('disabled', false);
         }
     }

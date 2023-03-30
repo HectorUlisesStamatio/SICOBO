@@ -80,6 +80,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findWarehousesByBeanSiteId(Long id) {
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, daoWarehouse.findAllByBeanSite_Id(id)), HttpStatus.OK);
+
+
+    }
+
     @Override
     public ResponseEntity<Object> guardar(DTOWarehouse dtoWarehouse) {
         try{

@@ -229,7 +229,7 @@ public class AdminController {
     public String redirectCostType(Model model, DTOCostType costType){
         model.addAttribute(OPTION, COSTTYPES);
         try {
-            Message warehouseTypes = (Message) warehousesTypeService.listar().getBody();
+            Message warehouseTypes = (Message) warehousesTypeService.listarTodas().getBody();
             assert warehouseTypes != null;
             Message costTypes = (Message) costTypeService.listar().getBody();
             assert costTypes != null;
@@ -260,7 +260,7 @@ public class AdminController {
     public String saveCost(@Valid @ModelAttribute("cost") DTOCostType cost, BindingResult result, Model model, RedirectAttributes attributes){
         model.addAttribute(OPTION, COSTTYPES);
         try {
-            Message warehouseTypes = (Message) warehousesTypeService.listar().getBody();
+            Message warehouseTypes = (Message) warehousesTypeService.listarTodas().getBody();
             assert warehouseTypes != null;
             Message costTypes = (Message) costTypeService.listar().getBody();
             assert costTypes != null;

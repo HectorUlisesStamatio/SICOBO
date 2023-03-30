@@ -5,6 +5,8 @@ import com.sicobo.sicobo.model.BeanWarehousesType;
 import org.springframework.http.ResponseEntity;
 
 public interface IWarehousesType {
+
+    public ResponseEntity<Object> listarTodas();
     public ResponseEntity<Object> listar();
 
     public ResponseEntity<Object> guardar(DTOWarehousesType dtoWarehousesType);

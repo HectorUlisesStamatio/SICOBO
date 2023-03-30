@@ -1,20 +1,13 @@
 package com.sicobo.sicobo.controller.gestor;
 
 import com.sicobo.sicobo.dto.DTOWarehouse;
-import com.sicobo.sicobo.model.BeanSite;
-import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.model.BeanWarehouse;
-import com.sicobo.sicobo.model.BeanWarehouseImage;
-import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
-import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
-import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
-import com.sicobo.sicobo.serviceimpl.WarehousesTypeServiceImpl;
+import com.sicobo.sicobo.model.*;
+import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -25,18 +18,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.FAILED_SEARCH;
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
-import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
@@ -53,25 +44,29 @@ public class GestorController {
     @Autowired
     private WarehousesTypeServiceImpl warehousesTypeService;
 
+    @Autowired
+    private CostTypeServiceImpl costTypeService;
+
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararRegistro")
     public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
-            ResponseEntity<?> responseEntity = warehousesTypeService.listar();
+            ResponseEntity<?> responseEntity = costTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
-
-            String error = handleErrorMessage(message);
-            if (error != null){
-                System.out.println("error prepararRegistro");
-                model.addAttribute(SITIOID, idSite);
-                model.addAttribute(MESSAGE, message);
-                int status = responseEntity.getStatusCode().value();
-                model.addAttribute(STATUS, status);
-                model.addAttribute(RESPONSE, RESPONSE);
-                return GESTOR_WAREHOUSES;
+            List<BeanCostType> listBeanCostType = (List<BeanCostType>)message.getResult();
+            if (listBeanCostType.isEmpty()){
+                message = new Message(FAILED_SEARCH,"No hay registros de tipos de bodegas", FAILED,FAIL_CODE, null);
+                redirectAttributes.addFlashAttribute(MESSAGE, message);
+                return REDIRECT_GESTOR_LISTWAREHOUSES;
             }
+
+            responseEntity = warehousesTypeService.listar();
+            message = (Message) responseEntity.getBody();
+            assert message != null;
+
             model.addAttribute(RESPONSE, message);
+            model.addAttribute(COST_TYPES, listBeanCostType);
             int status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);
             warehouse.setBeanSite( (int) idSite);
@@ -100,7 +95,7 @@ public class GestorController {
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
                 redirectAttributes.addFlashAttribute(RESPONSE, RESPONSE);
-                return REDIRECT_GESTOR_LISTSITES;
+                return REDIRECT_GESTOR_LISTWAREHOUSES;
             }else{
                 BeanWarehouse beanWarehouse = (BeanWarehouse) message.getResult();
                 warehouse.setId(beanWarehouse.getId());
@@ -108,8 +103,8 @@ public class GestorController {
                 warehouse.setSection(beanWarehouse.getSection());
                 warehouse.setFinalCost(beanWarehouse.getFinalCost());
                 warehouse.setStatus(beanWarehouse.getStatus());
-                warehouse.setBeanSite(Long.valueOf(beanWarehouse.getBeanSite().getId()).intValue());
-                warehouse.setWarehousesType(Long.valueOf(beanWarehouse.getWarehousesType().getId()).intValue());
+                warehouse.setBeanSite(beanWarehouse.getBeanSite().getId().intValue());
+                warehouse.setWarehousesType(beanWarehouse.getWarehousesType().getId().intValue());
             }
 
             responseEntity = warehousesTypeService.listar();
@@ -121,7 +116,7 @@ public class GestorController {
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
                 redirectAttributes.addFlashAttribute(RESPONSE, RESPONSE);
-                return REDIRECT_GESTOR_LISTSITES;
+                return REDIRECT_GESTOR_LISTWAREHOUSES;
             }
 
             model.addAttribute(RESPONSE, message2);
@@ -149,7 +144,7 @@ public class GestorController {
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
                 redirectAttributes.addFlashAttribute(STATUS, status);
-                return REDIRECT_GESTOR_LISTSITES;
+                return REDIRECT_GESTOR_LISTWAREHOUSES;
             }
 
             if (result.hasErrors()) {
@@ -174,7 +169,7 @@ public class GestorController {
                     redirectAttributes.addFlashAttribute(RESPONSE, message);
                     int status = responseEntity.getStatusCode().value();
                     redirectAttributes.addFlashAttribute(STATUS, status);
-                    return REDIRECT_GESTOR_LISTSITES;
+                    return REDIRECT_GESTOR_LISTWAREHOUSES;
                 }
 
                 BeanWarehouse beanWarehouse = (BeanWarehouse) message2.getResult();
@@ -214,7 +209,7 @@ public class GestorController {
 
             redirectAttributes.addFlashAttribute(MESSAGE, message2);
             redirectAttributes.addFlashAttribute(STATUS, responseEntity.getStatusCode().value());
-            return REDIRECT_GESTOR_LISTSITES;
+            return REDIRECT_GESTOR_LISTWAREHOUSES;
         }catch (AssertionError e) {
             log.error("Ocurrio un error en AdminController - saveSite" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS, SERVER_FAIL_CODE);
@@ -263,7 +258,6 @@ public class GestorController {
 
             error = handleErrorMessage(message);
             if (error != null){
-                System.out.println("asdasdasdsad");
                 model.addAttribute(SITIOID,  beanSite.getId());
                 model.addAttribute(MESSAGE, message);
                 int status = responseEntity.getStatusCode().value();
@@ -307,7 +301,7 @@ public class GestorController {
                     redirectAttributes.addFlashAttribute(MESSAGE, message);
                     int status = responseEntity.getStatusCode().value();
                     redirectAttributes.addFlashAttribute(STATUS, status);
-                    return REDIRECT_GESTOR_LISTSITES;
+                    return REDIRECT_GESTOR_LISTWAREHOUSES;
                 }
 
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
@@ -316,7 +310,7 @@ public class GestorController {
                 redirectAttributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
 
             }
-            return REDIRECT_GESTOR_LISTSITES;
+            return REDIRECT_GESTOR_LISTWAREHOUSES;
         }catch(Exception e){
             log.error("Ocurrio un error en GestorController - changeStateWarehouse" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);

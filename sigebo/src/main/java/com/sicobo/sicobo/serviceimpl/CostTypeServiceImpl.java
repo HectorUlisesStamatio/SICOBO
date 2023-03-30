@@ -35,7 +35,7 @@ public class CostTypeServiceImpl implements ICostTypeService {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
         List<BeanCostType> costTypeList = daoCostType.findAllByStatusIs(1);
-        return new ResponseEntity(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, costTypeList), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, costTypeList), HttpStatus.OK);
     }
 
     @Override
@@ -50,11 +50,11 @@ public class CostTypeServiceImpl implements ICostTypeService {
         costTypeToSave.setAmount(dtoCostType.getAmount().doubleValue());
 
         if(costTypeValidator.validAmount(dtoCostType.getAmount())){
-            return new ResponseEntity(new Message(FAILED_EXECUTION,"El monto es un valor inválido", FAILED,FAIL_CODE, null), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El monto es un valor inválido", FAILED,FAIL_CODE, null), HttpStatus.OK);
         }
 
         if(costTypeValidator.validWarehouseType(dtoCostType.getBeanWarehousesType())){
-            return new ResponseEntity(new Message(FAILED_EXECUTION,"El tipo de bodega es un valor inválido", FAILED,FAIL_CODE, null), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El tipo de bodega es un valor inválido", FAILED,FAIL_CODE, null), HttpStatus.OK);
         }
 
         Optional<BeanCostType> costTypeOptional = daoCostType.findBeanCostTypeByBeanWarehousesType_IdAndStatusIs((long) dtoCostType.getBeanWarehousesType(), 1);
@@ -89,20 +89,20 @@ public class CostTypeServiceImpl implements ICostTypeService {
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> editar(DTOCostType dtoCostType) {
         BeanCostType a = new BeanCostType();
-        return new ResponseEntity(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(a)), HttpStatus.OK);
+        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(a)), HttpStatus.OK);
     }
 
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminar(BeanCostType beanCostType) {
-        return new ResponseEntity(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(beanCostType)), HttpStatus.OK);
+        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(beanCostType)), HttpStatus.OK);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
         Optional<BeanCostType> optionalBeanCostType = daoCostType.findById(id);
-        return new ResponseEntity(new Message("Usuario registrado","HOLA", "success",200,optionalBeanCostType), HttpStatus.OK);
+        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,optionalBeanCostType), HttpStatus.OK);
     }
 
 
