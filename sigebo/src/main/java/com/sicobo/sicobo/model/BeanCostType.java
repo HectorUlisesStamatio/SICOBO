@@ -19,8 +19,9 @@ public class BeanCostType {
     @Column(columnDefinition = "integer default 1")
     private int status;
 
+
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "warehouses_type_id")
     private BeanWarehousesType beanWarehousesType;
 

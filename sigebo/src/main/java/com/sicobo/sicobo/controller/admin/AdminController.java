@@ -1,11 +1,15 @@
 package com.sicobo.sicobo.controller.admin;
 
+import com.sicobo.sicobo.dao.DaoWarehousesType;
+import com.sicobo.sicobo.dto.DTOCostType;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
+import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
 import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
+import com.sicobo.sicobo.serviceimpl.WarehousesTypeServiceImpl;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
@@ -44,6 +48,12 @@ public class AdminController {
     @Autowired
     private StateServiceImpl stateService;
 
+    @Autowired
+    private WarehousesTypeServiceImpl warehousesTypeService;
+
+    @Autowired
+    private CostTypeServiceImpl costTypeService;
+    
     @Autowired
     private UserServiceImpl userService;
 
@@ -215,6 +225,82 @@ public class AdminController {
     }
 
     @Secured({ROLE_ADMIN})
+    @GetMapping("/costos")
+    public String redirectCostType(Model model, DTOCostType costType){
+        model.addAttribute(OPTION, COSTTYPES);
+        try {
+            Message warehouseTypes = (Message) warehousesTypeService.listar().getBody();
+            assert warehouseTypes != null;
+            Message costTypes = (Message) costTypeService.listar().getBody();
+            assert costTypes != null;
+            model.addAttribute(HIDE_COST, false);
+            model.addAttribute(WAREHOUSE_TYPES, warehouseTypes.getResult());
+            model.addAttribute(COST_TYPES, costTypes.getResult());
+            model.addAttribute(COST, costType);
+        }catch (AssertionError e) {
+            log.error("Ocurrio un error en AdminController - redirectCostType" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en AdminController - redirectCostType" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return ADMIN_REGISTERCOSTTYPE;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/montoBodega")
+    public String findAmountByWarehouse(Model model, DTOCostType costType){
+
+
+        return ADMIN_REGISTERCOSTTYPE;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/modificarCosto")
+    public String saveCost(@Valid @ModelAttribute("cost") DTOCostType cost, BindingResult result, Model model, RedirectAttributes attributes){
+        model.addAttribute(OPTION, COSTTYPES);
+        try {
+            Message warehouseTypes = (Message) warehousesTypeService.listar().getBody();
+            assert warehouseTypes != null;
+            Message costTypes = (Message) costTypeService.listar().getBody();
+            assert costTypes != null;
+            
+            if (result.hasErrors()) {
+                for (ObjectError error : result.getAllErrors()) {
+                    log.error("Error: " + error.getDefaultMessage());
+                }
+
+                model.addAttribute(WAREHOUSE_TYPES, warehouseTypes.getResult());
+                model.addAttribute(COST_TYPES, costTypes.getResult());
+                model.addAttribute(HIDE_COST, true);
+                model.addAttribute(COST, cost);
+                return ADMIN_REGISTERCOSTTYPE;
+            }
+
+            Message response = (Message) costTypeService.guardar(cost).getBody();
+            assert response != null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                model.addAttribute(WAREHOUSE_TYPES, warehouseTypes.getResult());
+                model.addAttribute(COST_TYPES, costTypes.getResult());
+                model.addAttribute(HIDE_COST, true);
+                model.addAttribute(COST, cost);
+                return ADMIN_REGISTERCOSTTYPE;
+            }
+
+            attributes.addFlashAttribute(MESSAGE, response);
+        }catch (AssertionError e) {
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - saveCost" + e.getMessage());
+        }catch(Exception e){
+            log.error("Ocurrio un error en AdminController - saveCost" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+
+        return REDIRECT_ADMIN_REGISTERCOSTTYPE;
+    }
+
+    @Secured({ROLE_ADMIN})
     @GetMapping("/listarGestores")
     public String listarGestores(Model model){
         model.addAttribute(OPTION, GESTORES);
@@ -315,6 +401,7 @@ public class AdminController {
         }
         return REDIRECT_ADMIN_LISTGESTORES;
     }
+
 
 
 }
