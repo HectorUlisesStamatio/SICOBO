@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>SICOBO | Blanco</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<main id="main" class="main">
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="pagetitle">
+        <h1>Costos por Tipo de Bodega</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Inicio</a></li>
+                <li class="breadcrumb-item">Registro y Modificación de Costos</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${message != null}" class="alert alert-dismissible fade show" role="alert" th:classappend="${message.type} == 'success' ? 'alert-success' : 'alert-danger'">
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Filtro de costos por bodega</h5>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12 ">
+                                    <form class="row needs-validation" th:action="@{/admin/modificarCosto}" method="POST" th:object="${cost}" novalidate>
+                                        <div class="col-12 col-sm-6 mb-3">
+                                            <label for="beanWarehousesType" class="form-label">TIpo de bodega:</label>
+                                            <select class="form-select" th:field="*{beanWarehousesType}" id="beanWarehousesType" required>
+                                                <option value="0" disabled >Selecciona una opción...</option>
+                                                <option th:each="tmpWarehouse: ${warehouseTypes}" th:value="${tmpWarehouse.id}"
+                                                        th:text="${tmpWarehouse.description}"></option>
+                                            </select>
+                                            <div th:if="${#fields.hasErrors('beanWarehousesType')}" th:errors="*{beanWarehousesType}" class="alert alert-danger mb-3 mt-3" id="resultErrorWarehouseType"> </div>
+                                        </div>
+
+                                        <div class="col-12 col-sm-6 mb-3 " id="divCost" style="display: none">
+                                            <label for="costType" class="form-label">Costo:</label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="costType" th:field="*{amount}" placeholder="Ej. 25000.50" required min="1" pattern="^0*(?:[1-9]\d*|\d*(?:\.\d+))$" step="any">
+                                                <span class="input-group-text">MXN</span>
+                                            </div>
+                                            <div  th:text="#{registerCost.monto.errorRequired}" class="invalid-feedback" id="costRequired"></div>
+                                            <div   th:text="#{registerCost.monto.errorPattern}" class="invalid-feedback" id="costLong"></div>
+                                            <div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="alert alert-danger mb-3 mt-3" id="resultErrorCost"> </div>
+                                        </div>
+
+                                        <div class="col-12 text-end" id="divButton" style="display: none">
+                                            <button type="button" class="btn btn-danger" id="buttonCancel" title="Cancelar" >Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="buttonSave" title="Guadar costo" disabled>Guardar</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                                <div class="col-12 text-center" id="firstAlert">
+                                    <div class="alert alert-warning" role="alert">
+                                        Selecciona el tipo de bodega
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script  th:inline="javascript">
+    $(document).ready(function() {
+        let warehouseType = document.getElementById("beanWarehousesType");
+        let firstAmount;
+        let inputCostType = document.getElementById("costType");
+        let warehouseTypes = [[${warehouseTypes}]];
+        let hideCost = [[${hideCost}]];
+        if(hideCost){
+            document.getElementById("buttonSave").disabled = true
+            document.getElementById("divCost").style.display = "block";
+            document.getElementById("divButton").style.display = "block";
+            document.getElementById("firstAlert").style.display = "none";
+        }else{
+            document.getElementById("buttonSave").disabled = true
+            document.getElementById("divCost").style.display = "none";
+            document.getElementById("divButton").style.display = "none";
+            document.getElementById("firstAlert").style.display = "block";
+        }
+        let costTypes = [[${costTypes}]];
+        var buttonCancel = document.getElementById("buttonCancel");
+        console.log(costTypes)
+
+        buttonCancel.addEventListener("click", function() {
+            hideErrorsCostType()
+            inputCostType.classList.remove('is-invalid');
+            warehouseType.classList.remove('is-invalid');
+            inputCostType.classList.remove('is-valid');
+            warehouseType.classList.remove('is-valid');
+            document.getElementById("firstAlert").style.display = "block";
+            document.getElementById("divCost").style.display = "none";
+            document.getElementById("divButton").style.display = "none";
+            warehouseType.value = 0;
+        });
+
+
+        const hideResultErrors = () =>{
+            let errorCost = document.getElementById("resultErrorCost");
+            let errorWarehouseType= document.getElementById("resultErrorWarehouseType");
+
+            if(errorCost != undefined){
+                errorCost.style.display = "none";
+            }
+
+            if(errorWarehouseType != undefined){
+                errorWarehouseType.style.display = "none";
+            }
+        }
+
+        const hideErrorsCostType  = () =>{
+            document.getElementById("costRequired").style.display = "none";
+            document.getElementById("costLong").style.display = "none";
+        }
+
+        warehouseType.addEventListener("input", function () {
+            hideErrorsCostType()
+            hideResultErrors()
+            document.getElementById("buttonSave").disabled = true
+            inputCostType.classList.remove('is-valid');
+            inputCostType.classList.remove('is-invalid');
+            if(costTypes.length > 0){
+                if(warehouseType.value != 0){
+                    document.getElementById("firstAlert").style.display = "none";
+                    document.getElementById("divCost").style.display = "block";
+                    document.getElementById("divButton").style.display = "block";
+                    let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseType.value)
+                    if(costType != undefined){
+                        inputCostType.value = parseFloat(costType.amount)
+                        firstAmount = parseFloat(costType.amount)
+                    }else{
+                        inputCostType.value = null;
+                    }
+                }else{
+                    document.getElementById("firstAlert").style.display = "block";
+                    document.getElementById("divCost").style.display = "none";
+                    document.getElementById("divButton").style.display = "none";
+                }
+            }else{
+                document.getElementById("firstAlert").style.display = "none";
+                document.getElementById("divCost").style.display = "block";
+                document.getElementById("divButton").style.display = "block";
+            }
+
+
+
+            if (warehouseType.validity.valueMissing) {
+                warehouseType.classList.remove('is-valid');
+                warehouseType.classList.add('is-invalid');
+            }else if(warehouseType.value == 0){
+                warehouseType.classList.remove('is-valid');
+                warehouseType.classList.add('is-invalid');
+                document.getElementById("divCost").style.display = "none";
+                document.getElementById("divButton").style.display = "none";
+                document.getElementById("firstAlert").style.display = "block";
+            } else {
+                warehouseType.classList.add('is-valid');
+                warehouseType.classList.remove('is-invalid');
+            }
+
+        })
+
+        inputCostType.addEventListener("input", function () {
+            hideResultErrors()
+            hideErrorsCostType()
+            if (inputCostType.validity.valueMissing) {
+                document.getElementById("costRequired").style.display = "block";
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.add('is-invalid');
+                document.getElementById("buttonSave").disabled = true
+            }else if (inputCostType.validity.patternMismatch) {
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.add('is-invalid');
+                document.getElementById("costLong").style.display = "block";
+                document.getElementById("buttonSave").disabled = true
+            }else if (inputCostType.validity.rangeUnderflow) {
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.add('is-invalid');
+                document.getElementById("costLong").style.display = "block";
+                document.getElementById("buttonSave").disabled = true
+            }else if (firstAmount == inputCostType.value) {
+                inputCostType.classList.remove('is-valid');
+                inputCostType.classList.remove('is-invalid');
+                document.getElementById("buttonSave").disabled = true
+            }else{
+                inputCostType.classList.remove('is-invalid');
+                inputCostType.classList.add('is-valid');
+                document.getElementById("buttonSave").disabled = false
+                hideErrorsCostType();
+            }
+        })
+
+        inputCostType.oninvalid = function() {
+            console.log(inputCostType.validity)
+            if (inputCostType.validity.valueMissing) {
+                document.getElementById("costRequired").style.display = "block";
+            }else{
+                document.getElementById("costRequired").style.display = "none";
+            }
+            if (inputCostType.validity.stepMismatch) {
+                inputCostType.validity.stepMismatch = false;
+            }
+
+
+
+            if (inputCostType.validity.rangeUnderflow) {
+                document.getElementById("costLong").style.display = "block";
+            }else{
+                document.getElementById("costLong").style.display = "none";
+            }
+
+            if (inputCostType.validity.valid) {
+                hideErrorsCostType();
+            }
+
+        };
+
+    });
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+
+</html>

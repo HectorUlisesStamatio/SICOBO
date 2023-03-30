@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DaoWarehousesType  extends JpaRepository<BeanWarehousesType, Long> {
-    List<BeanWarehousesType> findAllByBeanCostTypeIsNotNull();
+    List<BeanWarehousesType> findAllByBeanCostTypeIsNotNullAndStatusIs(int status);
 }

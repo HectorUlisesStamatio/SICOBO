@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.serviceimpl;
 
+import com.sicobo.sicobo.dao.DaoCostType;
 import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOWarehousesType;
 import com.sicobo.sicobo.model.BeanWarehousesType;
@@ -21,12 +22,28 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.SUCCESS;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
 
+import java.util.List;
+
+import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
+import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Service
 @Slf4j
 public class WarehousesTypeServiceImpl implements IWarehousesType {
 
     @Autowired
-    DaoWarehousesType daoWarehousesType;
+    private DaoWarehousesType daoWarehousesType;
+    
+    @Autowired
+    private DaoCostType daoCostType;
+
+    @Override
+    public ResponseEntity<Object> listarTodas() {
+        List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAll();
+        return new ResponseEntity(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehousesTypes), HttpStatus.OK);
+    }
+    
 
     @Override
     @Transactional(readOnly = true)
@@ -66,4 +83,6 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     public ResponseEntity<Object> buscar(Long id) {
         return null;
     }
+
+
 }
