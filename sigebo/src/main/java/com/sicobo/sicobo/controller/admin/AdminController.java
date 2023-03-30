@@ -3,21 +3,25 @@ package com.sicobo.sicobo.controller.admin;
 import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOCostType;
 import com.sicobo.sicobo.dto.DTOSite;
+import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
 import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
 import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
 import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
 import com.sicobo.sicobo.serviceimpl.WarehousesTypeServiceImpl;
+import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -49,6 +53,9 @@ public class AdminController {
 
     @Autowired
     private CostTypeServiceImpl costTypeService;
+    
+    @Autowired
+    private UserServiceImpl userService;
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
@@ -257,6 +264,7 @@ public class AdminController {
             assert warehouseTypes != null;
             Message costTypes = (Message) costTypeService.listar().getBody();
             assert costTypes != null;
+            
             if (result.hasErrors()) {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
@@ -291,6 +299,109 @@ public class AdminController {
 
         return REDIRECT_ADMIN_REGISTERCOSTTYPE;
     }
+
+    @Secured({ROLE_ADMIN})
+    @GetMapping("/listarGestores")
+    public String listarGestores(Model model){
+        model.addAttribute(OPTION, GESTORES);
+        try {
+            Message message = (Message) userService.listar().getBody();
+            assert message !=null;
+            model.addAttribute(RESPONSE, message);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en AdminController - al listar los gestores" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        } catch (Exception e) {
+            log.error("Ocurrio un error en AdminController - al listar los gestores" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return ADMIN_LISTGESTORES;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @GetMapping("/registrarGestor")
+    public String registrarGestor(Model model, DTOUser user){
+        model.addAttribute(OPTION, GESTORES);
+        model.addAttribute(USER, user);
+        return ADMIN_REGISTERGESTORES;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/guardarGestor")
+    public String guardarGestor(@Validated @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model){
+        try{
+        if(result.hasErrors()){
+            for (ObjectError error: result.getAllErrors()){
+                log.error(ERRORS + error.getDefaultMessage());
+            }
+            return ADMIN_REGISTERGESTORES;
+        }
+        Message response = (Message) userService.guardar(user).getBody();
+        assert response != null;
+        if(response.getType().equals(FAILED)){
+            model.addAttribute(MESSAGE, response);
+            return ADMIN_REGISTERGESTORES;
+        }
+        attributes.addFlashAttribute(MESSAGE, response);
+        }catch (AssertionError e) {
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - saveGestor" + e.getMessage());
+        }
+        return REDIRECT_ADMIN_LISTGESTORES;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/prepararEdicion")
+    public String prepararEdicion(@RequestParam("idGestor") long idGestor, Model model, RedirectAttributes attributes) {
+        model.addAttribute(OPTION, GESTORES);
+        try{
+            Message message = (Message) userService.buscar(idGestor).getBody();
+            assert message != null;
+            if (message.getType().equals(FAILED)) {
+                attributes.addFlashAttribute(MESSAGE, message);
+                return REDIRECT_ADMIN_LISTGESTORES;
+            }
+            model.addAttribute(RESPONSE, message);
+            model.addAttribute(USER, message.getResult());
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en AdminController - prepareEdicion" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en AdminController - prepareEdicion" + e.getMessage());
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+
+        return ADMIN_UPDATEGESTORES;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/actualizarGestor")
+    public String updateGestor(@Valid @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
+        model.addAttribute(OPTION, GESTORES);
+        try{
+            if (result.hasErrors()) {
+                for (ObjectError error : result.getAllErrors()) {
+                    log.error("Error: " + error.getDefaultMessage());
+                }
+                return ADMIN_UPDATEGESTORES;
+            }
+            Message response = (Message) userService.editar(user).getBody();
+            assert response !=null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                return ADMIN_UPDATEGESTORES;
+            }
+            attributes.addFlashAttribute(MESSAGE, response);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en AdminController - updateGestores" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en AdminController - updateGestores" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return REDIRECT_ADMIN_LISTGESTORES;
+    }
+
 
 
 }

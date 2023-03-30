@@ -66,18 +66,11 @@
                                         <div th:unless="${#fields.hasErrors('rfc')}" th:text="#{register.rfc.error}" class="invalid-feedback"></div>
                                     </div>
 
-                                    <div class="col-8 col-sm-7">
+                                    <div class="col-12">
                                         <label for="phone_number" class="form-label">Número de Teléfono</label>
                                         <input th:field="*{phoneNumber}" type="number" class="form-control" id="phone_number" pattern="[0-9]{1,12}" required>
                                         <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="alert alert-danger mb-3 mt-3"></div>
                                         <div th:unless="${#fields.hasErrors('phoneNumber')}" th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
-                                    </div>
-
-                                    <div class="col-4 col-sm-5">
-                                        <label for="ext" class="form-label">Extensión</label>
-                                        <input th:field="*{ext}" type="number" class="form-control" id="ext" pattern="[0-9]{0,3}" maxlength="3">
-                                        <div th:if="${#fields.hasErrors('ext')}" th:errors="*{ext}" class="alert alert-danger mb-3 mt-3"></div>
-                                        <div th:unless="${#fields.hasErrors('ext')}" th:text="#{register.ext.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">

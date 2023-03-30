@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class DTOUser {
 
+    private Long id;
+
     @NotBlank(message = "El campo no puede estar vacío")
     @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\\s]+$", message = "Ingresa un nombre válido")
     private String name;
@@ -33,9 +35,6 @@ public class DTOUser {
     @Pattern(regexp = "[0-9]{1,12}", message = "Ingresa un teléfono válido")
     private String phoneNumber;
 
-    @Length(max = 3, message = "Solo se permite máximo 3 caracteres")
-    @Pattern(regexp = "[0-9]{0,3}", message = "Ingresa una extensión válida")
-    private String ext;
 
     @PositiveOrZero(message = "Tiene que ser un número positivo o 0")
     private int enabled;
