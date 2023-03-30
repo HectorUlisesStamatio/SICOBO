@@ -99,6 +99,9 @@ public final class Constantes {
         public static final String ADMIN_UPDATEGESTORES = "adminViews/updateGestor";
         public static final String GESTOR_REGISTERWAREHOUSE = "gestorViews/registerWarehouse";
         public static final String REDIRECT_GESTOR_LISTWAREHOUSES = "redirect:/gestor/bodegas";
+        public static final String ADMIN_TERMSANDCONDITIONS = "adminViews/listTermsAndConditions";
+        public static final String REDIRECT_ADMIN_TERMSANDCONDITIONS = "redirect:/admin/listarTerminosYCondiciones";
+        public static final String USER_TERMSANDCONDITIONS = "userViews/termsAndConditions";
     }
 
     public static final class Stuff{
@@ -123,6 +126,8 @@ public final class Constantes {
         public static final String GESTORES = "gestores";
         public static final String MAP_ERROR = "error";
         public static final String WAREHOUSE = "warehouse";
+
+        public static final String TERMSANDCONDTIONS = "termsAndConditions";
     }
 
     public static class ObjectMessages{

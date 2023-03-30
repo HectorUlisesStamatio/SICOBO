@@ -1,21 +1,20 @@
 package com.sicobo.sicobo.controller.admin;
 
-import com.sicobo.sicobo.dao.DaoWarehousesType;
 import com.sicobo.sicobo.dto.DTOCostType;
+import com.sicobo.sicobo.dto.DTOPolicies;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.dto.DTOUser;
+import com.sicobo.sicobo.model.BeanPolicies;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
-import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
-import com.sicobo.sicobo.serviceimpl.SiteServiceImpl;
-import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
-import com.sicobo.sicobo.serviceimpl.WarehousesTypeServiceImpl;
-import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
+import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +55,9 @@ public class AdminController {
     
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private PoliciesServiceImpl policiesService;
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
@@ -250,9 +252,55 @@ public class AdminController {
     @Secured({ROLE_ADMIN})
     @PostMapping("/montoBodega")
     public String findAmountByWarehouse(Model model, DTOCostType costType){
-
-
         return ADMIN_REGISTERCOSTTYPE;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @GetMapping("/listarTerminosYCondiciones")
+    public String listTermsAndConditions(Model model, DTOPolicies termsAndConditions){
+        try{
+            ResponseEntity<?> responseEntity = policiesService.listar();
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+            BeanPolicies termsAndConditionsSearched = (BeanPolicies) message.getResult();
+
+            if (termsAndConditionsSearched.getDescription() != null){
+                termsAndConditions.setDescription(termsAndConditionsSearched.getDescription());
+            }else{
+                termsAndConditions.setDescription("No hay términos y condiciones registrados");
+            }
+
+            model.addAttribute(TERMSANDCONDTIONS, termsAndConditions);
+        }catch (Exception e){
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - listarTerminosYCondiciones" + e.getMessage());
+        }
+        return ADMIN_TERMSANDCONDITIONS;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/guardarTerminosYCondiciones")
+    public String saveTermsAndConditions(Model model, @Valid @ModelAttribute("termsAndConditions") DTOPolicies termsAndConditions, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+        try{
+            if (bindingResult.hasErrors()) {
+                for (ObjectError errors : bindingResult.getAllErrors()) {
+                    log.error("Error: " + errors.getDefaultMessage());
+                }
+                model.addAttribute(TERMSANDCONDTIONS,termsAndConditions);
+                return ADMIN_TERMSANDCONDITIONS;
+            }
+
+            Safelist listaBlanca = Safelist.basicWithImages().removeTags("script");
+            String contenidoSanitizado = Jsoup.clean(termsAndConditions.getDescription(), listaBlanca);
+            termsAndConditions.setDescription(contenidoSanitizado);
+            ResponseEntity<?> responseEntity = policiesService.guardar(termsAndConditions);
+            Message message = (Message) responseEntity.getBody();
+            redirectAttributes.addFlashAttribute(MESSAGE,message);
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - guardarTerminosYCondiciones" + e.getMessage());
+        }
+        return REDIRECT_ADMIN_TERMSANDCONDITIONS;
     }
 
     @Secured({ROLE_ADMIN})

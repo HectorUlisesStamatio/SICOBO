@@ -40,7 +40,7 @@
         </li>
 
         <li class="nav-item">
-            <a th:classappend="${opcion}=='politicas' ? '' : 'collapsed'" class="nav-link" href="#">
+            <a th:classappend="${opcion}=='politicas' ? '' : 'collapsed'" class="nav-link" th:href="@{/admin/listarTerminosYCondiciones}">
                 <i class="bi bi-file-earmark-medical"></i>
                 <span>Políticas y Terminos</span>
             </a>
