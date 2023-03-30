@@ -1,6 +1,5 @@
 package com.sicobo.sicobo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,7 +20,6 @@ public class BeanCostType {
 
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JsonIgnore
     @JoinColumn(name = "warehouses_type_id")
     private BeanWarehousesType beanWarehousesType;
 

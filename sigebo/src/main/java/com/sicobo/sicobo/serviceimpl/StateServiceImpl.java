@@ -22,7 +22,7 @@ public class StateServiceImpl implements IStateService {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
-        return new ResponseEntity(new Message("Consulta exitosa","La consulta de estados ha sido exitosa", "success",200, daoState.findAll()), HttpStatus.OK);
+        return new ResponseEntity<>(new Message("Consulta exitosa","La consulta de estados ha sido exitosa", "success",200, daoState.findAll()), HttpStatus.OK);
     }
 
     @Override

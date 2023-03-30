@@ -22,12 +22,6 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.SUCCESS;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
 import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
 
-import java.util.List;
-
-import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
-import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
-import static com.sicobo.sicobo.util.Constantes.MessageHeaders.*;
-import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Service
 @Slf4j
 public class WarehousesTypeServiceImpl implements IWarehousesType {
@@ -37,11 +31,11 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     
     @Autowired
     private DaoCostType daoCostType;
-
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> listarTodas() {
         List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAll();
-        return new ResponseEntity(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehousesTypes), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehousesTypes), HttpStatus.OK);
     }
     
 
@@ -49,14 +43,10 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
         try{
-            List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAllByBeanCostTypeIsNotNull();
+            List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAllByBeanCostTypesIsNotNullAndBeanCostTypes_StatusIs(1);
             assert beanWarehousesTypes != null;
 
-            if(!beanWarehousesTypes.isEmpty()){
-                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehousesTypes), HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(new Message(FAILED_SEARCH,"No hay registros de tipos de bodegas", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
-            }
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehousesTypes), HttpStatus.OK);
         }catch(Exception e){
             log.error("Ocurrió un error en  WarehouseTypeServiceImpl - listar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);

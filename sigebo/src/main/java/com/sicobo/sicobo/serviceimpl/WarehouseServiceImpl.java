@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findWarehousesByBeanSite(BeanSite beanSite) {
         if(!daoWarehouse.existsBeanWarehouseByBeanSite(beanSite)){
-            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El sitio no cuenta con bodegas", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"El sitio no cuenta con bodegas", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
         try{
@@ -76,6 +77,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
             log.error("Ocurrió un error en  WarehouseServiceImpl - buscar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findWarehousesByBeanSiteId(Long id) {
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, daoWarehouse.findAllByBeanSite_Id(id)), HttpStatus.OK);
+
 
     }
 
@@ -139,8 +147,25 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminar(BeanWarehouse beanWarehouse) {
-        return null;
+        Optional<BeanWarehouse> beanWarehouseOpt = daoWarehouse.findBeanWarehouseById(beanWarehouse.getId());
+        String typeChange = beanWarehouse.getStatus() == 1 ? "habilitar" : "deshabilitar";
+        String typeMethod = beanWarehouse.getStatus() == 1 ? "habilitacion" : "deshabilitacion";
+        String typeTitle= beanWarehouse.getStatus() == 1 ? "Habilitacion" : "Deshabilitacion";
+        if(!beanWarehouseOpt.isPresent()){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"La bodega ha "+ typeChange +" no se encuentra registrada en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        BeanWarehouse beanWarehouseSave = beanWarehouseOpt.get();
+        beanWarehouseSave.setStatus(beanWarehouse.getStatus());
+        try{
+            daoWarehouse.save(beanWarehouseSave);
+            return new ResponseEntity<>(new Message(typeTitle + " exitosa","Se ha realizado la " + typeMethod+ " exitosamente", SUCCESS,SUCCESS_CODE, beanWarehouseSave), HttpStatus.OK);
+        }catch(Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - eliminar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -164,7 +189,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminarImagenes(Long id) {
         List<BeanWarehouseImage> beanWarehouseImages = daoWarehouseImage.findAllByBeanWarehouse_Id(id);
 
