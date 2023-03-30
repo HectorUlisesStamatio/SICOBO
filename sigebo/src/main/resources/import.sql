@@ -14,9 +14,3 @@ INSERT INTO `sicobo`.`warehouses_type` (`description`) VALUES ('Simple');
 INSERT INTO `sicobo`.`warehouses_type` (`description`) VALUES ('Media');
 INSERT INTO `sicobo`.`warehouses_type` (`description`) VALUES ('Especial');
 INSERT INTO `sicobo`.`warehouses_type` (`description`) VALUES ('Empresarial');
-
-INSERT INTO `sicobo`.`cost_type` (`amount`, `status`, `warehouses_type_id`) VALUES ('2000', '1', '1');
-INSERT INTO `sicobo`.`cost_type` (`amount`, `status`, `warehouses_type_id`) VALUES ('4000', '1', '2');
-INSERT INTO `sicobo`.`cost_type` (`amount`, `status`, `warehouses_type_id`) VALUES ('6000', '1', '3');
-INSERT INTO `sicobo`.`cost_type` (`amount`, `status`, `warehouses_type_id`) VALUES ('8000', '1', '4');
-

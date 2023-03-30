@@ -23,7 +23,6 @@ public final class Constantes {
         public static final String FAILED_EXECUTION = "Ejecución fallida";
         public static final String SUCCESSFUL_REGISTRATION = "Registro exitoso";
         public static final String SUCCESSFUL_SEARCH = "Búsqueda exitosa";
-
         public static final String SUCCESSFUL_UPDATE = "Actualización exitosa";
         public static final String FAILED_SEARCH = "Búsqueda fallida";
     }
@@ -31,7 +30,6 @@ public final class Constantes {
     public static final class MessageCodes{
 
         private MessageCodes(){}
-
         public static final int SERVER_FAIL_CODE = 500;
         public static final int FAIL_CODE = 400;
         public static final int SUCCESS_CODE = 200;
@@ -43,11 +41,8 @@ public final class Constantes {
         public static final String INSERT_SUCCESSFUL="Se ha realizado el registro exitosamente";
         public static final String SEARCH_SUCCESSFUL="Se ha realizado la búsqueda exitosamente";
         public static final String UPDATE_SUCCESSFUL="Se ha realizado la actualización exitosamente";
-
         public static final String ERROR_NAME = "Ingresa un valor válido en el campo nombre";
-
         public static final String ERROR_ADDRESS = "Ingresa un valor válido en el campo direccion";
-
         public static final String ERROR_STATE = "Ingresa un valor válido en el campo estado";
 
     }
@@ -72,8 +67,8 @@ public final class Constantes {
         public static final String ADMIN_REGISTERSITE = "adminViews/registerSite";
         public static final String REDIRECT_ADMIN_LISTSITES = "redirect:/admin/sitios";
         public static final String ADMIN_UPDATESITE = "adminViews/updateSite";
-
         public static final String ADMIN_REGISTERCOSTTYPE = "adminViews/registerCostType";
+        public static final String REDIRECT_ADMIN_REGISTERCOSTTYPE = "redirect:/admin/costos";
     }
 
     public static final class Stuff{
@@ -89,12 +84,14 @@ public final class Constantes {
         public static final String SITES = "sitios";
         public static final String STATES = "states";
         public static final String SITE = "site";
-
         public static final String WAREHOUSE_TYPES = "warehouseTypes";
-
         public static final String COST_TYPES = "costTypes";
-
         public static final String COSTTYPES = "pagos";
+        
+        public static final String HIDE_COST ="hideCost";
+
+        public static final String COST ="cost";
+        
     }
 
     public static class ObjectMessages{
