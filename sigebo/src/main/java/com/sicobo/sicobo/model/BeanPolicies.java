@@ -13,6 +13,7 @@ public class BeanPolicies {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "longtext")
     private String description;
 
 
