@@ -1,6 +1,5 @@
 package com.sicobo.sicobo.dao;
 
-import com.sicobo.sicobo.model.BeanCostType;
 import com.sicobo.sicobo.model.BeanPolicies;
 import org.springframework.data.jpa.repository.JpaRepository;
 

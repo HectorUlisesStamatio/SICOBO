@@ -34,7 +34,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
-      <div class="col-12" th:if="${response}">
+      <div class="col-12" th:if="${response != null}">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">
@@ -65,8 +65,8 @@
                       <th scope="col">Habilitar o Deshabilitar</th>
                     </tr>
                     </thead>
-                    <tbody th:if="${status != 400}">
-                      <tr th:each="warehouse, index: ${response.result}" >
+                    <tbody>
+                      <tr th:if="${#arrays.length(response.result) > 0}" th:each="warehouse, index: ${response.result}" >
                         <th scope="row" th:text="${index.index + 1 }"></th>
                         <td>
                           <div th:id="'carousel-' + ${warehouse.id}"  class="carousel slide" data-bs-ride="carousel">
@@ -92,7 +92,7 @@
                         <td th:text="${warehouse.warehousesType.description}"></td>
                         <td th:text="${warehouse.section}"></td>
                         <td th:text="${warehouse.description}"></td>
-                        <td th:text="${warehouse.finalCost}"></td>
+                        <td th:text="'$' + ${warehouse.finalCost} + 'MXN'"></td>
                         <td>
                           <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Disponible' : 'En renta')}"
                                 th:classappend="${warehouse.status == 0 ? 'bg-danger' : (warehouse.status == 1 ? 'bg-success' : 'bg-warning')}"></span>
@@ -117,9 +117,7 @@
                           </form>
                         </td>
                       </tr>
-                    </tbody>
-                    <tbody th:unless="${status != 400}">
-                      <tr>
+                      <tr th:unless="${#arrays.length(response.result) > 0}">
                         <td colspan="7" class="text-center fw-semibold">No hay bodegas registradas en el sistema para su sitio.</td>
                       </tr>
                     </tbody>

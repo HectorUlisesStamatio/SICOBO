@@ -43,7 +43,7 @@ public class WarehousesTypeServiceImpl implements IWarehousesType {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> listar() {
         try{
-            List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAllByBeanCostTypesIsNotNullAndBeanCostTypes_StatusIs(1);
+            List<BeanWarehousesType> beanWarehousesTypes = daoWarehousesType.findAllByBeanCostTypesIsNotNullAndBeanCostTypesStatusIs(1);
             assert beanWarehousesTypes != null;
 
             return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehousesTypes), HttpStatus.OK);

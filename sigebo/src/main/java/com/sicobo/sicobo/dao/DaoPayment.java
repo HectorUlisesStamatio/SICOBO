@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DaoPayment  extends JpaRepository<BeanPayment, Long> {
 
-    boolean existsBeanPaymentByBeanWarehouse_IdAndStatusEquals(Long id, int status);
+    boolean existsBeanPaymentByBeanWarehouseIdAndStatusEquals(Long id, int status);
 
 }

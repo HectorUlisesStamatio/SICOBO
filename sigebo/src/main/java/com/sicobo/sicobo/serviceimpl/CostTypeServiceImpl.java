@@ -57,7 +57,7 @@ public class CostTypeServiceImpl implements ICostTypeService {
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El tipo de bodega es un valor inválido", FAILED,FAIL_CODE, null), HttpStatus.OK);
         }
 
-        Optional<BeanCostType> costTypeOptional = daoCostType.findBeanCostTypeByBeanWarehousesType_IdAndStatusIs((long) dtoCostType.getBeanWarehousesType(), 1);
+        Optional<BeanCostType> costTypeOptional = daoCostType.findBeanCostTypeByBeanWarehousesTypeIdAndStatusIs((long) dtoCostType.getBeanWarehousesType(), 1);
 
         if(costTypeOptional.isPresent()){
             BeanCostType costType = costTypeOptional.get();

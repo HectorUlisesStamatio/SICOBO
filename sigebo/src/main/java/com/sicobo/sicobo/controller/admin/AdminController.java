@@ -8,6 +8,7 @@ import com.sicobo.sicobo.model.BeanPolicies;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
 import com.sicobo.sicobo.serviceimpl.*;
+import com.sicobo.sicobo.util.Constantes;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
-
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.SUCCESS_CODE;
+import static com.sicobo.sicobo.util.Constantes.MessageCodes.FAIL_CODE;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.*;
@@ -258,6 +260,7 @@ public class AdminController {
     @Secured({ROLE_ADMIN})
     @GetMapping("/listarTerminosYCondiciones")
     public String listTermsAndConditions(Model model, DTOPolicies termsAndConditions){
+        model.addAttribute(OPTION, POLICIES);
         try{
             ResponseEntity<?> responseEntity = policiesService.listar();
             Message message = (Message) responseEntity.getBody();
@@ -281,19 +284,29 @@ public class AdminController {
     @Secured({ROLE_ADMIN})
     @PostMapping("/guardarTerminosYCondiciones")
     public String saveTermsAndConditions(Model model, @Valid @ModelAttribute("termsAndConditions") DTOPolicies termsAndConditions, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+        model.addAttribute(OPTION, POLICIES);
         try{
             if (bindingResult.hasErrors()) {
                 for (ObjectError errors : bindingResult.getAllErrors()) {
                     log.error("Error: " + errors.getDefaultMessage());
                 }
+
+                model.addAttribute(STATUS, FAIL_CODE);
                 model.addAttribute(TERMSANDCONDTIONS,termsAndConditions);
                 return ADMIN_TERMSANDCONDITIONS;
             }
-
             Safelist listaBlanca = Safelist.basicWithImages().removeTags("script");
             String contenidoSanitizado = Jsoup.clean(termsAndConditions.getDescription(), listaBlanca);
             termsAndConditions.setDescription(contenidoSanitizado);
             ResponseEntity<?> responseEntity = policiesService.guardar(termsAndConditions);
+
+            Message response = (Message) responseEntity.getBody();
+            assert response != null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, "Algo salio mál con el registro, corrobora que no ingreses carácteres que no esten integrados en la herramienta");
+                model.addAttribute(TERMSANDCONDTIONS,termsAndConditions);
+                return ADMIN_REGISTERCOSTTYPE;
+            }
             Message message = (Message) responseEntity.getBody();
             redirectAttributes.addFlashAttribute(MESSAGE,message);
         }catch (Exception e){
