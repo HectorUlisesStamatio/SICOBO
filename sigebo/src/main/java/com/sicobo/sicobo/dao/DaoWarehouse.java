@@ -12,9 +12,9 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
 
     boolean existsBeanWarehouseByBeanSite(BeanSite beanSite);
-    boolean existsBeanWarehouseByBeanSite_Id(Long id);
+    boolean existsBeanWarehouseByBeanSiteId(Long id);
     List<BeanWarehouse> findBeanWarehouseByBeanSite(BeanSite beanSite);
-    List<BeanWarehouse> findAllByBeanSite_Id(Long id);
+    List<BeanWarehouse> findAllByBeanSiteId(Long id);
 
     boolean existsBeanWarehouseById(Long id);
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM BeanWarehouse a WHERE a.id = :id AND a.status = 2")

@@ -25,6 +25,13 @@
             <form method="post" th:action="@{/admin/guardarTerminosYCondiciones}" th:object="${termsAndConditions}" id="formValid">
               <div class="col">
                 <div class="col-12">
+                  <div th:if="${message != null}" th:classAppend="${message.code == 200 ? 'alert-success' : 'alert-danger'}" class="alert alert-dismissible fade show" role="alert" >
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="policies" class="form-label">Especifica los términos y condiciones a tus próximos usuarios. (no agregues carácteres que no se encuentren en la herramienta)</label>
                   <textarea th:field="*{description}" th:text="${description}" required id="policies"> </textarea>
                   <div th:unless="${#fields.hasErrors('description')}" th:text="#{policies.errorRequired}" class="invalid-feedback" id="policiesRequired"></div>
                   <div th:if="${#fields.hasErrors('description')}"  class="alert alert-danger mb-3 mt-3">
@@ -58,29 +65,31 @@
 
     tinymce.init({
       selector: 'textarea',
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
+      plugins: [
+        'advlist autolink lists link image',
+        'charmap print preview anchor help',
+        'searchreplace visualblocks code',
+        'insertdatetime media table paste wordcount'
+      ],
       toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-      tinycomments_mode: 'embedded',
-      tinycomments_author: 'Author name',
-      mergetags_list: [
-        { value: 'First.Name', title: 'First Name' },
-        { value: 'Email', title: 'Email' },
-      ]
-    });
-
-    policies.addEventListener("input", function(event) {
-      document.getElementById("policiesRequired").style.display = "none";
-      if (policies.validity.valueMissing) {
-        document.getElementById("policiesRequired").style.display = "block";
-        policies.classList.remove('is-valid');
-        policies.classList.add('is-invalid');
-      }else{
-        policies.classList.remove('is-invalid');
-        policies.classList.add('is-valid');
-        document.getElementById("policiesRequired").style.display = "none";
+      setup: function (editor) {
+        editor.on('change', function () {
+          document.getElementById("policiesRequired").style.display = "none";
+          var content = editor.getContent();
+          if (content.length === 0) {
+            policies.setCustomValidity("Error campo vacío")
+            document.getElementById("policiesRequired").style.display = "block";
+            policies.classList.remove('is-valid');
+            policies.classList.add('is-invalid');
+          } else {
+            policies.setCustomValidity("")
+            policies.classList.remove('is-invalid');
+            policies.classList.add('is-valid');
+            document.getElementById("policiesRequired").style.display = "none";
+          }
+        });
       }
     });
-
   })
 
   $('#formValid').submit(function(event) {

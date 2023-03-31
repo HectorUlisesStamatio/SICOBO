@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DaoWarehouseImage  extends JpaRepository<BeanWarehouseImage, Long> {
 
-    List<BeanWarehouseImage> findAllByBeanWarehouse_Id(Long id);
+    List<BeanWarehouseImage> findAllByBeanWarehouseId(Long id);
 }

@@ -5,13 +5,14 @@
 </head>
 <head th:insert="~{layout/admin/head :: head}"></head>
 <body>
+<div id="loader">
+    <div class="loader"></div>
+</div>
 <header th:insert="~{layout/admin/header :: header}"></header>
 <aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
 
 <main id="main" class="main">
-    <div id="loader">
-        <div class="loader"></div>
-    </div>
+
     <div class="pagetitle">
         <h1>Bodegas</h1>
         <nav>
@@ -41,91 +42,97 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${warehouse.id} ? 'Modificar bodega': 'Registrar bodega'">Registrar Bodega</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="section" class="form-label">Sección</label>
+                                    <div class="form-group has-validation" >
+                                        <input type="text" th:field="*{section}" id="section" class="form-control" required maxlength="100" minlength="5" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorRequired}" class="invalid-feedback" id="sectionRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorPattern}" class="invalid-feedback" id="sectionPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMax}" class="invalid-feedback" id="sectionMax"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMin}" class="invalid-feedback" id="sectionMin"></div>
+                                        <div th:if="${#fields.hasErrors('section')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{section}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="col-12 mb-3">
-                                <label for="section" class="form-label">Sección</label>
-                                <div class="form-group has-validation" >
-                                    <input type="text" th:field="*{section}" id="section" class="form-control" required maxlength="100" minlength="5" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorRequired}" class="invalid-feedback" id="sectionRequired"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorPattern}" class="invalid-feedback" id="sectionPattern"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMax}" class="invalid-feedback" id="sectionMax"></div>
-                                    <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMin}" class="invalid-feedback" id="sectionMin"></div>
-                                    <div th:if="${#fields.hasErrors('section')}"  class="alert alert-danger mb-3 mt-3">
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <div class="form-group has-validation">
+                                        <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"></textarea>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorRequired}" class="invalid-feedback" id="descriptionRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="descriptionPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="descriptionMax"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMin}" class="invalid-feedback" id="descriptionMin"></div>
+                                        <div th:if="${#fields.hasErrors('description')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{description}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <label for="warehousesType" class="form-label">Tipo de bodega</label>
+                                    <select class="form-select" th:field="*{warehousesType}" id="warehousesType" required onchange="mostrarCosto()">
+                                        <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
+                                                th:text="${tmpWarehouseType.description}" th:selected="${tmpWarehouseType.id == response.result[0].id}"></option>
+                                    </select>
+                                    <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
+                                    <div th:if="${#fields.hasErrors('warehousesType')}"  class="alert alert-danger mb-3 mt-3">
                                         <div class="row">
-                                            <div th:errors="*{section}" class="col-9"></div>
+                                            <div th:errors="*{warehousesType}" class="col-9"></div>
                                             <div class="col-3 text-end">
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-12 mb-3">
-                                <label for="description" class="form-label">Descripción</label>
-                                <div class="form-group has-validation">
-                                    <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"></textarea>
-                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorRequired}" class="invalid-feedback" id="descriptionRequired"></div>
-                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="descriptionPattern"></div>
-                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="descriptionMax"></div>
-                                    <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMin}" class="invalid-feedback" id="descriptionMin"></div>
-                                    <div th:if="${#fields.hasErrors('description')}"  class="alert alert-danger mb-3 mt-3">
-                                        <div class="row">
-                                            <div th:errors="*{description}" class="col-9"></div>
-                                            <div class="col-3 text-end">
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <label for="section" class="form-label">Costo</label>
+
+                                    <div class="form-group has-validation" >
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" th:field="*{finalCost}" id="finalCost" class="form-control" minlength="1" step="any" pattern="/^(?!0\d|$)\d*(\.\d{1,2})?$/" required />
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
+                                        <div th:if="${#fields.hasErrors('finalCost')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{finalCost}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-12 mb-3">
-                                <label for="warehousesType" class="form-label">Tipo de bodega</label>
-                                <select class="form-select" th:field="*{warehousesType}" id="warehousesType" required onchange="mostrarCosto()">
-                                    <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
-                                            th:text="${tmpWarehouseType.description}" th:selected="${tmpWarehouseType.id == response.result[0].id}"></option>
-                                </select>
-                                <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
-                                <div th:if="${#fields.hasErrors('warehousesType')}"  class="alert alert-danger mb-3 mt-3">
-                                    <div class="row">
-                                        <div th:errors="*{warehousesType}" class="col-9"></div>
-                                        <div class="col-3 text-end">
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-12 mb-3">
-                                <label for="section" class="form-label">Costo</label>
-                                <div class="form-group has-validation" >
-                                    <input type="number" disabled th:field="*{finalCost}" id="finalCost" class="form-control" minlength="1" step="any" pattern="/^(?!0\d|$)\d*(\.\d{1,2})?$/" required>
-                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
-                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
-                                    <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
-                                    <div th:if="${#fields.hasErrors('finalCost')}"  class="alert alert-danger mb-3 mt-3">
-                                        <div class="row">
-                                            <div th:errors="*{finalCost}" class="col-9"></div>
-                                            <div class="col-3 text-end">
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div  class="col-12 mb-3">
-                                <label for="images" class="form-label">Imágen(es):</label>
-                                <div class="form-group has-validation" >
-                                    <input type="file" id="images"  class="form-control" th:field="*{images}" name="images" multiple maxsize="1000000" accept="image/png,image/jpeg" required>
-                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
-                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorAccept}" class="invalid-feedback" id="imagesAccept"></div>
-                                    <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
-                                    <div th:if="${#fields.hasErrors('images')}"  class="alert alert-danger mb-3 mt-3">
-                                        <div class="row">
-                                            <div th:errors="*{images}" class="col-9"></div>
-                                            <div class="col-3 text-end">
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div  class="col-12 mb-3">
+                                    <label for="images" class="form-label">Imágen(es):</label>
+                                    <div class="form-group has-validation" >
+                                        <input type="file" id="images"  class="form-control" th:field="*{images}" name="images" multiple maxsize="1000000" accept="image/png,image/jpeg" required>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorAccept}" class="invalid-feedback" id="imagesAccept"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
+                                        <div th:if="${#fields.hasErrors('images')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{images}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -393,16 +400,19 @@
 
         let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
         if(warehouseTypeId == null || warehouseTypeId == 0) {
-            $('#finalCost').prop('disabled', true);
-            $('#finalCost').val("");
+            finalCost.disabled = true;
+            finalCost.value = "";
         } else {
-            let warehouseTypes = [[${response.result}]]
             let costTypes = [[${costTypes}]];
             let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseTypeId)
-
             hideErrorsInputFinalCosto()
-            document.getElementById("finalCost").value = costType.amount;
-            $('#finalCost').prop('disabled', false);
+            warehousesType.classList.remove('is-invalid');
+            warehousesType.classList.add('is-valid');
+            finalCost.classList.remove('is-invalid');
+            finalCost.classList.add('is-valid');
+            finalCost.disabled = false;
+            finalCost.value = costType.amount;
+
         }
     }
 
@@ -417,6 +427,7 @@
                 if (result.isConfirmed) {
                     const loader = document.getElementById("loader");
                     loader.style.display = "block";
+                    document.querySelector('.loader').classList.add('centered-animation');
                     this.submit();
 
                 }

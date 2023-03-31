@@ -174,7 +174,7 @@ public class SiteServiceImpl implements ISiteService {
 
     public ResponseEntity<Object> findBeanSiteByBeanUser(BeanUser beanUser) {
         if(!daoSite.existsByBeanUser(beanUser)){
-            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El usuario no pertenece a un sitio", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"El usuario no pertenece a un sitio", FAILED,SUCCESS_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
         try{

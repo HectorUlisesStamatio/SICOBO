@@ -11,5 +11,5 @@ public interface DaoCostType  extends JpaRepository<BeanCostType, Long> {
 
     List<BeanCostType> findAllByStatusIs(int status);
 
-    Optional<BeanCostType> findBeanCostTypeByBeanWarehousesType_IdAndStatusIs(Long idWarehouseType, int status);
+    Optional<BeanCostType> findBeanCostTypeByBeanWarehousesTypeIdAndStatusIs(Long idWarehouseType, int status);
 }

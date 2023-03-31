@@ -126,8 +126,9 @@ public final class Constantes {
         public static final String GESTORES = "gestores";
         public static final String MAP_ERROR = "error";
         public static final String WAREHOUSE = "warehouse";
-
         public static final String TERMSANDCONDTIONS = "termsAndConditions";
+        public static final String POLICIES = "politicas";
+        public static final String WAREHOUSES = "bodegas";
     }
 
     public static class ObjectMessages{

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,12 +66,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findWarehousesByBeanSite(BeanSite beanSite) {
+        List<BeanWarehouse> beanWarehouses = new ArrayList<>();
         if(!daoWarehouse.existsBeanWarehouseByBeanSite(beanSite)){
-            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"El sitio no cuenta con bodegas", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"El sitio no cuenta con bodegas", FAILED,SUCCESS_CODE, beanWarehouses), HttpStatus.BAD_REQUEST);
         }
 
         try{
-            List<BeanWarehouse> beanWarehouses = daoWarehouse.findBeanWarehouseByBeanSite(beanSite);
+            beanWarehouses = daoWarehouse.findBeanWarehouseByBeanSite(beanSite);
             assert beanWarehouses != null;
             return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouses), HttpStatus.OK);
         }catch(Exception e){
@@ -82,9 +84,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findWarehousesByBeanSiteId(Long id) {
-            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, daoWarehouse.findAllByBeanSite_Id(id)), HttpStatus.OK);
-
-
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, daoWarehouse.findAllByBeanSiteId(id)), HttpStatus.OK);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminarImagenes(Long id) {
-        List<BeanWarehouseImage> beanWarehouseImages = daoWarehouseImage.findAllByBeanWarehouse_Id(id);
+        List<BeanWarehouseImage> beanWarehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
 
         for (BeanWarehouseImage beanWarehouseImage : beanWarehouseImages){
             try {

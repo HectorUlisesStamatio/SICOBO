@@ -51,6 +51,7 @@ public class GestorController {
     @PostMapping("/prepararRegistro")
     public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
+            model.addAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = costTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
@@ -86,6 +87,7 @@ public class GestorController {
     public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("idWarehouse") @NotNull long idWarehouse,
                                          Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
+            model.addAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = warehouseService.buscar(idWarehouse);
             Message message = (Message) responseEntity.getBody();
             assert message != null;
@@ -107,6 +109,11 @@ public class GestorController {
                 warehouse.setWarehousesType(beanWarehouse.getWarehousesType().getId().intValue());
             }
 
+            responseEntity = costTypeService.listar();
+            message = (Message) responseEntity.getBody();
+            assert message != null;
+            List<BeanCostType> listBeanCostType = (List<BeanCostType>) message.getResult();
+
             responseEntity = warehousesTypeService.listar();
             Message message2 = (Message) responseEntity.getBody();
             assert message2 != null;
@@ -119,6 +126,7 @@ public class GestorController {
                 return REDIRECT_GESTOR_LISTWAREHOUSES;
             }
 
+            model.addAttribute(COST_TYPES, listBeanCostType);
             model.addAttribute(RESPONSE, message2);
             model.addAttribute(SITIOID, idSite);
             model.addAttribute(WAREHOUSE, warehouse);
@@ -135,6 +143,7 @@ public class GestorController {
     @PostMapping("/guardarBodega")
     public String saveWarehouse(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         try{
+            redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = warehousesTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
@@ -221,6 +230,7 @@ public class GestorController {
     @GetMapping("/bodegas")
     public String listWarehouses(Model model, RedirectAttributes redirectAttributes){
         try {
+            model.addAttribute(OPTION, WAREHOUSES);
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
             assert username != null;
@@ -245,8 +255,7 @@ public class GestorController {
             error = handleErrorMessage(message);
             if (error != null){
                 model.addAttribute(MESSAGE, message);
-                int status = responseEntity.getStatusCode().value();
-                model.addAttribute(STATUS, status);
+                model.addAttribute(STATUS, SUCCESS_CODE);
                 model.addAttribute(RESPONSE, null);
                 return GESTOR_WAREHOUSES;
             }
@@ -259,10 +268,8 @@ public class GestorController {
             error = handleErrorMessage(message);
             if (error != null){
                 model.addAttribute(SITIOID,  beanSite.getId());
-                model.addAttribute(MESSAGE, message);
-                int status = responseEntity.getStatusCode().value();
-                model.addAttribute(STATUS, status);
-                model.addAttribute(RESPONSE, RESPONSE);
+                model.addAttribute(RESPONSE, message);
+                model.addAttribute(STATUS, SUCCESS_CODE);
                 return GESTOR_WAREHOUSES;
             }
 
@@ -283,6 +290,7 @@ public class GestorController {
     @PostMapping("/cambiarEstadoBodega")
     public String changeStateWarehouse(@RequestParam("idWarehouse") Optional<Long> idWarehouse, @RequestParam("statusWarehouse") Optional<Boolean> statusWarehouse, Model model, RedirectAttributes redirectAttributes) {
         try {
+            redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             BeanWarehouse beanWarehouse = new BeanWarehouse();
             if (idWarehouse.isPresent() && statusWarehouse.isPresent()) {
                 beanWarehouse.setId(idWarehouse.get());
