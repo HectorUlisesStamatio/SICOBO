@@ -37,12 +37,12 @@
     - [ ] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
     - [ ] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
 - [ ] 🗃️Bodegas
-    - [ ] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [ ] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [ ] Consultar bodegas rentadas y disponibles - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Consultar bodegas por cliente - [@Nahum](https://www.github.com/GaticaNahum)
 
@@ -53,14 +53,17 @@
     - [ ] Notificación por renovación de pago - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Notificación por desalojo - [@Nahum](https://www.github.com/GaticaNahum)
 
- - [ ] ⚙️Extras
-    - [ ] Consulta de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Modificación de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos) 
+ - [X] ⚙️Extras
+    - [X] Consulta de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Modificación de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos) 
     - [X] Páginas de error - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     - [X] LandingPage - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     - [X] Base del Proyecto - [@Ulises](https://www.github.com/HectorUlisesStamatio)
     - [X] Base de datos - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     
+ - [X] 💰Tipos de bodegas
+    - [X] Consulta de tipos de bodegas
+    - [X] Modificación de tipos de bodegas
 
 ## ⚠️Commits
 
