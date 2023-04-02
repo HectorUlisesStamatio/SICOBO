@@ -16,4 +16,7 @@ public interface IUserService {
     public ResponseEntity<Object> eliminar(BeanUser beanUser);
 
     public ResponseEntity<Object> buscar(Long id);
+    public ResponseEntity<Object> sendEmail (String email);
+
+
 }

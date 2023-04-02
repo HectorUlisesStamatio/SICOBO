@@ -4,15 +4,15 @@ import com.sicobo.sicobo.dao.DaoAuthorities;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanAuthorities;
-import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.service.IUserService;
 import com.sicobo.sicobo.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,6 @@ public class UserServiceImpl implements IUserService
     private DaoUser daoUser;
     @Autowired
     private DaoAuthorities daoAuthorities;
-
     @Autowired
     private PasswordEncrypter passwordEncrypter;
     @Autowired
@@ -46,6 +45,8 @@ public class UserServiceImpl implements IUserService
     private PhoneValidator phoneValidator;
     @Autowired
     private RFCValidator rfcValidator;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @Override
     @Transactional(readOnly = true)
@@ -259,6 +260,23 @@ public class UserServiceImpl implements IUserService
         return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,user ), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<Object> sendEmail(String email) {
+        BeanUser user = daoUser.findByEmail(email);
+
+        if(user != null){
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("20203TN058@utez.edu.mx");
+            message.setTo("20203TN058@utez.edu.mx");
+            message.setSubject("Prueba de envío email simple");
+            message.setText("Esto es el contenido del email");
+            javaMailSender.send(message);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEND_EMAIL_SUCCESFUL, SUCCESS,SUCCESS_CODE, user), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El correo no existe", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
     public ResponseEntity<Object> findBeanUserByUsername(String user) {
         if(!daoUser.existsBeanUserByUsername(user)){
@@ -273,8 +291,5 @@ public class UserServiceImpl implements IUserService
             log.error("Ocurrió un error al buscar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
-
 }

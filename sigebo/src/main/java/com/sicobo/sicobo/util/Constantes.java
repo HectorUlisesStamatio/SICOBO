@@ -40,6 +40,8 @@ public final class Constantes {
     public static final class MessageBody{
         private MessageBody(){}
         public static final String INTERNAL_ERROR ="Ocurrió un error interno";
+
+        public static final String SEND_EMAIL_SUCCESFUL ="Se envío correctamente el correo, no olvides revisar tu bandeja de spam";
         public static final String INSERT_SUCCESSFUL="Se ha realizado el registro exitosamente";
         public static final String SEARCH_SUCCESSFUL="Se ha realizado la búsqueda exitosamente";
         public static final String UPDATE_SUCCESSFUL="Se ha realizado la actualización exitosamente";
@@ -82,6 +84,10 @@ public final class Constantes {
 
         private Redirects(){}
         public static final String REGISTER = "register";
+
+        public static final String FORGOT_PASSWORD = "forgotPassword";
+
+        public static final String RESET_PASSWORD = "resetPassword";
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
