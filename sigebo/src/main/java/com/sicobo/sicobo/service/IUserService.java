@@ -16,7 +16,9 @@ public interface IUserService {
     public ResponseEntity<Object> eliminar(BeanUser beanUser);
 
     public ResponseEntity<Object> buscar(Long id);
-    public ResponseEntity<Object> sendEmail (String email);
+    public ResponseEntity<Object> sendEmailTemplate (String email);
+
+    public ResponseEntity<Object> changePassword (String password, String token);
 
 
 }

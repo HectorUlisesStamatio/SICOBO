@@ -7,18 +7,25 @@ import com.sicobo.sicobo.model.BeanAuthorities;
 import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.service.IUserService;
 import com.sicobo.sicobo.util.*;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -30,7 +37,9 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Slf4j
 public class UserServiceImpl implements IUserService
 {
+    private static final Duration TOKEN_EXPIRATION = Duration.ofHours(2);
 
+    private final Map<String, Instant> tokens = new HashMap<>();
     @Autowired
     private DaoUser daoUser;
     @Autowired
@@ -47,6 +56,9 @@ public class UserServiceImpl implements IUserService
     private RFCValidator rfcValidator;
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Override
     @Transactional(readOnly = true)
@@ -261,20 +273,71 @@ public class UserServiceImpl implements IUserService
     }
 
     @Override
-    public ResponseEntity<Object> sendEmail(String email) {
+    public ResponseEntity<Object> sendEmailTemplate(String email) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
         BeanUser user = daoUser.findByEmail(email);
 
         if(user != null){
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("20203TN058@utez.edu.mx");
-            message.setTo("20203TN058@utez.edu.mx");
-            message.setSubject("Prueba de envío email simple");
-            message.setText("Esto es el contenido del email");
-            javaMailSender.send(message);
-            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEND_EMAIL_SUCCESFUL, SUCCESS,SUCCESS_CODE, user), HttpStatus.OK);
+            try {
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                Context context = new Context();
+                Map<String,Object> model = new HashMap<>();
+
+                String oldToken = UUID.randomUUID().toString();
+                oldToken = oldToken.replaceAll("-", "").toUpperCase();
+                String token = oldToken.substring(0, 10);
+                Instant creationTime = Instant.now();
+
+                model.put("userName", "Hola " +user.getUsername());
+                model.put("url","http://localhost:8080/resetPassword");
+                model.put("token","Su código de seguridad para recuperar contraseña es: "+token);
+                context.setVariables(model);
+
+                user.setTokenPassword(token);
+                user.setCreation_time(creationTime);
+                daoUser.save(user);
+
+                String htmlText = templateEngine.process("emailTemplate", context);
+                helper.setFrom("20203TN058@utez.edu.mx");
+                helper.setTo(user.getEmail());
+                helper.setSubject("Recuperar Contraseña");
+                helper.setText(htmlText, true);
+                javaMailSender.send(message);
+                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEND_EMAIL_SUCCESFUL, SUCCESS,SUCCESS_CODE, user), HttpStatus.OK);
+            } catch (jakarta.mail.MessagingException e) {
+                log.error("Ocurrió un error al buscar" + e.getMessage());
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }else{
-            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El correo no existe", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El correo ingresado no existe", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public ResponseEntity<Object> changePassword(String password, String token) {
+
+        BeanUser user = daoUser.findBeanUserByTokenPassword(token);
+
+        if(user == null){
+            return new ResponseEntity<>(new Message(INVALID_TOKEN,"Use el código de seguridad adjuntado en su correo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if (token != null && Instant.now().minus(TOKEN_EXPIRATION).isBefore(user.getCreation_time())) {
+            try {
+                user.setPassword(passwordEncrypter.encriptarPassword(password));
+                user.setTokenPassword(null);
+                user.setCreation_time(null);
+                daoUser.save(user);
+                return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, "Se ha cambiado su contraseña correctamente", SUCCESS,SUCCESS_CODE, user), HttpStatus.OK);
+            }catch (Exception e){
+                log.error("Ocurrió un error al buscar" + e.getMessage());
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            return new ResponseEntity<>(new Message(INVALID_TOKEN,"El código no de seguridad ha expirado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
 
     }
 

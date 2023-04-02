@@ -24,9 +24,10 @@ public final class Constantes {
         public static final String SUCCESSFUL_REGISTRATION = "Registro exitoso";
         public static final String SUCCESSFUL_SEARCH = "Búsqueda exitosa";
         public static final String SUCCESSFUL_UPDATE = "Actualización exitosa";
-
         public static final String SUCCESSFUL_DELETE = "Eliminación exitosa";
         public static final String FAILED_SEARCH = "Búsqueda fallida";
+
+        public static final String INVALID_TOKEN = "Código de seguridad invalido";
     }
 
     public static final class MessageCodes{
@@ -40,7 +41,6 @@ public final class Constantes {
     public static final class MessageBody{
         private MessageBody(){}
         public static final String INTERNAL_ERROR ="Ocurrió un error interno";
-
         public static final String SEND_EMAIL_SUCCESFUL ="Se envío correctamente el correo, no olvides revisar tu bandeja de spam";
         public static final String INSERT_SUCCESSFUL="Se ha realizado el registro exitosamente";
         public static final String SEARCH_SUCCESSFUL="Se ha realizado la búsqueda exitosamente";
@@ -85,6 +85,7 @@ public final class Constantes {
         private Redirects(){}
         public static final String REGISTER = "register";
 
+        public static final String LOGIN = "login";
         public static final String FORGOT_PASSWORD = "forgotPassword";
 
         public static final String RESET_PASSWORD = "resetPassword";

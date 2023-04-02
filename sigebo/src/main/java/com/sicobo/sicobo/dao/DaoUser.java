@@ -17,4 +17,5 @@ public interface DaoUser  extends JpaRepository<BeanUser, Long> {
     List<BeanUser> findAllByRoleEquals(String role);
     Optional<BeanUser> findBeanUserById(Long id);
     BeanUser findByEmail(String email);
+    BeanUser findBeanUserByTokenPassword(String token);
 }

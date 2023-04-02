@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -55,6 +56,12 @@ public class BeanUser {
 
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
+
+    @Column(name = "token_password",nullable = true)
+    private String tokenPassword;
+
+    @Column(nullable = true)
+    private Instant creation_time;
 
     public BeanUser() {
 

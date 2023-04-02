@@ -103,17 +103,40 @@ public class HomeController {
     @PostMapping("/resetPassword")
     public String resetPassword(@RequestParam("email") String email, Model model) {
 
-        ResponseEntity<?> responseEntity = userService.sendEmail(email);
+        ResponseEntity<?> responseEntity = userService.sendEmailTemplate(email);
         Message message = (Message) responseEntity.getBody();
         assert message != null;
 
         if(message.getType().equals(FAILED)) {
             model.addAttribute(MESSAGE,message);
-            return FORGOT_PASSWORD;
+            return LOGIN;
         }else{
             System.out.println("Se envío correctamente el correo");
             model.addAttribute(MESSAGE,message);
-            return FORGOT_PASSWORD;
+            return LOGIN;
+        }
+
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam("pass") String pass,@RequestParam("password") String password,@RequestParam("token") String token ,Model model) {
+
+        if (!pass.equals(password)) {
+            model.addAttribute("invalidPass", "Las contraseñas no coinciden");
+            return RESET_PASSWORD;
+        }
+
+        ResponseEntity<?> responseEntity = userService.changePassword(pass, token);
+        Message message = (Message) responseEntity.getBody();
+        assert message != null;
+
+        if(message.getType().equals(FAILED)) {
+            model.addAttribute(MESSAGE,message);
+            return RESET_PASSWORD;
+        }else{
+            System.out.println("Se cambio correctamente la contraseña");
+            model.addAttribute(MESSAGE,message);
+            return LOGIN;
         }
 
     }
