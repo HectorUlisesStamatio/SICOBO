@@ -37,7 +37,7 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Slf4j
 public class UserServiceImpl implements IUserService
 {
-    private static final Duration TOKEN_EXPIRATION = Duration.ofHours(2);
+    private static final Duration TOKEN_EXPIRATION = Duration.ofHours(1);
 
     private final Map<String, Instant> tokens = new HashMap<>();
     @Autowired
@@ -323,6 +323,10 @@ public class UserServiceImpl implements IUserService
             return new ResponseEntity<>(new Message(INVALID_TOKEN,"Use el código de seguridad adjuntado en su correo", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
+        if(!passwordValidator.isValid(password)){
+            return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PASSWORD_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
         if (token != null && Instant.now().minus(TOKEN_EXPIRATION).isBefore(user.getCreation_time())) {
             try {
                 user.setPassword(passwordEncrypter.encriptarPassword(password));
@@ -335,7 +339,7 @@ public class UserServiceImpl implements IUserService
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }else{
-            return new ResponseEntity<>(new Message(INVALID_TOKEN,"El código no de seguridad ha expirado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(INVALID_TOKEN,"El código de seguridad ha expirado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
 
