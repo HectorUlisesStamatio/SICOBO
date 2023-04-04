@@ -39,7 +39,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Modificar Gestor</h5>
-                            <input type="text" th:field="*{id}" id="id" />
+                            <input type="hidden" th:field="*{id}" id="id" />
 
                             <div class="col-12">
                                 <label for="name" class="form-label">Nombre(s)</label>
@@ -112,7 +112,7 @@
 
                             <div class="col-12">
                                 <label for="password" class="form-label">Contraseña</label>
-                                <input th:field="*{password}" type="password" class="form-control" id="password" name="password"
+                                <input th:field="*{password}" type="text" class="form-control" id="password" name="password"
                                        pattern="^(?=^.{10,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
                                        minlength="10" required>
                                 <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
@@ -121,6 +121,13 @@
                                      class="invalid-feedback"></div>
                                 <div th:text="#{register.password.error.hint}" class="invalid-feedback"></div>
                             </div>
+
+                            <script>
+                                    try{
+                                        let password1=document.getElementById("password");
+                                        password1.type = "password";
+                                    }catch(e){}
+                            </script>
 
                             <div class="col-12 mb-3">
                                 <div class="card-footer text-end">
@@ -142,7 +149,6 @@
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 
 <script>
-
 
     $('#formValid').submit(function (event) {
         event.preventDefault();

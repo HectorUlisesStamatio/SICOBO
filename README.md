@@ -20,9 +20,9 @@
 - [X] 🔑Control de Acceso
     - [X] Inicio de Sesión - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     - [X] AutoRegistro - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
-- [ ] 👤Perfiles
-    - [ ] Modificación de Perfil - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Recuperar Contraseña - [@Nahum](https://www.github.com/GaticaNahum)
+- [X] 👤Perfiles
+    - [X] Modificación de Perfil - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Recuperar Contraseña - [@Nahum](https://www.github.com/GaticaNahum)
 
 - [X] 🏫Sitios
     - [X] Consulta de sitios - [@Omar](https://www.github.com/20203tn096)
@@ -30,10 +30,10 @@
     - [X] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
 - [ ] 👷Gestores
-    - [ ] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
     - [ ] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
     - [ ] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
 - [ ] 🗃️Bodegas

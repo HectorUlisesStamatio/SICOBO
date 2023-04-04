@@ -7,6 +7,7 @@ import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanPolicies;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
+import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Constantes;
 import com.sicobo.sicobo.util.Message;
@@ -462,6 +463,38 @@ public class AdminController {
         }
         return REDIRECT_ADMIN_LISTGESTORES;
     }
+
+
+    @Secured({ROLE_ADMIN})
+    @PostMapping("/cambiarEstadoGestor")
+    public String changeStatGestores(@RequestParam("idGestor2") Optional<Long> idGestor, @RequestParam("statusGestor") Optional<Boolean> statusGestor, Model model, RedirectAttributes attributes) {
+        model.addAttribute(OPTION, GESTORES);
+        try {
+            BeanUser beanUser = new BeanUser();
+            if (idGestor.isPresent() && statusGestor.isPresent()) {
+                beanUser.setId(idGestor.get());
+                if(statusGestor.get().booleanValue()){
+                    beanUser.setEnabled(0);
+                }else{
+                    beanUser.setEnabled(1);
+                }
+                Message message = (Message) userService.eliminar(beanUser).getBody();
+                assert message !=null;
+                attributes.addFlashAttribute(MESSAGE, message);
+            } else {
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            }
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en AdminController - changeStatGestores" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en AdminController - changeStatGestores" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return REDIRECT_ADMIN_LISTGESTORES;
+    }
+
+
 
 
 

@@ -22,36 +22,28 @@
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
                         <h6 sec:authentication="name"></h6>
-                        <span>Administrador</span>
+                        <span sec:authorize="hasRole('USUARIO')">Usuario</span>
+                        <span sec:authorize="hasRole('GESTOR')">Gestor</span>
+                        <span sec:authorize="hasRole('ADMIN')">Administrador</span>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
-                            <i class="bi bi-person"></i>
-                            <span>Mi Perfil</span>
+                        <a class="dropdown-item d-flex align-items-center" th:href="@{/preferencias/perfil}">
+                            <button style="border: none; background: none; text-decoration: none; width: 100%;" type="button"><i class="bi bi-person"></i><span>Mi Perfil</span></button>
                         </a>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
 
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
-                            <i class="bi bi-gear"></i>
-                            <span>Ajustes</span>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
 
                     <li>
                         <form th:action="@{/logout}" method="post">
                             <a class="dropdown-item d-flex align-items-center" href="#">
-                                <button style="border: none; background: none; text-decoration: none;" type="submit"><i class="bi bi-box-arrow-right"></i><span>Cerrar Sesión</span></button>
+                                <button style="border: none; background: none; text-decoration: none; width: 100%;" type="submit"><i class="bi bi-box-arrow-right"></i><span>Cerrar Sesión</span></button>
                             </a>
                         </form>
 

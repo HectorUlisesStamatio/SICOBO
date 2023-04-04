@@ -48,6 +48,13 @@ public class GestorController {
     private CostTypeServiceImpl costTypeService;
 
     @Secured({ROLE_GESTOR})
+    @GetMapping("/dashboard")
+    public String dashboardGestor(Model model){
+        model.addAttribute(OPTION, null);
+        return GESTOR_DASHBOARD;
+    }
+
+    @Secured({ROLE_GESTOR})
     @PostMapping("/prepararRegistro")
     public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {

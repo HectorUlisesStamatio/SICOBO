@@ -1,0 +1,21 @@
+<aside th:fragment="sidebar" id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+        <li class="nav-item">
+            <a th:classappend="${opcion}==null ? '' : 'collapsed'" class="nav-link" th:href="@{/gestor/dashboard}">
+                <i class="bi bi-bar-chart"></i>
+                <span>DASDASDA</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:classappend="${opcion}=='bodegas' ? '' : 'collapsed'" class="nav-link" th:href="@{/gestor/bodegas}">
+                <i class="bi bi-archive"></i>
+                <span>DSADSA</span>
+            </a>
+        </li>
+
+    </ul>
+
+</aside>

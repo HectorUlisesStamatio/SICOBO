@@ -13,6 +13,7 @@ public final class Constantes {
         private Roles(){}
         public static final String ROLE_ADMIN = "ROLE_ADMIN";
         public static final String ROLE_GESTOR = "ROLE_GESTOR";
+        public static final String ROLE_USUARIO = "ROLE_USUARIO";
     }
 
     public static final class MessageHeaders{
@@ -109,6 +110,10 @@ public final class Constantes {
         public static final String ADMIN_TERMSANDCONDITIONS = "adminViews/listTermsAndConditions";
         public static final String REDIRECT_ADMIN_TERMSANDCONDITIONS = "redirect:/admin/listarTerminosYCondiciones";
         public static final String USER_TERMSANDCONDITIONS = "userViews/termsAndConditions";
+        public static final String USER_PROFILE = "editProfile";
+        public static final String REDIRECT_HOME = "redirect:/";
+
+        public static final String GESTOR_DASHBOARD = "gestorViews/dashboardGestor";
     }
 
     public static final class Stuff{

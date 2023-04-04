@@ -20,5 +20,8 @@ public interface IUserService {
 
     public ResponseEntity<Object> changePassword (String password, String token);
 
+    public ResponseEntity<Object> editarPerfil(DTOUser dtoUser);
+
+
 
 }

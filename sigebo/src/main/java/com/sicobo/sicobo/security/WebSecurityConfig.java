@@ -37,6 +37,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(request ->{
             request.requestMatchers("/", "/home","/index","/register","/registrarUsuario","/politicas", "/forgotPassword","/resetPassword","/resetPassword", "/changePassword").permitAll();
             request.requestMatchers("/css/**", "/js/**", "/img/**", "/scss/**", "/vendor/**").permitAll();
+            request.requestMatchers("/preferencias/**").hasAnyRole("USUARIO","GESTOR","ADMIN");
             request.requestMatchers("/usuario/**").hasRole("USUARIO");
             request.requestMatchers("/gestor/**").hasRole("GESTOR");
             request.requestMatchers("/admin/**").hasRole("ADMIN");
