@@ -171,6 +171,33 @@ public class HomeController {
         return USER_PROFILE;
     }
 
+    @Secured({ROLE_ADMIN,ROLE_GESTOR,ROLE_USUARIO})
+    @PostMapping("/preferencias/actualizarPerfil")
+    public String updateGestor(@Valid @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
+        try{
+            if (result.hasErrors()) {
+                for (ObjectError error : result.getAllErrors()) {
+                    log.error("Error: " + error.getDefaultMessage());
+                }
+                return USER_PROFILE;
+            }
+            Message response = (Message) userService.editarPerfil(user).getBody();
+            assert response !=null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                return USER_PROFILE;
+            }
+            attributes.addFlashAttribute(MESSAGE, response);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - perfil" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en HomeController - perfil" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return REDIRECT_HOME;
+    }
+
     @Secured({ROLE_USUARIO})
     @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroDos}"})
     public String listarBodegas(RedirectAttributes attributes, Model model) {
