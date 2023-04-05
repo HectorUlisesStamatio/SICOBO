@@ -1,15 +1,16 @@
 package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoAuthorities;
+import com.sicobo.sicobo.dao.DaoSite;
+import com.sicobo.sicobo.dao.DaoSiteAssigment;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.model.BeanAuthorities;
-import com.sicobo.sicobo.model.BeanSite;
-import com.sicobo.sicobo.model.BeanUser;
+import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IUserService;
 import com.sicobo.sicobo.util.*;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,10 @@ public class UserServiceImpl implements IUserService
     private DaoUser daoUser;
     @Autowired
     private DaoAuthorities daoAuthorities;
+    @Autowired
+    private DaoSiteAssigment siteAssigment;
+    @Autowired
+    private DaoSite daoSite;
     @Autowired
     private PasswordEncrypter passwordEncrypter;
     @Autowired
@@ -146,6 +151,22 @@ public class UserServiceImpl implements IUserService
             return new ResponseEntity<>(new Message(FAILED_REGISTRATION,PHONE_INVALID, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
         beanUser.setPassword(passwordEncrypter.encriptarPassword(beanUser.getPassword()));
+        if(dtoUser.getBeanSiteAssigment()>0){
+            Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
+            try{
+                if(beanSite.isPresent()){
+                    BeanSite beanSite1 = beanSite.get();
+                    BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment(beanUser,beanSite1);
+                    siteAssigmentPrepared.setStatus(1);
+                    siteAssigment.save(siteAssigmentPrepared);
+                }else{
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }catch (Exception e){
+                log.error("Ocurrió un error al guardar" + e.getMessage());
+            }
+            beanUser.setEnabled(1);
+        }
         try{
             BeanUser beanUserCreated = daoUser.save(beanUser);
             BeanAuthorities beanAuthorities = new BeanAuthorities(beanUser.getUsername(),beanUser.getPassword(),beanUser.getEnabled(),beanUser.getRole());
@@ -160,7 +181,6 @@ public class UserServiceImpl implements IUserService
     @Override
     public ResponseEntity<Object> editar(DTOUser dtoUser) {
         Optional<BeanUser> userSearched = daoUser.findBeanUserById(dtoUser.getId());
-
         if (!userSearched.isPresent()){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El gestor ha actualizar no se encuentra registrado en el sistema", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
@@ -196,6 +216,41 @@ public class UserServiceImpl implements IUserService
         userPrepared.setLastname(dtoUser.getLastname());
         userPrepared.setSurname(dtoUser.getSurname());
         userPrepared.setPhoneNumber(dtoUser.getPhoneNumber());
+        try{
+            if(dtoUser.getBeanSiteAssigment()!=userPrepared.getBeanSiteAssigment().getId()){
+                Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
+                Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(dtoUser.getId()));
+                try{
+                    if(beanSite.isPresent() && beanSiteAssigment.isPresent()){
+                        BeanSite beanSite1 = beanSite.get();
+                        BeanSiteAssigment siteAssigmentPrepared = beanSiteAssigment.get();
+                        siteAssigmentPrepared.setBeanUser(userPrepared);
+                        siteAssigmentPrepared.setBeanSite(beanSite1);
+                        siteAssigmentPrepared.setStatus(1);
+                        siteAssigment.save(siteAssigmentPrepared);
+                    }else{
+                        return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }catch (Exception e){
+                    log.error("Ocurrió un error al guardar" + e.getMessage());
+                }
+            }
+        }catch (Exception E){
+            Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
+            try{
+                BeanSite beanSite1 = beanSite.get();
+                BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment();
+                siteAssigmentPrepared.setBeanUser(userPrepared);
+                siteAssigmentPrepared.setBeanSite(beanSite1);
+                siteAssigmentPrepared.setStatus(1);
+                siteAssigment.save(siteAssigmentPrepared);
+
+            }catch (Exception e){
+                log.error("Ocurrió un error al guardar" + e.getMessage());
+            }
+        }
+
+
 
         if(!dtoUser.getPassword().equals(userSearched.get().getPassword())){
             if(!passwordValidator.isValid(dtoUser.getPassword())){
@@ -266,6 +321,30 @@ public class UserServiceImpl implements IUserService
         }
 
         return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,user ), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> buscarGestor(Long id) {
+        BeanUser user = new BeanUser();
+        BeanSiteAssigment beanSiteAssigment = new BeanSiteAssigment();
+        if(!daoUser.existsBeanUserById(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra el gestor seleccionado", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<BeanUser> userOptional = daoUser.findBeanUserById(id);
+
+        if(userOptional.isPresent()){
+            user = userOptional.get();
+        }
+        Optional<BeanSiteAssigment> siteAssigmentOptional = Optional.ofNullable(siteAssigment.findByBeanUserId(user.getId()));
+
+        if(siteAssigmentOptional.isPresent()){
+            beanSiteAssigment = siteAssigmentOptional.get();
+            DTOUser dtoUser = new DTOUser(user.getId(), user.getName(),user.getLastname(),user.getSurname(),user.getEmail(),user.getRfc(),user.getPhoneNumber(), user.getEnabled(), user.getUsername(),user.getPassword(),user.getRole(),beanSiteAssigment.getBeanSite().getId().intValue());
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,dtoUser ), HttpStatus.OK);
+        }
+        DTOUser dtoUser = new DTOUser(user.getId(),user.getName(),user.getLastname(),user.getSurname(),user.getEmail(),user.getRfc(),user.getPhoneNumber(), user.getEnabled(), user.getUsername(),user.getPassword(),user.getRole(),0);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,dtoUser ), HttpStatus.OK);
     }
 
     @Override

@@ -29,13 +29,13 @@
     - [X] Registro de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
-- [ ] 👷Gestores
+- [X] 👷Gestores
     - [X] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
 - [ ] 🗃️Bodegas
     - [X] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)

@@ -4,12 +4,8 @@ import com.sicobo.sicobo.dto.DTOCostType;
 import com.sicobo.sicobo.dto.DTOPolicies;
 import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.model.BeanPolicies;
-import com.sicobo.sicobo.model.BeanSite;
-import com.sicobo.sicobo.model.BeanState;
-import com.sicobo.sicobo.model.BeanUser;
+import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.serviceimpl.*;
-import com.sicobo.sicobo.util.Constantes;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +45,8 @@ public class AdminController {
 
     @Autowired
     private StateServiceImpl stateService;
+
+
 
     @Autowired
     private WarehousesTypeServiceImpl warehousesTypeService;
@@ -384,7 +382,19 @@ public class AdminController {
     @GetMapping("/registrarGestor")
     public String registrarGestor(Model model, DTOUser user){
         model.addAttribute(OPTION, GESTORES);
-        model.addAttribute(USER, user);
+        try {
+            Message response = (Message) siteService.listar().getBody();
+            assert response != null;
+            model.addAttribute(SITES, response.getResult());
+            model.addAttribute(USER, user);
+        }catch (NullPointerException e) {
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Valor nulo un error en AdminController - registrarGestor" + e.getMessage());
+        }  catch (Exception e) {
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrio un error en AdminController - registrarGestor" + e.getMessage());
+        }
+
         return ADMIN_REGISTERGESTORES;
     }
 
@@ -417,12 +427,15 @@ public class AdminController {
     public String prepararEdicion(@RequestParam("idGestor") long idGestor, Model model, RedirectAttributes attributes) {
         model.addAttribute(OPTION, GESTORES);
         try{
-            Message message = (Message) userService.buscar(idGestor).getBody();
+            Message message = (Message) userService.buscarGestor(idGestor).getBody();
             assert message != null;
             if (message.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, message);
                 return REDIRECT_ADMIN_LISTGESTORES;
             }
+            Message responseSite = (Message) siteService.listar().getBody();
+            assert responseSite != null;
+            model.addAttribute(SITES, responseSite.getResult());
             model.addAttribute(RESPONSE, message);
             model.addAttribute(USER, message.getResult());
         }catch (NullPointerException e) {

@@ -4,6 +4,8 @@ package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
+import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
+import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
@@ -42,6 +44,12 @@ public class HomeController {
     @Autowired
     private DaoUser userRepository;
 
+    @Autowired
+    private StateServiceImpl stateService;
+
+    @Autowired
+    private CostTypeServiceImpl costTypeService;
+
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @GetMapping("/")
@@ -54,7 +62,7 @@ public class HomeController {
             }else if(Objects.equals(rol, "[ROLE_GESTOR]")) {
                 return GESTOR_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
-                return INDEX;
+                return USER_INDEX;
             }else{
                 return INDEX;
             }
@@ -163,31 +171,22 @@ public class HomeController {
         return USER_PROFILE;
     }
 
-    @Secured({ROLE_ADMIN,ROLE_GESTOR,ROLE_USUARIO})
-    @PostMapping("/preferencias/actualizarPerfil")
-    public String updateGestor(@Valid @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
-        try{
-            if (result.hasErrors()) {
-                for (ObjectError error : result.getAllErrors()) {
-                    log.error("Error: " + error.getDefaultMessage());
-                }
-                return USER_PROFILE;
-            }
-            Message response = (Message) userService.editarPerfil(user).getBody();
-            assert response !=null;
-            if (response.getType().equals(FAILED)) {
-                model.addAttribute(MESSAGE, response);
-                return USER_PROFILE;
-            }
-            attributes.addFlashAttribute(MESSAGE, response);
+    @Secured({ROLE_USUARIO})
+    @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroDos}"})
+    public String listarBodegas(RedirectAttributes attributes, Model model) {
+        try {
+            Message response = (Message) stateService.listar().getBody();
+            Message responseCosto = (Message) costTypeService.listar().getBody();
+            assert response != null;
+            assert responseCosto != null;
+            model.addAttribute(STATES, response.getResult());
+            model.addAttribute(COST_TYPES,responseCosto.getResult());
         }catch (NullPointerException e) {
-            log.error("Valor nulo un error en HomeController - perfil" + e.getMessage());
-            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-        }catch(Exception e){
-            log.error("Ocurrio un error en HomeController - perfil" + e.getMessage());
-            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
         }
-        return REDIRECT_HOME;
+        return LISTADO_BODEGAS;
     }
 
 

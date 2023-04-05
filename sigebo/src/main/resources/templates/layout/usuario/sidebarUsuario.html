@@ -1,20 +1,20 @@
 <aside th:fragment="sidebar" id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-
         <li class="nav-item">
-            <a th:classappend="${opcion}==null ? '' : 'collapsed'" class="nav-link" th:href="@{/gestor/dashboard}">
-                <i class="bi bi-bar-chart"></i>
-                <span>DASDASDA</span>
+            <a class="nav-link" href="#">
+                <i class="bi bi-house-door-fill"></i>
+                <span>Inicio</span>
+            </a>
+        </li>
+        <li class="nav-heading">Estados</li>
+        <li class="nav-item" th:each="tmpEstado: ${states}">
+            <a class="nav-link collapsed" href="#">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span th:text="${tmpEstado.name}"></span>
             </a>
         </li>
 
-        <li class="nav-item">
-            <a th:classappend="${opcion}=='bodegas' ? '' : 'collapsed'" class="nav-link" th:href="@{/gestor/bodegas}">
-                <i class="bi bi-archive"></i>
-                <span>DSADSA</span>
-            </a>
-        </li>
 
     </ul>
 

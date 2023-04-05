@@ -114,6 +114,10 @@ public final class Constantes {
         public static final String REDIRECT_HOME = "redirect:/";
 
         public static final String GESTOR_DASHBOARD = "gestorViews/dashboardGestor";
+
+        public static final String USER_INDEX = "redirect:/bodegas";
+
+        public static final String LISTADO_BODEGAS = "listadoBodegas";
     }
 
     public static final class Stuff{
