@@ -6,16 +6,17 @@
 <head th:insert="~{layout/admin/head :: head}"></head>
 <body>
 <header th:insert="~{layout/admin/header :: header}"></header>
-<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+<aside th:insert="~{layout/gestor/sidebarGestor :: sidebar}"></aside>
 
 <main id="main" class="main">
-
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
     <div class="pagetitle">
-        <h1>Bodegas</h1>
+        <h1>Dashboard</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/dash}">Inicio</a></li>
-                <li class="breadcrumb-item">Páginas</li>
+                <li class="breadcrumb-item"><a href="#">Inicio</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
         </nav>
@@ -117,21 +118,45 @@
             <!-- / Content -->
             <div class="container">
                 <div class="row">
-                    <div class="col-12 col-lg-6" th:each="bodega, index: ${response.result}">
-                        <div class="card" style="width: 35rem;">
-                            <img src="https://www.recilock.cl/images/Noticias_2021/tipos-de-sistemas-bodega1.jpg" class="card-img-custom-w" alt="...">
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
                             <div class="card-body">
-                                <h5 class="card-title" th:text="${bodega.beanSite.name}">Título de la card</h5>
-                                <div class="card-text-scrollable">
-                                    <p th:text="${bodega.description}"></p>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="#" class="btn btn-warning" th:text="${bodega.warehousesType.description}"></a>
+                                <h5 class="card-title">Últimas Rentas <span>| Hoy</span></h5>
 
-                                    <a href="#" class="btn btn-primary ms-2" th:text="${bodega.beanSite.beanState.name}"></a>
-
-                                    <a href="#" th:text="${bodega.status == 1} ? 'Disponible' : 'Rentada'" th:class="${bodega.status == 1} ? 'btn float-end btn-success' : 'btn float-end btn-danger'"></a>
-                                </div>
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Cliente</th>
+                                        <th scope="col">Bodega</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col">Estado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row"><a href="#">#2457</a></th>
+                                        <td>Jose Luis</td>
+                                        <td><a href="#" class="text-primary">Bodega Grande</a></td>
+                                        <td>$12000</td>
+                                        <td><span class="badge bg-success">Vigente</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#">#2147</a></th>
+                                        <td>Juan Perez</td>
+                                        <td><a href="#" class="text-primary">Bodega de Lujo</a></td>
+                                        <td>$4700</td>
+                                        <td><span class="badge bg-warning">En proceso</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#">#2644</a></th>
+                                        <td>Adrian López</td>
+                                        <td><a href="#" class="text-primar">Bodega Chica</a></td>
+                                        <td>$3000</td>
+                                        <td><span class="badge bg-danger">Cancelado</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

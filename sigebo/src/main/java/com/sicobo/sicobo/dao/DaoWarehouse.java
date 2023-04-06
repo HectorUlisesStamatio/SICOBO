@@ -28,4 +28,14 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
             " BeanWarehousesType wt on w.warehousesType.id = wt.id inner join BeanSite s on" +
             " w.beanSite.id = s.id inner join BeanState st on s.beanState.id = st.id where w.status = 1")
     List<Object[]> findAllWarehouseDetails();
+
+
+    @Query(value = "select * from users \n" +
+            "inner join site_assigment on users.id = site_assigment.user_id\n" +
+            "inner join site on site_assigment.site_id = site.id\n" +
+            "inner join state on site.states_id = state.id\n" +
+            "inner join warehouse on site.id = warehouse.site_id_site\n" +
+            "inner join warehouses_type on warehouse.warehouses_types = warehouses_type.id\n" +
+            "inner join cost_type on warehouses_type.id = cost_type.warehouses_type_id", nativeQuery = true)
+    List<Object[]> findAllClienteWarehousesDetails();
 }

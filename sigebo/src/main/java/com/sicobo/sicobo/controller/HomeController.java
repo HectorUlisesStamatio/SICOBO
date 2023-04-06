@@ -45,6 +45,7 @@ public class HomeController {
 
     @Autowired
     private DaoUser userRepository;
+
     @Autowired
     private WarehouseServiceImpl warehouseService;
     private StateServiceImpl stateService;
@@ -63,7 +64,7 @@ public class HomeController {
             if(Objects.equals(rol, "[ROLE_ADMIN]")) {
                 return ADMIN_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_GESTOR]")) {
-                Message message = (Message) warehouseService.listar().getBody();
+                /*Message message = (Message) warehouseService.listar().getBody();
                 assert message !=null;
 
                 List<BeanWarehouse> warehouses = (List<BeanWarehouse>) message.getResult();
@@ -81,7 +82,7 @@ public class HomeController {
 
                 model.addAttribute("bodegasDisponibles", bodegasDisponibles);
                 model.addAttribute("bodegasRentadas", bodegasRentadas);
-                model.addAttribute(RESPONSE, message);
+                model.addAttribute(RESPONSE, message);*/
                 return GESTOR_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
                 return USER_INDEX;
