@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Bodegas</title>
+    <style>
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #c4c4c4;
+            border-radius: 5px;
+        }
+
+        .::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/usuario/sidebarUsuario :: sidebar}"></aside>
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Bodegas</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                <li class="breadcrumb-item active">Bodegas</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section profile">
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container-fluid">
+                            <div class="row my-3">
+                                <div class="col-12 col-md-6 ">
+                                    <div id="img-container">
+                                        <img id="productImage" th:src="${warehouse.result.images[0].secureUrl}"
+                                             class="w-100 mb-3" style="object-fit: cover!important; "
+                                             alt="Imagen del producto">
+                                    </div>
+                                    <div id="productThumbnails" class="row "
+                                         style="overflow-x: auto!important; flex-wrap: nowrap!important;">
+                                        <div class="col-3" th:each="tmpImage: ${warehouse.result.images}">
+                                            <img th:src="${tmpImage.secureUrl}" class="img-thumbnail h-100"
+                                                 onclick="changeImage(this.src);">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                      <div class="row">
+                                          <div class="col-12">
+                                            <h3>Nombre de la Bodega</h3>
+                                          </div>
+                                          <div class="col-12">
+                                              <h3 id="finalCost" class="fw-bold" th:text="${'$' +warehouse.result.finalCost + ' MXN'}"></h3>
+                                          </div>
+                                          <div class="col-12">
+                                              <p th:text="${warehouse.result.description}"></p>
+                                          </div>
+                                          <div class="col-12">
+                                              <p th:text="${warehouse.result.section}"></p>
+                                          </div>
+                                          <div class="col-12">
+                                              <div class="form-group">
+                                                   <label for="cantidad">Meses para renta:</label>
+                                                    <select class="form-select" id="cantidad" name="cantidad">
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                        <option value="7">7</option>
+                                                        <option value="8">8</option>
+                                                        <option value="9">9</option>
+                                                        <option value="10">10</option>
+                                                        <option value="11">11</option>
+                                                        <option value="12">12</option>
+                                                    </select>
+                                              </div>
+
+                                          </div>
+                                          <div class="col-12 mt-3">
+                                              <form th:action="@{/prepararCompra}" method="POST">
+                                                  <input type="hidden" th:value="${warehouse.result.id}" name="idWarehouse" />
+                                                  <input type="hidden" th:value="${warehouse.result.finalCost}" name="finalCost" id="inputFinalCost" />
+                                                  <button title="Comprar bodega" type="submit" class="btn btn-primary">Comprar</button>
+                                              </form>
+                                          </div>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+<script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+<script th:inline="javascript">
+
+    let warehouse = JSON.parse('[[${warehouse.result}]]')
+    let hCost = document.getElementById("finalCost");
+    let cantidad = document.getElementById("cantidad");
+    let inputFinalCost = document.getElementById("inputFinalCost");
+
+    var options1 = {
+        width: 400,
+        zoomWidth: 500,
+        offset: {vertical: 0, horizontal: 10}
+    };
+
+    // If the width and height of the image are not known or to adjust the image to the container of it
+    var options2 = {
+        scale: 0.3,
+        zoomWidth: 1000,
+        zoomPosition: 'original',
+        fillContainer: true,
+        zoomLensStyle:'opacity: 0.9;background-color: white;heigth: 50px;',
+        offset: {vertical: 0, horizontal: 10}
+    };
+    let imageZoom =  new ImageZoom(document.getElementById("img-container"), options2);
+    function changeImage(src) {
+        let image = document.getElementById("productImage").src = src;
+        imageZoom.kill();
+        imageZoom = new ImageZoom(document.getElementById('img-container'), options2);
+
+    }
+
+    cantidad.addEventListener("input", function (e) {
+      if(cantidad.value > 0) {
+          hCost.innerHTML = "$" +cantidad.value * warehouse.finalCost + " MXN";
+          inputFinalCost.value =  cantidad.value * warehouse.finalCost;
+      }
+    })
+
+
+
+
+</script>
+
+</body>
+
+</html>

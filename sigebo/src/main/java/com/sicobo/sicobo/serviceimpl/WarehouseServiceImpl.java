@@ -189,6 +189,30 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> detalleBodega(Long id) {
+        BeanWarehouse beanWarehouse;
+        if(!daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra la bodega seleccionada", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        if(daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id)){
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No es posible rentar una bodega en renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
+        List<BeanWarehouseImage> warehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
+        if(beanWarehouseOptional.isPresent()){
+            beanWarehouse = beanWarehouseOptional.get();
+            beanWarehouse.setImages(warehouseImages);
+            assert beanWarehouse != null;
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouse ), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminarImagenes(Long id) {
         List<BeanWarehouseImage> beanWarehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
@@ -204,4 +228,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
         return new ResponseEntity<>(new Message(SUCCESSFUL_DELETE,DELETE_SUCCESSFUL, SUCCESS,SUCCESS_CODE,null ), HttpStatus.OK);
     }
+
+
+
 }

@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,10 +14,12 @@ public class BeanSiteAssigment {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private BeanUser beanUser;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "site_id")
+    @JsonIgnore
     private BeanSite beanSite;
 
 

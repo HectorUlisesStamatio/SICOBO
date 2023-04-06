@@ -65,4 +65,16 @@ public class BeanSite {
         this.fechaActualizacion = LocalDateTime.now();
     }
 
+    @Override
+    public String toString() {
+        return "BeanSite{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                ", address='" + address + '\'' +
+                ", beanState=" + beanState +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                '}';
+    }
 }

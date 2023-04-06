@@ -4,10 +4,10 @@ package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
-import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
-import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
+import com.sicobo.sicobo.model.BeanWarehouse;
+import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Message;
+import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +21,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
+import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_FIELD_ERRORS;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.Roles.*;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
@@ -49,6 +48,12 @@ public class HomeController {
 
     @Autowired
     private CostTypeServiceImpl costTypeService;
+
+    @Autowired
+    private WarehouseServiceImpl warehouseService;
+
+    @Autowired
+    private StripeServiceImpl stripeService;
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
@@ -187,6 +192,59 @@ public class HomeController {
             log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
         }
         return LISTADO_BODEGAS;
+    }
+
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping("/detalleProducto/{idWarehouse}")
+    public String preparedDatail(@PathVariable Long idWarehouse, Model model) {
+
+        try {
+            Message message = (Message) warehouseService.detalleBodega(idWarehouse).getBody();
+            assert  message != null;
+            System.out.println(((BeanWarehouse)message.getResult()).getDescription());
+            model.addAttribute(WAREHOUSE, message);
+
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
+        }
+
+        return PRODUCT_DETAIL;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @PostMapping("/prepararCompra")
+    public String preparedBuy(@RequestParam("idWarehouse")Optional<Long> idWarehouse,@RequestParam("finalCost")Optional<Double> finalCost, RedirectAttributes attributes, Model model ){
+        Session session = null;
+        try{
+            if(!idWarehouse.isPresent() || !finalCost.isPresent()){
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+            }
+
+            Message message = (Message) warehouseService.detalleBodega(idWarehouse.get()).getBody();
+            assert message != null;
+            BeanWarehouse warehouse = (BeanWarehouse) message.getResult();
+            assert  warehouse != null;
+            warehouse.setFinalCost(finalCost.get());
+            Message response = (Message) stripeService.checkout(warehouse).getBody();
+            assert response !=null;
+            if(response.getType().equals(FAILED)){
+                attributes.addFlashAttribute(MESSAGE, response);
+               return REDIRECT_PREPARED_DETAIL + warehouse.getId();
+            }
+            session = (Session) response.getResult();
+            assert  session != null;
+
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
+        }
+        System.out.println("Costo final: " +finalCost.get());
+
+        return "redirect:" + session.getUrl() ;
     }
 
 

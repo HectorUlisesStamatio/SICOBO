@@ -118,6 +118,10 @@ public final class Constantes {
         public static final String USER_INDEX = "redirect:/bodegas";
 
         public static final String LISTADO_BODEGAS = "listadoBodegas";
+
+        public static final String PRODUCT_DETAIL = "productDetail";
+
+        public static final String REDIRECT_PREPARED_DETAIL = "redirect:/detalleProducto/";
     }
 
     public static final class Stuff{

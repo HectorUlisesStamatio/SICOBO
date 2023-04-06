@@ -39,4 +39,14 @@ public class BeanWarehousesType {
     private void preUpdate(){
         this.fechaActualizacion = LocalDateTime.now();
     }
+
+    @Override
+    public String toString() {
+        return "BeanWarehousesType{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                '}';
+    }
 }
