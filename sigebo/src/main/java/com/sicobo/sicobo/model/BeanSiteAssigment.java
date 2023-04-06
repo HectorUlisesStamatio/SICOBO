@@ -23,4 +23,11 @@ public class BeanSiteAssigment {
     @Column(columnDefinition = "integer default 1")
     private int status;
 
+    public BeanSiteAssigment() {
+    }
+
+    public BeanSiteAssigment(BeanUser beanUser, BeanSite beanSite) {
+        this.beanUser = beanUser;
+        this.beanSite = beanSite;
+    }
 }

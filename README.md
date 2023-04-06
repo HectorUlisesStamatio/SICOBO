@@ -29,19 +29,19 @@
     - [X] Registro de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
     - [X] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
-- [ ] 👷Gestores
+- [X] 👷Gestores
     - [X] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
 - [ ] 🗃️Bodegas
     - [X] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [ ] Consultar bodegas rentadas y disponibles - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Consultar bodegas por cliente - [@Nahum](https://www.github.com/GaticaNahum)
