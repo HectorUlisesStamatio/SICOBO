@@ -41,7 +41,7 @@
     - [X] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [X] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
     - [X] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [ ] Consultar bodegas rentadas y disponibles - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Consultar bodegas por cliente - [@Nahum](https://www.github.com/GaticaNahum)
