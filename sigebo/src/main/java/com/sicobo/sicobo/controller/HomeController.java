@@ -4,7 +4,9 @@ package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
+import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
+import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
@@ -42,16 +45,38 @@ public class HomeController {
     @Autowired
     private DaoUser userRepository;
 
+    @Autowired
+    private WarehouseServiceImpl warehouseService;
+
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @GetMapping("/")
-    public String inicio(){
+    public String inicio(Model model){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String rol = auth.getAuthorities().toString();
         try{
             if(Objects.equals(rol, "[ROLE_ADMIN]")) {
                 return ADMIN_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_GESTOR]")) {
+                Message message = (Message) warehouseService.listar().getBody();
+                assert message !=null;
+
+                List<BeanWarehouse> warehouses = (List<BeanWarehouse>) message.getResult();
+                int bodegasDisponibles = 0;
+                int bodegasRentadas = 0;
+
+                for (BeanWarehouse warehouse : warehouses) {
+                    if (warehouse.getStatus() == 1) {
+                        bodegasDisponibles++;
+                    } else {
+                        bodegasRentadas++;
+                    }
+                }
+                System.out.println(message.getResult());
+
+                model.addAttribute("bodegasDisponibles", bodegasDisponibles);
+                model.addAttribute("bodegasRentadas", bodegasRentadas);
+                model.addAttribute(RESPONSE, message);
                 return GESTOR_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
                 return INDEX;

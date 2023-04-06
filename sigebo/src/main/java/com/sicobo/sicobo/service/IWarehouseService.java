@@ -15,4 +15,5 @@ public interface IWarehouseService {
     public ResponseEntity<Object> eliminar(BeanWarehouse beanWarehouse);
 
     public ResponseEntity<Object> buscar(Long id);
+
 }
