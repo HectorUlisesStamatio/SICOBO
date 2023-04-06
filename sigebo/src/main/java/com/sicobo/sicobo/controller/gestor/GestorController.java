@@ -28,6 +28,7 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
+import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 

@@ -91,6 +91,8 @@ public final class Constantes {
         public static final String RESET_PASSWORD = "resetPassword";
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
+
+        public static final String GESTOR_DASHBOARD = "gestorViews/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
         public static final String GESTOR_WAREHOUSES = "gestorViews/listWarehouses";
         public static final String REDIRECT_ERROR = "redirect:/error";
