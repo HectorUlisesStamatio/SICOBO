@@ -7,6 +7,9 @@ import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
+import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
+import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
+import com.sicobo.sicobo.serviceimpl.WarehouseDetailsServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -21,14 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
@@ -44,9 +45,13 @@ public class HomeController {
 
     @Autowired
     private DaoUser userRepository;
-
     @Autowired
     private WarehouseServiceImpl warehouseService;
+    private StateServiceImpl stateService;
+    @Autowired
+    private WarehouseDetailsServiceImpl warehouseDetailsService;
+    @Autowired
+    private CostTypeServiceImpl costTypeService;
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
@@ -79,7 +84,7 @@ public class HomeController {
                 model.addAttribute(RESPONSE, message);
                 return GESTOR_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
-                return INDEX;
+                return USER_INDEX;
             }else{
                 return INDEX;
             }
@@ -169,6 +174,9 @@ public class HomeController {
     public String profile(Model model,RedirectAttributes attributes){
         try{
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Message response = (Message) stateService.listar().getBody();
+            assert response != null;
+            model.addAttribute(STATES, response.getResult());
             Message message = (Message) userService.findBeanUserByUsername(auth.getName()).getBody();
             assert message != null;
             if (message.getType().equals(FAILED)) {
@@ -213,6 +221,36 @@ public class HomeController {
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_HOME;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroUno}/{parametroDos}"})
+    public String listarBodegas(@PathVariable(required = false) Optional<String> parametroUno, @PathVariable(required = false) Optional<String> parametroDos, RedirectAttributes attributes, Model model) {
+        try {
+            String parametro=null;
+            String segundoParametro=null;
+            if(parametroUno.isPresent()){
+                parametro = parametroUno.get();
+            }
+            if(parametroDos.isPresent()) {
+                segundoParametro = parametroDos.get();
+            }
+
+            Message response = (Message) stateService.listar().getBody();
+            Message responseCosto = (Message) costTypeService.listar().getBody();
+            Message responseBodegas = (Message) warehouseDetailsService.listar(parametro,segundoParametro).getBody();
+            assert response != null;
+            assert responseCosto != null;
+            assert responseBodegas != null;
+            model.addAttribute(STATES, response.getResult());
+            model.addAttribute(COST_TYPES,responseCosto.getResult());
+            model.addAttribute(WAREHOUSES,responseBodegas.getResult());
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
+        }
+        return LISTADO_BODEGAS;
     }
 
 

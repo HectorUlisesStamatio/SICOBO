@@ -82,7 +82,21 @@ public class BeanUser {
         this.enabled = enabled;
     }
 
-
+    public BeanUser(String name, String lastname, String surname, String email, String rfc, String phoneNumber, String username, String password, String role, int numberAttempts, int policyAcceptance, int enabled, BeanSiteAssigment beanSiteAssigment) {
+        this.name = name;
+        this.lastname = lastname;
+        this.surname = surname;
+        this.email = email;
+        this.rfc = rfc;
+        this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.numberAttempts = numberAttempts;
+        this.policyAcceptance = policyAcceptance;
+        this.enabled = enabled;
+        this.beanSiteAssigment = beanSiteAssigment;
+    }
 
     @PrePersist
     private void prePersist(){

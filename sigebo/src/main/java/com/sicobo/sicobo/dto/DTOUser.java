@@ -55,8 +55,26 @@ public class DTOUser {
     @NotNull(message = "Tienes que aceptar los términos y condiciones")
     private int policyAcceptance;
 
+    @PositiveOrZero(message = "Selecciona un valor válido")
+    private int beanSiteAssigment;
 
+    public DTOUser() {
+    }
 
+    public DTOUser(Long id,String name, String lastname, String surname, String email, String rfc, String phoneNumber, int enabled, String username, String password, String role, int beanSiteAssigment) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.surname = surname;
+        this.email = email;
+        this.rfc = rfc;
+        this.phoneNumber = phoneNumber;
+        this.enabled = enabled;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.beanSiteAssigment = beanSiteAssigment;
+    }
 
 
 }

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Bodegas</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/usuario/sidebarUsuario :: sidebar}"></aside>
+<style>
+  /*=============== VARIABLES CSS ===============*/
+  :root {
+    --header-height: 3.5rem;
+
+    /*========== Colores ==========*/
+    --first-color: hsl(216, 76%, 67%);
+    --first-color-alt: rgb(77, 122, 190);
+    --first-color-light: hsl(228, 62%, 59%);
+    --first-color-lighten: hsl(228, 100%, 97%);
+    --second-color: hsl(338.69, 100%, 48%);
+    --title-color: hsl(228, 57%, 28%);
+    --text-color: hsl(228, 15%, 50%);
+    --text-color-light: hsl(228, 12%, 75%);
+    --border-color: hsl(228, 99%, 98%);
+    --body-color: #fff;
+    --container-color: #fff;
+
+    /*========== Fuete & Tipografía ==========*/
+    /*.5rem = 8px | 1rem = 16px ...*/
+    --body-font: 'Poppins', sans-serif;
+    --biggest-font-size: 2.25rem;
+    --h1-font-size: 1.5rem;
+    --h2-font-size: 1.25rem;
+    --h3-font-size: 1rem;
+    --normal-font-size: .938rem;
+    --small-font-size: .813rem;
+    --smaller-font-size: .75rem;
+
+    /*========== Font weight ==========*/
+    --font-medium: 500;
+    --font-semi-bold: 600;
+
+    /*========== z index ==========*/
+    --z-tooltip: 10;
+    --z-fixed: 100;
+  }
+
+  /* Responsive typography */
+  @media screen and (min-width: 1024px) {
+    :root {
+      --biggest-font-size: 4rem;
+      --h1-font-size: 2.25rem;
+      --h2-font-size: 1.5rem;
+      --h3-font-size: 1.25rem;
+      --normal-font-size: 1rem;
+      --small-font-size: .875rem;
+      --smaller-font-size: .813rem;
+    }
+  }
+
+
+  /*=============== POPULAR ===============*/
+
+  .popular__card {
+    width: 290px;
+    background-color: var(--container-color);
+    padding: .5rem .5rem 1.5rem;
+    border-radius: 1rem;
+    margin: 10px;
+    cursor: pointer;
+    transition: .4s;
+  }
+
+  .popular__img {
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    height: 60%;
+    width: 100%;
+  }
+
+  .popular__data {
+    padding: 0 1rem 0 .5rem;
+  }
+
+  .popular__price {
+    font-size: var(--h2-font-size);
+    color: var(--text-color);
+    margin-bottom: .25rem;
+  }
+
+  .popular__price span {
+    color: var(--second-color);
+  }
+
+  .popular__title {
+    font-size: var(--h3-font-size);
+    margin-bottom: .75rem;
+  }
+
+  .popular__description {
+    font-size: var(--small-font-size);
+  }
+
+  .popular__card:hover {
+    box-shadow: 0 12px 16px hsla(228, 66%, 45%, .1);
+  }
+</style>
+
+<main id="main" class="main">
+  <div id="loader">
+    <div class="loader"></div>
+  </div>
+  <div class="pagetitle">
+    <h1>Bodegas</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+        <li class="breadcrumb-item active">Bodegas</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section profile">
+    <div class="row">
+
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-body">
+
+            <div class="tab-content pt-2">
+
+              <div class="tab-pane fade show active profile-overview pt-1" id="profile-overview">
+                <div class="row">
+                  <div class="offset-md-9 offset-sm-6 col-12 col-sm-6 col-md-3 align-self-end pt-2">
+                    <div class="form-floating">
+                      <select id="price" name="price" class="form-select" aria-label="Floating label select example">
+                        <option selected>Cualquier Precio</option>
+                        <option th:each="tmpCost: ${costTypes}" th:text="${tmpCost.amount}" th:value="${tmpCost.amount}"></option>
+                      </select>
+                      <label for="price">Precio</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row align-items-start">
+                  <article th:each="tmpBodega: ${bodegas}" class="popular__card swiper-slide">
+                    <img th:src="${tmpBodega.secure_url}" alt="" class="popular__img">
+
+                    <div class="popular__data">
+                      <h2 class="popular__price">
+                        <span th:text="${tmpBodega.final_cost}">$</span>
+                      </h2>
+                      <h3 class="popular__title" th:text="${tmpBodega.section}"></h3>
+                      <p class="popular__description" th:text="${tmpBodega.description}"></p>
+                    </div>
+                  </article>
+                  <div class="col-12" th:unless="${#arrays.length(bodegas) > 0}">
+                    <div class="alert alert-warning" role="alert">
+                     No existen bodegas disponibles según sus parametros.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+<script>
+
+  let $ = jQuery;
+
+  let urlActual = new URL(window.location.href);
+  let nombreDePath = urlActual.pathname.split("/");
+  let urlGenerado;
+  let myOpts = document.getElementById('price').options;
+  let length = $('#price').children('option').length;
+
+  $(document).ready(function(){
+      for(i=0;i<length;i++){
+        if(nombreDePath[2] === myOpts[i].value || nombreDePath[3] === myOpts[i].value){
+          let selectedPrice = myOpts[i].value;
+          $("#price option[value='" + selectedPrice + "']").attr("selected", true);
+
+        }
+      }
+
+
+  })
+
+
+  $("#price").on('change', function() {
+    let bandera = false;
+    for(i=0;i<length;i++){
+      if(nombreDePath[2] === myOpts[i].value || nombreDePath[3] === myOpts[i].value){
+        bandera=true;
+      }
+    }
+    if(nombreDePath.length ===4){
+      if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+        if ($('select[name="price"] option:selected').text()) {
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+          window.location.replace(urlGenerado);
+        }
+        else {
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          window.location.replace(urlGenerado);
+        }
+      }else{
+        urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+        window.location.replace(urlGenerado);
+      }
+    }else if(urlActual.href === "http://localhost:8080/bodegas" || bandera===true){
+      if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+        urlGenerado = "http://localhost:8080/bodegas/"+$('select[name="price"] option:selected').text();
+        window.location.replace(urlGenerado);
+      }else{
+        urlGenerado = "http://localhost:8080/bodegas";
+        window.location.replace(urlGenerado);
+      }
+
+    }else{
+      if (nombreDePath[2]){
+        if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+          if ($('select[name="price"] option:selected').text()) {
+            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+            window.location.replace(urlGenerado);
+          }
+          else {
+            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+            window.location.replace(urlGenerado);
+          }
+        }else{
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          window.location.replace(urlGenerado);
+        }
+      }
+    }
+  });
+</script>
+</body>
+
+</html>
