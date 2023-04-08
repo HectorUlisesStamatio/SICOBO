@@ -139,7 +139,9 @@
                                             <td th:text="${resultado[6]}"></td>
                                             <td th:text="'$'+${resultado[5]}"></td>
                                             <td th:text="${resultado[2]}"></td>
-                                            <td th:text="${resultado[4] == 1} ? 'Disponible' : 'Rentada'" th:class="${resultado[4] == 1} ? 'badge bg-success mt-1' : 'badge bg-danger mt-1'"></td>
+                                            <td th:text="${resultado[4] == 1} ? 'Disponible' : (${resultado[4] == 2} ? 'Rentada' : 'Desactivada')"
+                                                th:class="${resultado[4] == 1} ? 'badge bg-success mt-2' : (${resultado[4] == 2} ? 'badge bg-danger mt-2' : 'badge bg-dark mt-2')">
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
