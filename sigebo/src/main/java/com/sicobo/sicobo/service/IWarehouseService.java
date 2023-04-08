@@ -19,4 +19,6 @@ public interface IWarehouseService {
     public ResponseEntity<Object> buscar(Long id);
 
     public ResponseEntity<Object> detalleBodega(Long id);
+
+    public ResponseEntity<Object> rentar(Long id);
 }

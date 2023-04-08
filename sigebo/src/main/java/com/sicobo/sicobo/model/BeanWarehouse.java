@@ -17,6 +17,7 @@ public class BeanWarehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "longtext")
     private String description;
 
     private String section;

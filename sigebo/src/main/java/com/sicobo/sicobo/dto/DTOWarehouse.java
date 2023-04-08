@@ -14,12 +14,12 @@ public class DTOWarehouse {
     private long id;
 
     @NotBlank(message = "El campo no debe estar en blanco")
-    @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9&%#\\s]+$", message = "Ingresa un valor válido")
-    @Size(min = 3, max = 255, message = "El campo debe tener entre 3 y 255 caracteres")
+    @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\\s]*$", message = "Ingresa un valor válido")
+    @Size(min = 3, max = 1200, message = "El campo debe tener entre 3 y 1200 caracteres")
     private String description;
 
     @NotBlank(message = "El campo no debe estar en blanco")
-    @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9&%#\\s]+$", message = "Ingresa un valor válido solo con alfanuméricos, carácteres especiales disponibles: &, % y #")
+    @Pattern(regexp = "^(?!\\s)(?!.*\\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\\s]*$", message = "Ingresa un valor válido solo con alfanuméricos, carácteres especiales disponibles: &, % y #")
     @Size(min = 5, max = 100, message = "El campo debe tener entre 3 y 255 caracteres")
     private String section;
 

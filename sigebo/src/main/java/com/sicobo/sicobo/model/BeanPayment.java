@@ -34,7 +34,6 @@ public class BeanPayment {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "user_id")
     private BeanUser beanUser;
 
@@ -42,6 +41,9 @@ public class BeanPayment {
 
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
+
+    @Column(columnDefinition = "text")
+    private String paymentId;
 
     @PrePersist
     private void prePersist(){

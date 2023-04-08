@@ -192,23 +192,29 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Transactional(readOnly = true)
     public ResponseEntity<Object> detalleBodega(Long id) {
         BeanWarehouse beanWarehouse;
-        if(!daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1)){
-            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No se encuentra la bodega seleccionada", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
-        }
+        try {
+            if (!daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1)) {
+                if (daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id)) {
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No es posible rentar una bodega en renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+                } else {
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega seleccionada", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+                }
+            }
 
-        if(daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id)){
-            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No es posible rentar una bodega en renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
-        }
 
-        Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
-        List<BeanWarehouseImage> warehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
-        if(beanWarehouseOptional.isPresent()){
-            beanWarehouse = beanWarehouseOptional.get();
-            beanWarehouse.setImages(warehouseImages);
-            assert beanWarehouse != null;
-            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouse ), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para renta", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
+            List<BeanWarehouseImage> warehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
+            if (beanWarehouseOptional.isPresent()) {
+                beanWarehouse = beanWarehouseOptional.get();
+                beanWarehouse.setImages(warehouseImages);
+                assert beanWarehouse != null;
+                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehouse), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No fue posible obtener la bodega para renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+        }catch(Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodega" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -228,6 +234,38 @@ public class WarehouseServiceImpl implements IWarehouseService {
         return new ResponseEntity<>(new Message(SUCCESSFUL_DELETE,DELETE_SUCCESSFUL, SUCCESS,SUCCESS_CODE,null ), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<Object>   rentar(Long id) {
+        Optional<BeanWarehouse> warehouseSearched = daoWarehouse.findBeanWarehouseById(id);
+        boolean existWarehouse = daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1);
+        boolean warehouseisRented = daoWarehouse.existsBeanWarehouseByIdAndStatusIsRented(id);
+        try {
+            if (!warehouseSearched.isPresent()) {
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega seleccionada", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+            if (!existWarehouse) {
+                if (warehouseisRented) {
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No es posible rentar una bodega en renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+                }else{
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega jsjbsngshgs", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+                }
+            }
+
+
+            BeanWarehouse warehouse = warehouseSearched.get();
+            warehouse.setStatus(2);
+
+            BeanWarehouse warehouseRented = daoWarehouse.save(warehouse);
+            return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, warehouseRented), HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - rentar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+
+    }
 
 
 }
