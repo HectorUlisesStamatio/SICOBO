@@ -21,4 +21,6 @@ public interface IWarehouseService {
     public ResponseEntity<Object> detalleBodega(Long id);
 
     public ResponseEntity<Object> rentar(Long id);
+    public ResponseEntity<Object> buscarBodegaPorUsername(String username);
+
 }

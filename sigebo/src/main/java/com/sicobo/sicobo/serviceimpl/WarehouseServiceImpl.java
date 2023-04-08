@@ -216,6 +216,34 @@ public class WarehouseServiceImpl implements IWarehouseService {
             log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodega" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    public ResponseEntity<Object> buscarBodegaPorUsername(String username) {
+
+        List<Object[]> warehouses = daoWarehouse.findAllWarehousesByClient(username);
+
+        if (warehouses == null){
+            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El usuario no existe", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        List<BeanWarehouseForClient> warehouseForClients = new ArrayList<>();
+
+        for (Object[] warehouse : warehouses) {
+            String siteName = warehouse[0].toString();
+            String warehouseDescription = warehouse[1].toString();
+            String warehouseTypeDescription = warehouse[2].toString();
+            String warehouseStatus = warehouse[3].toString();
+            String stateName = warehouse[4].toString();
+
+            List<String> urlImage = new ArrayList<>();
+            for (int i = 5; i < warehouse.length; i++) {
+                urlImage.add(warehouse[i].toString());
+            }
+
+            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage);
+            warehouseForClients.add(beanWarehouseForClient);
+        }
+
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, warehouseForClients), HttpStatus.OK);
+
     }
 
     @Transactional(rollbackFor = {SQLException.class})
