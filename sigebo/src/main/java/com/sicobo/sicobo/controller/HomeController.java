@@ -45,7 +45,8 @@ public class HomeController {
 
     @Autowired
     private StateServiceImpl stateService;
-
+    @Autowired
+    private WarehouseDetailsServiceImpl warehouseDetailsService;
     @Autowired
     private CostTypeServiceImpl costTypeService;
 
@@ -157,6 +158,9 @@ public class HomeController {
     public String profile(Model model,RedirectAttributes attributes){
         try{
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Message response = (Message) stateService.listar().getBody();
+            assert response != null;
+            model.addAttribute(STATES, response.getResult());
             Message message = (Message) userService.findBeanUserByUsername(auth.getName()).getBody();
             assert message != null;
             if (message.getType().equals(FAILED)) {
@@ -176,16 +180,55 @@ public class HomeController {
         return USER_PROFILE;
     }
 
+    @Secured({ROLE_ADMIN,ROLE_GESTOR,ROLE_USUARIO})
+    @PostMapping("/preferencias/actualizarPerfil")
+    public String updateGestor(@Valid @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
+        try{
+            if (result.hasErrors()) {
+                for (ObjectError error : result.getAllErrors()) {
+                    log.error("Error: " + error.getDefaultMessage());
+                }
+                return USER_PROFILE;
+            }
+            Message response = (Message) userService.editarPerfil(user).getBody();
+            assert response !=null;
+            if (response.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, response);
+                return USER_PROFILE;
+            }
+            attributes.addFlashAttribute(MESSAGE, response);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - perfil" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }catch(Exception e){
+            log.error("Ocurrio un error en HomeController - perfil" + e.getMessage());
+            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+        }
+        return REDIRECT_HOME;
+    }
+
     @Secured({ROLE_USUARIO})
-    @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroDos}"})
-    public String listarBodegas(RedirectAttributes attributes, Model model) {
+    @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroUno}/{parametroDos}"})
+    public String listarBodegas(@PathVariable(required = false) Optional<String> parametroUno, @PathVariable(required = false) Optional<String> parametroDos, RedirectAttributes attributes, Model model) {
         try {
+            String parametro=null;
+            String segundoParametro=null;
+            if(parametroUno.isPresent()){
+                parametro = parametroUno.get();
+            }
+            if(parametroDos.isPresent()) {
+                segundoParametro = parametroDos.get();
+            }
+
             Message response = (Message) stateService.listar().getBody();
             Message responseCosto = (Message) costTypeService.listar().getBody();
+            Message responseBodegas = (Message) warehouseDetailsService.listar(parametro,segundoParametro).getBody();
             assert response != null;
             assert responseCosto != null;
+            assert responseBodegas != null;
             model.addAttribute(STATES, response.getResult());
             model.addAttribute(COST_TYPES,responseCosto.getResult());
+            model.addAttribute(WAREHOUSES,responseBodegas.getResult());
         }catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
         }  catch (Exception e) {

@@ -107,7 +107,9 @@
 </style>
 
 <main id="main" class="main">
-
+  <div id="loader">
+    <div class="loader"></div>
+  </div>
   <div class="pagetitle">
     <h1>Bodegas</h1>
     <nav>
@@ -131,76 +133,31 @@
                 <div class="row">
                   <div class="offset-md-9 offset-sm-6 col-12 col-sm-6 col-md-3 align-self-end pt-2">
                     <div class="form-floating">
-                      <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-                        <option disabled selected>Selecciona un precio</option>
-                        <option>Cualquier Precio</option>
+                      <select id="price" name="price" class="form-select" aria-label="Floating label select example">
+                        <option selected>Cualquier Precio</option>
                         <option th:each="tmpCost: ${costTypes}" th:text="${tmpCost.amount}" th:value="${tmpCost.amount}"></option>
                       </select>
-                      <label for="floatingSelect">Precio</label>
+                      <label for="price">Precio</label>
                     </div>
                   </div>
                 </div>
                 <div class="row align-items-start">
-                  <article class="popular__card swiper-slide">
-                    <img th:src="@{/img/popular1.jpg}"alt="" class="popular__img">
+                  <article th:each="tmpBodega: ${bodegas}" class="popular__card swiper-slide">
+                    <img th:src="${tmpBodega.secure_url}" alt="" class="popular__img">
 
                     <div class="popular__data">
                       <h2 class="popular__price">
-                        <span>$</span>69,999
+                        <span th:text="${tmpBodega.final_cost}">$</span>
                       </h2>
-                      <h3 class="popular__title">
-                        Bodega de lujo Santa Fe
-                      </h3>
-                      <p class="popular__description">
-                        Av. Vasco de Quiroga 3800, Santa Fe, Alvaro Obregón, Ciudad de México . #9876
-                      </p>
+                      <h3 class="popular__title" th:text="${tmpBodega.section}"></h3>
+                      <p class="popular__description" th:text="${tmpBodega.description}"></p>
                     </div>
                   </article>
-                  <article class="popular__card swiper-slide">
-                    <img th:src="@{/img/popular1.jpg}" alt="" class="popular__img">
-
-                    <div class="popular__data">
-                      <h2 class="popular__price">
-                        <span>$</span>69,999
-                      </h2>
-                      <h3 class="popular__title">
-                        Bodega de lujo Santa Fe
-                      </h3>
-                      <p class="popular__description">
-                        Av. Vasco de Quiroga 3800, Santa Fe, Alvaro Obregón, Ciudad de México . #9876
-                      </p>
+                  <div class="col-12" th:unless="${#arrays.length(bodegas) > 0}">
+                    <div class="alert alert-warning" role="alert">
+                     No existen bodegas disponibles según sus parametros.
                     </div>
-                  </article>
-                  <article class="popular__card swiper-slide">
-                    <img th:src="@{/img/popular1.jpg}" alt="" class="popular__img">
-
-                    <div class="popular__data">
-                      <h2 class="popular__price">
-                        <span>$</span>69,999
-                      </h2>
-                      <h3 class="popular__title">
-                        Bodega de lujo Santa Fe
-                      </h3>
-                      <p class="popular__description">
-                        Av. Vasco de Quiroga 3800, Santa Fe, Alvaro Obregón, Ciudad de México . #9876
-                      </p>
-                    </div>
-                  </article>
-                  <article class="popular__card swiper-slide">
-                    <img th:src="@{/img/popular1.jpg}" alt="" class="popular__img">
-
-                    <div class="popular__data">
-                      <h2 class="popular__price">
-                        <span>$</span>69,999
-                      </h2>
-                      <h3 class="popular__title">
-                        Bodega de lujo Santa Fe
-                      </h3>
-                      <p class="popular__description">
-                        Av. Vasco de Quiroga 3800, Santa Fe, Alvaro Obregón, Ciudad de México . #9876
-                      </p>
-                    </div>
-                  </article>
+                  </div>
                 </div>
               </div>
             </div>
@@ -214,7 +171,78 @@
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
+<script>
 
+  let $ = jQuery;
+
+  let urlActual = new URL(window.location.href);
+  let nombreDePath = urlActual.pathname.split("/");
+  let urlGenerado;
+  let myOpts = document.getElementById('price').options;
+  let length = $('#price').children('option').length;
+
+  $(document).ready(function(){
+      for(i=0;i<length;i++){
+        if(nombreDePath[2] === myOpts[i].value || nombreDePath[3] === myOpts[i].value){
+          let selectedPrice = myOpts[i].value;
+          $("#price option[value='" + selectedPrice + "']").attr("selected", true);
+
+        }
+      }
+
+
+  })
+
+
+  $("#price").on('change', function() {
+    let bandera = false;
+    for(i=0;i<length;i++){
+      if(nombreDePath[2] === myOpts[i].value || nombreDePath[3] === myOpts[i].value){
+        bandera=true;
+      }
+    }
+    if(nombreDePath.length ===4){
+      if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+        if ($('select[name="price"] option:selected').text()) {
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+          window.location.replace(urlGenerado);
+        }
+        else {
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          window.location.replace(urlGenerado);
+        }
+      }else{
+        urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+        window.location.replace(urlGenerado);
+      }
+    }else if(urlActual.href === "http://localhost:8080/bodegas" || bandera===true){
+      if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+        urlGenerado = "http://localhost:8080/bodegas/"+$('select[name="price"] option:selected').text();
+        window.location.replace(urlGenerado);
+      }else{
+        urlGenerado = "http://localhost:8080/bodegas";
+        window.location.replace(urlGenerado);
+      }
+
+    }else{
+      if (nombreDePath[2]){
+        if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
+          if ($('select[name="price"] option:selected').text()) {
+            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+            window.location.replace(urlGenerado);
+          }
+          else {
+            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+            window.location.replace(urlGenerado);
+          }
+        }else{
+          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          window.location.replace(urlGenerado);
+        }
+      }
+    }
+  });
+</script>
 </body>
 
 </html>
