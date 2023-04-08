@@ -32,12 +32,10 @@
                             <div class="d-flex align-items-end row">
                                 <div class="col-sm-7">
                                     <div class="card-body">
-                                        <h5 class="card-title text-primary">Hola, ¿Como estas? John! 🎉</h5>
+                                        <h5 class="card-title text-primary">Hola, ¿Como estas? 🎉</h5>
                                         <p class="mb-4" style="text-align: justify">
                                             <span class="fw-bold">¡Bienvenido!</span> Nos alegra que estés aquí. Este es tu espacio para descubrir todas las herramientas y recursos que tenemos disponibles para ti. Estamos aquí para apoyarte en cada paso del camino. <span class="fw-bold"> ¡Empecemos!</span>
                                         </p>
-
-                                        <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
                                     </div>
                                 </div>
                                 <div class="col-sm-5 text-center text-sm-left mb-4">
@@ -57,7 +55,7 @@
                     <div class="col-12 col-lg-12 col-md-4">
                         <div class="row">
                             <div class="row">
-                                <div class="col-xxl-4 col-md-6">
+                                <div class="col-12 col-lg-4">
                                     <div class="card info-card sales-card">
 
                                         <div class="card-body">
@@ -76,7 +74,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-xxl-4 col-md-6">
+                                <div class="col-12 col-lg-4">
                                     <div class="card info-card revenue-card">
 
                                         <div class="card-body">
@@ -94,7 +92,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xxl-4 col-xl-12">
+                                <div class="col-12 col-lg-4">
                                     <div class="card info-card customers-card">
                                         <div class="card-body">
                                             <h5 class="card-title">Bodegas rentadas <span>| Este Año</span></h5>
@@ -130,31 +128,19 @@
                                         <th scope="col">Cliente</th>
                                         <th scope="col">Bodega</th>
                                         <th scope="col">Precio</th>
-                                        <th scope="col">Estado</th>
+                                        <th scope="col">Sitio</th>
+                                        <th scope="col">Estatus</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2457</a></th>
-                                        <td>Jose Luis</td>
-                                        <td><a href="#" class="text-primary">Bodega Grande</a></td>
-                                        <td>$12000</td>
-                                        <td><span class="badge bg-success">Vigente</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2147</a></th>
-                                        <td>Juan Perez</td>
-                                        <td><a href="#" class="text-primary">Bodega de Lujo</a></td>
-                                        <td>$4700</td>
-                                        <td><span class="badge bg-warning">En proceso</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2644</a></th>
-                                        <td>Adrian López</td>
-                                        <td><a href="#" class="text-primar">Bodega Chica</a></td>
-                                        <td>$3000</td>
-                                        <td><span class="badge bg-danger">Cancelado</span></td>
-                                    </tr>
+                                        <tr th:each="resultado, iteracion : ${response}">
+                                            <td th:text="${iteracion.count}"></td>
+                                            <td th:text="${resultado[0]}"></td>
+                                            <td th:text="${resultado[6]}"></td>
+                                            <td th:text="'$'+${resultado[5]}"></td>
+                                            <td th:text="${resultado[2]}"></td>
+                                            <td th:text="${resultado[4] == 1} ? 'Disponible' : 'Rentada'" th:class="${resultado[4] == 1} ? 'badge bg-success mt-1' : 'badge bg-danger mt-1'"></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

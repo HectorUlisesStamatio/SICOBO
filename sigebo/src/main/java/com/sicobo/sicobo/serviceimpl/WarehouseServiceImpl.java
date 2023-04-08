@@ -58,8 +58,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    public ResponseEntity<Object> listar() {
-        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, "La consulta de bodegas ha sido exitosa",SUCCESS, SUCCESS_CODE,daoWarehouse.findAll()), HttpStatus.OK);
+    public ResponseEntity<List<Object[]>> listar(Long id, String username) {
+        List<Object[]> resultados = daoWarehouse.findAllClienteWarehousesDetails(id, username);
+        return new ResponseEntity<>(resultados, HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)

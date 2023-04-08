@@ -24,6 +24,6 @@ public interface IUserService {
 
     public ResponseEntity<Object> editarPerfil(DTOUser dtoUser);
 
-
+    public ResponseEntity<Object> buscarGestor(String username);
 
 }

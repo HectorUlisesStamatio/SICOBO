@@ -30,12 +30,15 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     List<Object[]> findAllWarehouseDetails();
 
 
-    @Query(value = "select * from users \n" +
-            "inner join site_assigment on users.id = site_assigment.user_id\n" +
-            "inner join site on site_assigment.site_id = site.id\n" +
-            "inner join state on site.states_id = state.id\n" +
-            "inner join warehouse on site.id = warehouse.site_id_site\n" +
-            "inner join warehouses_type on warehouse.warehouses_types = warehouses_type.id\n" +
-            "inner join cost_type on warehouses_type.id = cost_type.warehouses_type_id", nativeQuery = true)
-    List<Object[]> findAllClienteWarehousesDetails();
+    @Query(value = "SELECT DISTINCT concat(u.name,' ',u.lastname,' ', u.surname) as fullName,u.username,\n" +
+            "s.name, w.description , w.status, w.final_cost, wt.description\n" +
+            "FROM users u \n" +
+            "INNER JOIN payment p ON u.id = p.user_id \n" +
+            "INNER JOIN warehouse w ON p.warehouse_id = w.id \n" +
+            "INNER JOIN site s ON w.site_id_site = s.id \n" +
+            "INNER JOIN site_assigment sa ON s.id = sa.site_id \n" +
+            "INNER JOIN warehouses_type wt on w.warehouses_types = wt.id\n" +
+            "INNER JOIN users u2 ON sa.user_id = u2.id \n" +
+            "WHERE u2.id = :id AND s.name = :username and u.role = \"ROLE_USUARIO\"", nativeQuery = true)
+    List<Object[]> findAllClienteWarehousesDetails(Long id, String username);
 }
