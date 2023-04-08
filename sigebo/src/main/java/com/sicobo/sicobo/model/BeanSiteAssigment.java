@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,14 +12,15 @@ public class BeanSiteAssigment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "user_id")
     private BeanUser beanUser;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "site_id")
     private BeanSite beanSite;
-
 
     @Column(columnDefinition = "integer default 1")
     private int status;

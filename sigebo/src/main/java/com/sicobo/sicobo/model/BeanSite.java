@@ -22,9 +22,6 @@ public class BeanSite {
 
     private String address;
 
-    @OneToOne(mappedBy = "beanSite")
-    private BeanSiteAssigment beanSiteAssigment;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "states_id")

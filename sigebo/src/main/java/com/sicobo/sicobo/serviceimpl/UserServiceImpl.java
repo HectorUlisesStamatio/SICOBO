@@ -216,11 +216,11 @@ public class UserServiceImpl implements IUserService
         userPrepared.setSurname(dtoUser.getSurname());
         userPrepared.setPhoneNumber(dtoUser.getPhoneNumber());
         try{
-            if(dtoUser.getBeanSiteAssigment()!=userPrepared.getBeanSiteAssigment().getId()){
+            Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(dtoUser.getId()));
+            if(beanSiteAssigment.isPresent()){
                 Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
-                Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(dtoUser.getId()));
                 try{
-                    if(beanSite.isPresent() && beanSiteAssigment.isPresent()){
+                    if(beanSite.isPresent()){
                         BeanSite beanSite1 = beanSite.get();
                         BeanSiteAssigment siteAssigmentPrepared = beanSiteAssigment.get();
                         siteAssigmentPrepared.setBeanUser(userPrepared);
@@ -233,23 +233,23 @@ public class UserServiceImpl implements IUserService
                 }catch (Exception e){
                     log.error("Ocurrió un error al guardar" + e.getMessage());
                 }
+            }else{
+                Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
+                try{
+                    BeanSite beanSite1 = beanSite.get();
+                    BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment();
+                    siteAssigmentPrepared.setBeanUser(userPrepared);
+                    siteAssigmentPrepared.setBeanSite(beanSite1);
+                    siteAssigmentPrepared.setStatus(1);
+                    siteAssigment.save(siteAssigmentPrepared);
+
+                }catch (Exception e){
+                    log.error("Ocurrió un error al guardar" + e.getMessage());
+                }
             }
         }catch (Exception E){
-            Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
-            try{
-                BeanSite beanSite1 = beanSite.get();
-                BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment();
-                siteAssigmentPrepared.setBeanUser(userPrepared);
-                siteAssigmentPrepared.setBeanSite(beanSite1);
-                siteAssigmentPrepared.setStatus(1);
-                siteAssigment.save(siteAssigmentPrepared);
-
-            }catch (Exception e){
-                log.error("Ocurrió un error al guardar" + e.getMessage());
-            }
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
 
         if(!dtoUser.getPassword().equals(userSearched.get().getPassword())){
             if(!passwordValidator.isValid(dtoUser.getPassword())){

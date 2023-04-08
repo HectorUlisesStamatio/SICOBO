@@ -4,7 +4,6 @@ package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
 import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
 import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
@@ -48,6 +47,7 @@ public class HomeController {
 
     @Autowired
     private WarehouseServiceImpl warehouseService;
+    @Autowired
     private StateServiceImpl stateService;
     @Autowired
     private WarehouseDetailsServiceImpl warehouseDetailsService;
