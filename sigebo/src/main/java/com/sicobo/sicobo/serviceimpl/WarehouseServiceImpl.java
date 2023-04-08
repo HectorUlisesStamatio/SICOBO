@@ -1,7 +1,6 @@
 package com.sicobo.sicobo.serviceimpl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.sicobo.sicobo.dao.DaoSiteAssigment;
 import com.sicobo.sicobo.dao.DaoUser;
@@ -11,7 +10,6 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
-import com.sicobo.sicobo.util.WarehouseValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +58,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    public ResponseEntity<Object> listar() {
-        return null;
+    public ResponseEntity<List<Object[]>> listar(Long id, String username) {
+        List<Object[]> resultados = daoWarehouse.findAllClienteWarehousesDetails(id, username);
+        return new ResponseEntity<>(resultados, HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)

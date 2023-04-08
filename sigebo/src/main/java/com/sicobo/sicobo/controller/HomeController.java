@@ -1,11 +1,10 @@
-
 package com.sicobo.sicobo.controller;
-
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.serviceimpl.*;
+import com.sicobo.sicobo.model.BeanGestorInfo;
 import com.sicobo.sicobo.util.Message;
 import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
@@ -24,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -44,6 +44,8 @@ public class HomeController {
     private DaoUser userRepository;
 
     @Autowired
+    private WarehouseServiceImpl warehouseService;
+    @Autowired
     private StateServiceImpl stateService;
     @Autowired
     private WarehouseDetailsServiceImpl warehouseDetailsService;
@@ -59,14 +61,14 @@ public class HomeController {
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @GetMapping("/")
-    public String inicio(){
+    public String inicio(Model model){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String rol = auth.getAuthorities().toString();
         try{
             if(Objects.equals(rol, "[ROLE_ADMIN]")) {
                 return ADMIN_DASHBOARD;
             }else if(Objects.equals(rol, "[ROLE_GESTOR]")) {
-                return GESTOR_DASHBOARD;
+                return "redirect:/warehousesAll";
             }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
                 return USER_INDEX;
             }else{
@@ -77,6 +79,48 @@ public class HomeController {
         }
         return INDEX;
     }
+
+
+
+    @Secured({ROLE_GESTOR})
+    @GetMapping("/warehousesAll")
+    public String warehousesAll(Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Message gestorInfo = (Message) userService.buscarGestor(auth.getName()).getBody();
+
+        if(gestorInfo.getType().equals(FAILED)){
+            return ERRORS;
+        }
+
+        long userId = 0;
+        String siteName = null;
+
+        List<BeanGestorInfo> gestorInfosList = (List<BeanGestorInfo>) gestorInfo.getResult();
+        for (BeanGestorInfo gestor : gestorInfosList) {
+            userId = gestor.getUserId();
+            siteName = gestor.getSiteName();
+        }
+
+        ResponseEntity<List<Object[]>> response = warehouseService.listar(userId, siteName);
+        int bodegasDisponibles = 0;
+        int bodegasRentadas = 0;
+
+        for (Object[] resultado : response.getBody()) {
+            int status = (int) resultado[4];
+            if (status == 1) {
+                bodegasDisponibles++;
+            } else if (status == 2) {
+                bodegasRentadas++;
+            }
+        }
+        model.addAttribute("bodegasDisponibles", bodegasDisponibles);
+        model.addAttribute("bodegasRentadas", bodegasRentadas);
+
+        model.addAttribute(RESPONSE, response.getBody());
+        return GESTOR_DASHBOARD;
+    }
+
 
     @GetMapping("/register")
     public String register(Model model, DTOUser user){

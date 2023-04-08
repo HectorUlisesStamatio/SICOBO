@@ -30,4 +30,17 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
             " BeanWarehousesType wt on w.warehousesType.id = wt.id inner join BeanSite s on" +
             " w.beanSite.id = s.id inner join BeanState st on s.beanState.id = st.id where w.status = 1")
     List<Object[]> findAllWarehouseDetails();
+
+
+    @Query(value = "SELECT DISTINCT concat(u.name,' ',u.lastname,' ', u.surname) as fullName,u.username,\n" +
+            "s.name, w.description , w.status, w.final_cost, wt.description\n" +
+            "FROM users u \n" +
+            "INNER JOIN payment p ON u.id = p.user_id \n" +
+            "INNER JOIN warehouse w ON p.warehouse_id = w.id \n" +
+            "INNER JOIN site s ON w.site_id_site = s.id \n" +
+            "INNER JOIN site_assigment sa ON s.id = sa.site_id \n" +
+            "INNER JOIN warehouses_type wt on w.warehouses_types = wt.id\n" +
+            "INNER JOIN users u2 ON sa.user_id = u2.id \n" +
+            "WHERE u2.id = :id AND s.name = :username and u.role = \"ROLE_USUARIO\"", nativeQuery = true)
+    List<Object[]> findAllClienteWarehousesDetails(Long id, String username);
 }

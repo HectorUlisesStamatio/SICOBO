@@ -25,10 +25,7 @@ import org.thymeleaf.context.Context;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -216,11 +213,11 @@ public class UserServiceImpl implements IUserService
         userPrepared.setSurname(dtoUser.getSurname());
         userPrepared.setPhoneNumber(dtoUser.getPhoneNumber());
         try{
-            if(dtoUser.getBeanSiteAssigment()!=userPrepared.getBeanSiteAssigment().getId()){
+            Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(dtoUser.getId()));
+            if(beanSiteAssigment.isPresent()){
                 Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
-                Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(dtoUser.getId()));
                 try{
-                    if(beanSite.isPresent() && beanSiteAssigment.isPresent()){
+                    if(beanSite.isPresent()){
                         BeanSite beanSite1 = beanSite.get();
                         BeanSiteAssigment siteAssigmentPrepared = beanSiteAssigment.get();
                         siteAssigmentPrepared.setBeanUser(userPrepared);
@@ -233,23 +230,23 @@ public class UserServiceImpl implements IUserService
                 }catch (Exception e){
                     log.error("Ocurrió un error al guardar" + e.getMessage());
                 }
+            }else{
+                Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
+                try{
+                    BeanSite beanSite1 = beanSite.get();
+                    BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment();
+                    siteAssigmentPrepared.setBeanUser(userPrepared);
+                    siteAssigmentPrepared.setBeanSite(beanSite1);
+                    siteAssigmentPrepared.setStatus(1);
+                    siteAssigment.save(siteAssigmentPrepared);
+
+                }catch (Exception e){
+                    log.error("Ocurrió un error al guardar" + e.getMessage());
+                }
             }
         }catch (Exception E){
-            Optional<BeanSite> beanSite = daoSite.findById((long)dtoUser.getBeanSiteAssigment());
-            try{
-                BeanSite beanSite1 = beanSite.get();
-                BeanSiteAssigment siteAssigmentPrepared = new BeanSiteAssigment();
-                siteAssigmentPrepared.setBeanUser(userPrepared);
-                siteAssigmentPrepared.setBeanSite(beanSite1);
-                siteAssigmentPrepared.setStatus(1);
-                siteAssigment.save(siteAssigmentPrepared);
-
-            }catch (Exception e){
-                log.error("Ocurrió un error al guardar" + e.getMessage());
-            }
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
 
         if(!dtoUser.getPassword().equals(userSearched.get().getPassword())){
             if(!passwordValidator.isValid(dtoUser.getPassword())){
@@ -482,6 +479,27 @@ public class UserServiceImpl implements IUserService
             log.error("Ocurrió un error al editar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Object> buscarGestor(String username) {
+
+        List<Object[]> info = daoUser.findGestoDetails(username);
+
+        if (info == null){
+            return new ResponseEntity<>(new Message(FAILED_SEARCH,"El gestor no existe", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        List<BeanGestorInfo> gestorInfos = new ArrayList<>();
+
+        for (Object[] o : info) {
+            Long id = Long.parseLong(o[0].toString());
+            String name = o[1].toString();
+            BeanGestorInfo gestorInfo = new BeanGestorInfo(id, name);
+            gestorInfos.add(gestorInfo);
+        }
+
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, gestorInfos), HttpStatus.OK);
     }
 
     public ResponseEntity<Object> findBeanUserByUsername(String user) {
