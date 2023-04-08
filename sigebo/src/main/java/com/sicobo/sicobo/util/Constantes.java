@@ -90,6 +90,8 @@ public final class Constantes {
         public static final String FORGOT_PASSWORD = "forgotPassword";
 
         public static final String RESET_PASSWORD = "resetPassword";
+
+        public static final String MIS_BODEGAS = "misBodegas";
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";

@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
-import static com.sicobo.sicobo.util.Constantes.Redirects.ADMIN_TERMSANDCONDITIONS;
-import static com.sicobo.sicobo.util.Constantes.Redirects.USER_TERMSANDCONDITIONS;
+import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.Stuff.MESSAGE;
 import static com.sicobo.sicobo.util.Constantes.Stuff.TERMSANDCONDTIONS;
 
@@ -45,5 +44,10 @@ public class UserController {
             log.error("Ocurrio un error en UserController - mostrarContenido" + e.getMessage());
         }
         return USER_TERMSANDCONDITIONS;
+    }
+
+    @GetMapping("/misBodegas")
+    public String misBodegas(){
+        return MIS_BODEGAS;
     }
 }
