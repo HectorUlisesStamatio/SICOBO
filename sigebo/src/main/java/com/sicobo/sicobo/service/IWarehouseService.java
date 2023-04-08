@@ -18,4 +18,6 @@ public interface IWarehouseService {
 
     public ResponseEntity<Object> buscar(Long id);
 
+    public ResponseEntity<Object> buscarBodegaPorUsername(String username);
+
 }
