@@ -21,10 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
@@ -211,7 +211,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 urlImage.add(warehouse[i].toString());
             }
 
-            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage);
+            Long paymentId = Long.parseLong( warehouse[6].toString());
+
+            Date dueDate = (Date) warehouse[7];
+            Date paymentDate = (Date) warehouse[8];
+
+
+            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate);
             warehouseForClients.add(beanWarehouseForClient);
         }
 
