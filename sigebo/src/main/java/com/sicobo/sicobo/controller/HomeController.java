@@ -2,13 +2,13 @@ package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOUser;
+import com.sicobo.sicobo.model.BeanPayment;
+import com.sicobo.sicobo.model.BeanUser;
+import com.sicobo.sicobo.model.BeanWarehouse;
+import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.model.BeanGestorInfo;
-import com.sicobo.sicobo.serviceimpl.UserServiceImpl;
-import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
-import com.sicobo.sicobo.serviceimpl.CostTypeServiceImpl;
-import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
-import com.sicobo.sicobo.serviceimpl.WarehouseDetailsServiceImpl;
 import com.sicobo.sicobo.util.Message;
+import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,11 +27,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
+import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_FIELD_ERRORS;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.Roles.*;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
@@ -52,6 +55,16 @@ public class HomeController {
     private WarehouseDetailsServiceImpl warehouseDetailsService;
     @Autowired
     private CostTypeServiceImpl costTypeService;
+
+    @Autowired
+    private StripeServiceImpl stripeService;
+
+    @Autowired
+    private PaymentServiceImpl paymentService;
+
+    private Session session;
+
+    private Session sessionRenovation;
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
@@ -162,7 +175,6 @@ public class HomeController {
             model.addAttribute(MESSAGE,message);
             return LOGIN;
         }else{
-            System.out.println("Se envío correctamente el correo");
             model.addAttribute(MESSAGE,message);
             return LOGIN;
         }
@@ -185,7 +197,6 @@ public class HomeController {
             model.addAttribute(MESSAGE,message);
             return RESET_PASSWORD;
         }else{
-            System.out.println("Se cambio correctamente la contraseña");
             model.addAttribute(MESSAGE,message);
             return LOGIN;
         }
@@ -276,5 +287,273 @@ public class HomeController {
         return LISTADO_BODEGAS;
     }
 
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping("/detalleProducto/{idWarehouse}")
+    public String preparedDatail(@PathVariable Optional<Long> idWarehouse, Model model) {
+
+        try {
+            if(!idWarehouse.isPresent()){
+                model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                model.addAttribute(WAREHOUSE, null);
+                return PRODUCT_DETAIL;
+            }
+            Message message = (Message) warehouseService.detalleBodega(idWarehouse.get()).getBody();
+            assert  message != null;
+
+            if(message.getType().equals(FAILED)){
+                model.addAttribute(MESSAGE, message);
+                model.addAttribute(WAREHOUSE, null);
+                return PRODUCT_DETAIL;
+            }
+
+            model.addAttribute(WAREHOUSE, message);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - preparedDatail" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - preparedDatail" + e.getMessage());
+        }
+
+        return PRODUCT_DETAIL;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @PostMapping("/prepararCompra")
+    public String preparedBuy(@RequestParam("idWarehouse")Optional<Long> idWarehouse,@RequestParam("finalCost")Optional<Double> finalCost, @RequestParam("months")Optional<Integer> months, RedirectAttributes attributes, Model model ){
+        try{
+            if(!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent()){
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                return REDIRECT_PREPARED_DETAIL + idWarehouse;
+            }
+
+            Message message = (Message) warehouseService.detalleBodega(idWarehouse.get()).getBody();
+            assert message != null;
+            if(message.getType().equals(FAILED)){
+                attributes.addFlashAttribute(MESSAGE, message);
+                return REDIRECT_PREPARED_DETAIL + idWarehouse;
+            }
+            BeanWarehouse warehouse = (BeanWarehouse) message.getResult();
+            assert  warehouse != null;
+            warehouse.setFinalCost(finalCost.get());
+            Message response = (Message) stripeService.checkout(warehouse, months.get()).getBody();
+            assert response !=null;
+            if(response.getType().equals(FAILED)){
+                attributes.addFlashAttribute(MESSAGE, response);
+               return REDIRECT_PREPARED_DETAIL + warehouse.getId();
+            }
+            session = (Session) response.getResult();
+            assert  session != null;
+
+        } catch (NullPointerException e) {
+            log.error("Valor nulo un error en HomeController - preparedBuy" + e.getMessage());
+        }  catch (Exception e) {
+            log.error("Ocurrio un error en HomeController - preparedBuy" + e.getMessage());
+        }
+
+        return "redirect:" + session.getUrl() ;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping("/estadoPago")
+    public String succesPayment(Model model) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = ((User) auth.getPrincipal()).getUsername();
+            assert username != null;
+            ResponseEntity<?> responseEntity = userService.findBeanUserByUsername(username);
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+
+            if (message.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, message);
+                return WAREHOUSES_USER;
+            }
+            BeanUser user = (BeanUser) message.getResult();
+            assert user != null;
+            ResponseEntity<?> responseRented =  stripeService.paymentIntent(session, user);
+            Message messageResult = (Message) responseRented.getBody();
+            assert  messageResult != null;
+
+            if(messageResult.getType().equals(FAILED)){
+                model.addAttribute(MESSAGE, messageResult);
+                return PAYMENT_INFORMATION;
+            }
+
+            Map<String,Object> mapResult = (Map<String,Object>) messageResult.getResult();
+            assert  mapResult != null;
+
+            BeanWarehouse warehouse = (BeanWarehouse) mapResult.get("warehouse");
+            assert warehouse != null;
+            BeanPayment payment = (BeanPayment) mapResult.get("payment");
+            assert warehouse != null;
+
+            model.addAttribute(MESSAGE, messageResult);
+            model.addAttribute(WAREHOUSE, warehouse);
+            model.addAttribute(PAYMENT, payment);
+        } catch (NullPointerException e){
+            log.error("Ocurrio un error en HomeController - succesPayment" + e.getMessage());
+        } catch (Exception e){
+            log.error("Ocurrio un error en HomeController - succesPayment" + e.getMessage());
+        }
+
+        return PAYMENT_INFORMATION;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping("/renovacionBodega/{idPayment}")
+    public String detailRenovation(@PathVariable("idPayment") Optional<Long> idPayment, Model model){
+        try{
+            if(!idPayment.isPresent()){
+               model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+               return MY_WAREHOUSES;
+            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = ((User) auth.getPrincipal()).getUsername();
+            assert username != null;
+            ResponseEntity<?> responseEntity = userService.findBeanUserByUsername(username);
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+
+            if (message.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, message);
+                return MY_WAREHOUSES;
+            }
+            BeanUser user = (BeanUser) message.getResult();
+            assert user != null;
+
+            Message messagePayment = (Message) paymentService.buscarPagoRenovacion(idPayment.get(), user).getBody();
+            assert  messagePayment != null;
+
+            if(messagePayment.getType().equals(FAILED)){
+                model.addAttribute(WAREHOUSE, null);
+                model.addAttribute(MESSAGE, messagePayment);
+                return MY_WAREHOUSE_DETAIL;
+            }
+
+            BeanPayment payment = (BeanPayment) messagePayment.getResult();
+            assert payment != null;
+
+            Message messageResponse = (Message) warehouseService.detalleBodegaRentada(payment.getBeanWarehouse().getId(),user).getBody();
+
+            if(messageResponse.getType().equals(FAILED)){
+                model.addAttribute(WAREHOUSE, null);
+                model.addAttribute(MESSAGE, messageResponse);
+                return MY_WAREHOUSE_DETAIL;
+            }
+            model.addAttribute(WAREHOUSE, messageResponse);
+            model.addAttribute(PAYMENT, idPayment.get());
+        } catch (NullPointerException e){
+            log.error("Ocurrio un error en HomeController - detailRenovation" + e.getMessage());
+        } catch (Exception e){
+            log.error("Ocurrio un error en HomeController - detailRenovation" + e.getMessage());
+        }
+        return MY_WAREHOUSE_DETAIL;
+    }
+
+    @Secured({ROLE_USUARIO})
+    @PostMapping("/prepararRenovacion")
+    public String prepareRenovation(
+            @RequestParam("idWarehouse")Optional<Long> idWarehouse,
+            @RequestParam("finalCost")Optional<Double> finalCost,
+            @RequestParam("months")Optional<Integer> months,
+            @RequestParam("idPayment")Optional<Long> idPayment,
+            RedirectAttributes attributes, Model model){
+        try{
+            if(!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent() || !idPayment.isPresent()){
+                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+            }
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = ((User) auth.getPrincipal()).getUsername();
+            assert username != null;
+            ResponseEntity<?> responseEntity = userService.findBeanUserByUsername(username);
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+
+            if (message.getType().equals(FAILED)) {
+                attributes.addFlashAttribute(MESSAGE, message);
+                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+            }
+            BeanUser user = (BeanUser) message.getResult();
+            assert user != null;
+
+
+            Message messageResponse = (Message) warehouseService.detalleBodegaRentada(idWarehouse.get(), user).getBody();
+            assert messageResponse != null;
+            if(messageResponse.getType().equals(FAILED)){
+                attributes.addFlashAttribute(MESSAGE, messageResponse);
+                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+            }
+
+
+            BeanWarehouse warehouse = (BeanWarehouse) messageResponse.getResult();
+            assert  warehouse != null;
+            warehouse.setFinalCost(finalCost.get());
+            Message response = (Message) stripeService.checkoutRenovation(warehouse, months.get(), idPayment.get()).getBody();
+            assert response !=null;
+            if(response.getType().equals(FAILED)){
+                attributes.addFlashAttribute(MESSAGE, response);
+                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+            }
+            sessionRenovation = (Session) response.getResult();
+            assert  sessionRenovation != null;
+
+        } catch (NullPointerException e){
+            log.error("Ocurrio un error en HomeController - prepareRenovation" + e.getMessage());
+        } catch (Exception e){
+            log.error("Ocurrio un error en HomeController - prepareRenovation" + e.getMessage());
+        }
+
+        return "redirect:" + sessionRenovation.getUrl();
+    }
+
+
+    @Secured({ROLE_USUARIO})
+    @GetMapping("/estadoRenovacion")
+    public String succesPaymentRenovation(Model model) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = ((User) auth.getPrincipal()).getUsername();
+            assert username != null;
+            ResponseEntity<?> responseEntity = userService.findBeanUserByUsername(username);
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+
+            if (message.getType().equals(FAILED)) {
+                model.addAttribute(MESSAGE, message);
+                return WAREHOUSES_USER;
+            }
+            BeanUser user = (BeanUser) message.getResult();
+            assert user != null;
+
+            ResponseEntity<?> responseRented =  stripeService.paymentIntentRenovation(sessionRenovation, user);
+            Message messageResult = (Message) responseRented.getBody();
+            assert  messageResult != null;
+
+            if(messageResult.getType().equals(FAILED)){
+                model.addAttribute(MESSAGE, messageResult);
+                return PAYMENT_RENOVATION_INFORMATION;
+            }
+
+            Map<String,Object> mapResult = (Map<String,Object>) messageResult.getResult();
+            assert  mapResult != null;
+
+            BeanWarehouse warehouse = (BeanWarehouse) mapResult.get("warehouse");
+            assert warehouse != null;
+            BeanPayment payment = (BeanPayment) mapResult.get("payment");
+            assert warehouse != null;
+
+            model.addAttribute(MESSAGE, messageResult);
+            model.addAttribute(WAREHOUSE, warehouse);
+            model.addAttribute(PAYMENT, payment);
+        } catch (NullPointerException e){
+            log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
+        } catch (Exception e){
+            log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
+        }
+
+        return PAYMENT_RENOVATION_INFORMATION;
+    }
 
 }

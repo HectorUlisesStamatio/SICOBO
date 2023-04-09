@@ -23,6 +23,9 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
     Optional<BeanWarehouse> findBeanWarehouseById(Long id);
 
+    boolean existsBeanWarehouseByIdAndStatusIs(Long id, int status);
+    boolean existsBeanWarehouseByIdAndStatusIsOrStatusIs(Long id, int status, int otherStatus);
+
     @Query("SELECT w.finalCost,w.section, w.description, wi.secureUrl, wt.description "+ "as " + "costo" +", s.address," +
             " st.name  FROM BeanWarehouse w inner join BeanWarehouseImage wi on wi.id = w.id inner join" +
             " BeanWarehousesType wt on w.warehousesType.id = wt.id inner join BeanSite s on" +
@@ -43,7 +46,8 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     List<Object[]> findAllClienteWarehousesDetails(Long id, String username);
 
 
-    @Query(value = "select site.name, warehouse.description, warehouses_type.description, warehouse.status, state.name, warehouse_images.url from users\n" +
+    @Query(value = "select site.name, warehouse.description, warehouses_type.description, warehouse.status, state.name, warehouse_images.url,\n" +
+            "payment.id, payment.due_date, payment.payment_date  from users\n" +
             "inner join payment on users.id = payment.user_id\n" +
             "inner join warehouse on payment.warehouse_id = warehouse.id\n" +
             "inner join warehouses_type on warehouse.warehouses_types = warehouses_type.id\n" +

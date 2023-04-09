@@ -91,7 +91,7 @@
                         </td>
                         <td th:text="${warehouse.warehousesType.description}"></td>
                         <td th:text="${warehouse.section}"></td>
-                        <td th:text="${warehouse.description}"></td>
+                        <td th:text="${#strings.length(warehouse.description) > 50 ? (warehouse.description.substring(0,50) +  '...') : warehouse.description}"></td>
                         <td th:text="'$' + ${warehouse.finalCost} + 'MXN'"></td>
                         <td>
                           <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Disponible' : 'En renta')}"

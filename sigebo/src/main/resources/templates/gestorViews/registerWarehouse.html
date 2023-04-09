@@ -65,7 +65,7 @@
                                 <div class="col-12 mb-3">
                                     <label for="description" class="form-label">Descripción</label>
                                     <div class="form-group has-validation">
-                                        <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="255" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"></textarea>
+                                        <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="1200" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"></textarea>
                                         <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorRequired}" class="invalid-feedback" id="descriptionRequired"></div>
                                         <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="descriptionPattern"></div>
                                         <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="descriptionMax"></div>
