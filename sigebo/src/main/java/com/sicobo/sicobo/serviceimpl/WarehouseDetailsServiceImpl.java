@@ -31,12 +31,16 @@ public class WarehouseDetailsServiceImpl implements IWarehouseDetails {
         List<BeanWarehouseDetails> warehouseDetailsList = new ArrayList<>();
         List<BeanWarehouseDetails> warehouseDetailsListMostrar = new ArrayList<>();
         warehouseDetailsListMostrar.clear();
-        for (int i=0;i<bodegas.size();i++) {
-            String objeto = Arrays.toString(bodegas.get(i).clone());
-            objeto = objeto.replace("[", "").replace("]", "");
-            String[] partes = objeto.split(",");
-            BeanWarehouseDetails beanWarehouseDetails = new BeanWarehouseDetails("$"+partes[0],partes[1],partes[2],partes[3],partes[4],
-                    partes[5],partes[6], partes[7]);
+        for(Object[] warehouse : bodegas){
+            String finalCost = "$"+warehouse[0].toString();
+            String section = warehouse[1].toString();
+            String description = warehouse[2].toString();
+            String secure_url = warehouse[3].toString();
+            String costo = warehouse[4].toString();
+            String addres = warehouse[5].toString();
+            String name = warehouse[6].toString();
+            String id = warehouse[7].toString();
+            BeanWarehouseDetails beanWarehouseDetails = new BeanWarehouseDetails(finalCost,section,description,secure_url,costo,addres,name, id);
             warehouseDetailsList.add(beanWarehouseDetails);
         }
 
