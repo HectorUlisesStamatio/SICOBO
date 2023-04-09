@@ -46,14 +46,24 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     List<Object[]> findAllClienteWarehousesDetails(Long id, String username);
 
 
-    @Query(value = "select site.name, warehouse.description, warehouses_type.description, warehouse.status, state.name, warehouse_images.url,\n" +
-            "payment.id, payment.due_date, payment.payment_date  from users\n" +
-            "inner join payment on users.id = payment.user_id\n" +
-            "inner join warehouse on payment.warehouse_id = warehouse.id\n" +
-            "inner join warehouses_type on warehouse.warehouses_types = warehouses_type.id\n" +
-            "inner join site on warehouse.site_id_site = site.id\n" +
-            "inner join warehouse_images on warehouse_images.warehouse_id = warehouse.id\n" +
-            "inner join state on site.states_id = state.id \n" +
-            "where users.username = :username", nativeQuery = true)
+    @Query(value = "select \n" +
+            "site.name,\n" +
+            "    warehouse.description,\n" +
+            "    warehouses_type.description,\n" +
+            "    warehouse.status,\n" +
+            "    state.name,\n" +
+            "    (SELECT url FROM warehouse_images WHERE warehouse_id = warehouse.id LIMIT 1) as warehouseImageUrl,\n" +
+            "    payment.id,\n" +
+            "    payment.due_date,\n" +
+            "    payment.payment_date\n" +
+            "FROM\n" +
+            "    users\n" +
+            "    INNER JOIN payment ON users.id = payment.user_id\n" +
+            "    INNER JOIN warehouse ON payment.warehouse_id = warehouse.id\n" +
+            "    INNER JOIN warehouses_type ON warehouse.warehouses_types = warehouses_type.id\n" +
+            "    INNER JOIN site ON warehouse.site_id_site = site.id\n" +
+            "    INNER JOIN state ON site.states_id = state.id\n" +
+            "WHERE\n" +
+            "    users.username = :username", nativeQuery = true)
     List<Object[]> findAllWarehousesByClient(String username);
 }

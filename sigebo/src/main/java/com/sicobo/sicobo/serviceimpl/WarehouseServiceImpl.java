@@ -236,17 +236,10 @@ public class WarehouseServiceImpl implements IWarehouseService {
             String warehouseTypeDescription = warehouse[2].toString();
             String warehouseStatus = warehouse[3].toString();
             String stateName = warehouse[4].toString();
-
-            List<String> urlImage = new ArrayList<>();
-            for (int i = 5; i < warehouse.length; i++) {
-                urlImage.add(warehouse[i].toString());
-            }
-
+            String urlImage = warehouse[5].toString();
             Long paymentId = Long.parseLong( warehouse[6].toString());
-
             Date dueDate = (Date) warehouse[7];
             Date paymentDate = (Date) warehouse[8];
-
 
             BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate);
             warehouseForClients.add(beanWarehouseForClient);

@@ -20,7 +20,7 @@ public class BeanWarehouseForClient {
 
     private String stateName;
 
-    private List<String> warehouseImageUrl;
+    private String warehouseImageUrl;
 
     private Long paymentId;
 
@@ -31,7 +31,7 @@ public class BeanWarehouseForClient {
     public BeanWarehouseForClient() {
     }
 
-    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, List<String> warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate) {
+    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, String warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate) {
         this.siteName = siteName;
         this.warehouseDescription = warehouseDescription;
         this.warehouseTypeDescription = warehouseTypeDescription;
