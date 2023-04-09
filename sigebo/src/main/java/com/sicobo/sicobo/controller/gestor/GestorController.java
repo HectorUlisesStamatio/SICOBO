@@ -60,12 +60,13 @@ public class GestorController {
     public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
             model.addAttribute(OPTION, WAREHOUSES);
+            redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = costTypeService.listar();
             Message message = (Message) responseEntity.getBody();
             assert message != null;
             List<BeanCostType> listBeanCostType = (List<BeanCostType>)message.getResult();
             if (listBeanCostType.isEmpty()){
-                message = new Message(FAILED_SEARCH,"No hay registros de tipos de bodegas", FAILED,FAIL_CODE, null);
+                message = new Message(FAILED_SEARCH,"No hay registros de tipos de pagos", FAILED,FAIL_CODE, null);
                 redirectAttributes.addFlashAttribute(MESSAGE, message);
                 return REDIRECT_GESTOR_LISTWAREHOUSES;
             }
@@ -96,6 +97,7 @@ public class GestorController {
                                          Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
             model.addAttribute(OPTION, WAREHOUSES);
+            redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = warehouseService.buscar(idWarehouse);
             Message message = (Message) responseEntity.getBody();
             assert message != null;
@@ -150,7 +152,9 @@ public class GestorController {
     @Secured({ROLE_GESTOR})
     @PostMapping("/guardarBodega")
     public String saveWarehouse(@Valid @ModelAttribute("warehouse") DTOWarehouse warehouse, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
+
         try{
+            model.addAttribute(OPTION, WAREHOUSES);
             redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             ResponseEntity<?> responseEntity = warehousesTypeService.listar();
             Message message = (Message) responseEntity.getBody();
@@ -239,6 +243,7 @@ public class GestorController {
     public String listWarehouses(Model model, RedirectAttributes redirectAttributes){
         try {
             model.addAttribute(OPTION, WAREHOUSES);
+            redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
             assert username != null;
@@ -298,6 +303,7 @@ public class GestorController {
     @PostMapping("/cambiarEstadoBodega")
     public String changeStateWarehouse(@RequestParam("idWarehouse") Optional<Long> idWarehouse, @RequestParam("statusWarehouse") Optional<Boolean> statusWarehouse, Model model, RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute(OPTION, WAREHOUSES);
             redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
             BeanWarehouse beanWarehouse = new BeanWarehouse();
             if (idWarehouse.isPresent() && statusWarehouse.isPresent()) {
