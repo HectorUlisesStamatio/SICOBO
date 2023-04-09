@@ -143,7 +143,6 @@
                 </div>
                 <div class="row align-items-start">
                   <article th:each="tmpBodega: ${bodegas}" th:onclick="detailProduct(${tmpBodega.id})" class="popular__card swiper-slide">
-                    <span>[[${tmpBodega}]]</span>
                     <img th:src="${tmpBodega.secure_url}" alt="" class="popular__img">
 
                     <div class="popular__data">
