@@ -35,7 +35,8 @@ public class WarehouseDetailsServiceImpl implements IWarehouseDetails {
             String objeto = Arrays.toString(bodegas.get(i).clone());
             objeto = objeto.replace("[", "").replace("]", "");
             String[] partes = objeto.split(",");
-            BeanWarehouseDetails beanWarehouseDetails = new BeanWarehouseDetails("$"+partes[0],partes[1],partes[2],partes[3],partes[4],partes[5],partes[6]);
+            BeanWarehouseDetails beanWarehouseDetails = new BeanWarehouseDetails("$"+partes[0],partes[1],partes[2],partes[3],partes[4],
+                    partes[5],partes[6], partes[7]);
             warehouseDetailsList.add(beanWarehouseDetails);
         }
 
