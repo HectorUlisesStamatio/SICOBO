@@ -7,6 +7,7 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
+import com.sicobo.sicobo.util.PaymentValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class WarehouseServiceImpl implements IWarehouseService {
     private DaoPayment daoPayment;
 
     private Cloudinary cloudinary;
+
+    private PaymentValidator paymentValidator = new PaymentValidator();
 
     public WarehouseServiceImpl() {
         this.cloudinary = new Cloudinary(ObjectUtils.asMap(
@@ -241,8 +244,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
             Date dueDate = (Date) warehouse[7];
             Date paymentDate = (Date) warehouse[8];
             Long paymentStatus = Long.parseLong( warehouse[9].toString());
+            boolean isRenovation = !paymentValidator.validDate(dueDate, new Date()) && !paymentValidator.validDateOut(dueDate, new Date()) && (paymentStatus == 1);
 
-            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate, paymentStatus);
+            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate, paymentStatus, isRenovation);
             warehouseForClients.add(beanWarehouseForClient);
         }
 

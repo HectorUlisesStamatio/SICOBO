@@ -29,10 +29,12 @@ public class BeanWarehouseForClient {
 
     private Long paymentStatus;
 
+    private boolean isRenovation;
+
     public BeanWarehouseForClient() {
     }
 
-    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, String warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate, Long paymentStatus) {
+    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, String warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate, Long paymentStatus, boolean isRenovation) {
         this.siteName = siteName;
         this.warehouseDescription = warehouseDescription;
         this.warehouseTypeDescription = warehouseTypeDescription;
@@ -43,5 +45,6 @@ public class BeanWarehouseForClient {
         this.dueDate = dueDate;
         this.paymentDate = paymentDate;
         this.paymentStatus = paymentStatus;
+        this.isRenovation = isRenovation;
     }
 }
