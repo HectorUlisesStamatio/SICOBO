@@ -127,6 +127,7 @@
                                         <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
                                         <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorAccept}" class="invalid-feedback" id="imagesAccept"></div>
                                         <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxLength}" class="invalid-feedback" id="imagesMaxLength"></div>
                                         <div th:if="${#fields.hasErrors('images')}"  class="alert alert-danger mb-3 mt-3">
                                             <div class="row">
                                                 <div th:errors="*{images}" class="col-9"></div>
@@ -196,6 +197,7 @@
         document.getElementById("imagesRequired").style.display = "none";
         document.getElementById("imagesAccept").style.display = "none";
         document.getElementById("imagesMaxSize").style.display = "none";
+        document.getElementById("imagesMaxLength").style.display = "none";
     }
 
     window.addEventListener('load', function() {
@@ -340,19 +342,25 @@
         images.oninvalid = function() {
             document.getElementById("imagesRequired").style.display = images.validity.valueMissing ? "block" : "none";
             document.getElementById("imagesAccept").style.display = images.validity.patternMismatch ? "block" : "none";
+            document.getElementById("imagesMaxLength").style.display = "none";
 
             const input = document.getElementById("images");
             const maxFileSize = input.getAttribute("maxsize");
             const files = input.files;
             let flag = false;
-            for (let i = 0; i < files.length; i++) {
-                const fileSize = files[i].size;
-                if (fileSize > maxFileSize) {
-                    flag = true;
-                    break;
+            if(files.length <= 3){
+                for (let i = 0; i < files.length; i++) {
+                    const fileSize = files[i].size;
+                    if (fileSize > maxFileSize) {
+                        flag = true;
+                        break;
+                    }
                 }
+                document.getElementById("imagesMaxSize").style.display = flag ? "block" : "none";
+            }else{
+                document.getElementById("imagesMaxLength").style.display = "block";
             }
-            document.getElementById("imagesMaxSize").style.display = flag ? "block" : "none";
+
 
             if (images.validity.valid)
                 hideErrorsInputImages();
@@ -373,23 +381,31 @@
                 const maxFileSize = input.getAttribute("maxsize");
                 const files = input.files;
                 let flag = false;
-                for (let i = 0; i < files.length; i++) {
-                    const fileSize = files[i].size;
-                    if (fileSize > maxFileSize) {
-                        flag = true;
-                        break;
+
+                if(files.length <= 3){
+                    for (let i = 0; i < files.length; i++) {
+                        const fileSize = files[i].size;
+                        if (fileSize > maxFileSize) {
+                            flag = true;
+                            break;
+                        }
                     }
-                }
-                if (flag) {
+                    if (flag) {
+                        images.setCustomValidity("Error en la cantidad de MB")
+                        images.classList.remove('is-valid');
+                        images.classList.add('is-invalid');
+                        document.getElementById("imagesMaxSize").style.display = "block";
+                    } else {
+                        images.setCustomValidity("")
+                        images.classList.remove('is-invalid');
+                        images.classList.add('is-valid');
+                        hideErrorsInputImages();
+                    }
+                }else{
                     images.setCustomValidity("Error en la cantidad de MB")
                     images.classList.remove('is-valid');
                     images.classList.add('is-invalid');
-                    document.getElementById("imagesMaxSize").style.display = "block";
-                } else {
-                    images.setCustomValidity("")
-                    images.classList.remove('is-invalid');
-                    images.classList.add('is-valid');
-                    hideErrorsInputImages();
+                    document.getElementById("imagesMaxLength").style.display = "block";
                 }
             }
         });
