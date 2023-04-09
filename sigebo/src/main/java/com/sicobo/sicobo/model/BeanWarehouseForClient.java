@@ -3,9 +3,8 @@ package com.sicobo.sicobo.model;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
+
 
 @Data
 public class BeanWarehouseForClient {
@@ -28,10 +27,12 @@ public class BeanWarehouseForClient {
 
     private Date paymentDate;
 
+    private Long paymentStatus;
+
     public BeanWarehouseForClient() {
     }
 
-    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, String warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate) {
+    public BeanWarehouseForClient(String siteName, String warehouseDescription, String warehouseTypeDescription, String warehouseStatus, String stateName, String warehouseImageUrl, Long paymentId, Date dueDate, Date paymentDate, Long paymentStatus) {
         this.siteName = siteName;
         this.warehouseDescription = warehouseDescription;
         this.warehouseTypeDescription = warehouseTypeDescription;
@@ -41,5 +42,6 @@ public class BeanWarehouseForClient {
         this.paymentId = paymentId;
         this.dueDate = dueDate;
         this.paymentDate = paymentDate;
+        this.paymentStatus = paymentStatus;
     }
 }

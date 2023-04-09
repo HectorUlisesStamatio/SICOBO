@@ -240,8 +240,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
             Long paymentId = Long.parseLong( warehouse[6].toString());
             Date dueDate = (Date) warehouse[7];
             Date paymentDate = (Date) warehouse[8];
+            Long paymentStatus = Long.parseLong( warehouse[9].toString());
 
-            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate);
+            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate, paymentStatus);
             warehouseForClients.add(beanWarehouseForClient);
         }
 

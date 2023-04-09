@@ -55,7 +55,8 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
             "    (SELECT url FROM warehouse_images WHERE warehouse_id = warehouse.id LIMIT 1) as warehouseImageUrl,\n" +
             "    payment.id,\n" +
             "    payment.due_date,\n" +
-            "    payment.payment_date\n" +
+            "    payment.payment_date,\n" +
+            "    payment.status\n" +
             "FROM\n" +
             "    users\n" +
             "    INNER JOIN payment ON users.id = payment.user_id\n" +
