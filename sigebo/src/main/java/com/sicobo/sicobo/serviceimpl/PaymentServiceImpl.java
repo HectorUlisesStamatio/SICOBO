@@ -118,7 +118,7 @@ public class PaymentServiceImpl  implements IPaymentService {
             boolean existPayment = daoPayment.existsById(id);
             boolean isPaymentActive = daoPayment.existsBeanPaymentByIdAndStatusIs(id, 1);
             boolean isMinePayment = daoPayment.existsBeanPaymentByIdAndBeanUserId(id, user.getId());
-            if(!isPaymentActive){
+            if(!existPayment){
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El pago no se encuentra dentro del sistema", FAILED, FAIL_CODE, null), HttpStatus.OK);
             }
             if(!isPaymentActive){
