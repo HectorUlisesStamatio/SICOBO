@@ -53,7 +53,6 @@ public class BeanWarehouseImage {
                 ", url='" + url + '\'' +
                 ", secureUrl='" + secureUrl + '\'' +
                 ", publicId='" + publicId + '\'' +
-                ", beanWarehouse=" + beanWarehouse +
                 ", fechaCreacion=" + fechaCreacion +
                 ", fechaActualizacion=" + fechaActualizacion +
                 '}';

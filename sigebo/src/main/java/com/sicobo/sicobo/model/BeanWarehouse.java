@@ -17,6 +17,7 @@ public class BeanWarehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "longtext")
     private String description;
 
     private String section;
@@ -42,9 +43,10 @@ public class BeanWarehouse {
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "beanWarehouse", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+    @JsonIgnore
     private List<BeanWarehouseImage> images;
 
     @PrePersist
@@ -55,5 +57,21 @@ public class BeanWarehouse {
     @PreUpdate
     private void preUpdate(){
         this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "BeanWarehouse{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", section='" + section + '\'' +
+                ", finalCost=" + finalCost +
+                ", status=" + status +
+                ", beanSite=" + beanSite +
+                ", warehousesType=" + warehousesType +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                ", images=" + images +
+                '}';
     }
 }

@@ -43,6 +43,9 @@ public class BeanPayment {
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
+    @Column(columnDefinition = "text")
+    private String paymentId;
+
     @PrePersist
     private void prePersist(){
         this.fechaCreacion = LocalDateTime.now();

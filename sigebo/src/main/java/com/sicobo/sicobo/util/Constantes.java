@@ -41,7 +41,7 @@ public final class Constantes {
 
     public static final class MessageBody{
         private MessageBody(){}
-        public static final String INTERNAL_ERROR ="Ocurrió un error interno";
+        public static final String INTERNAL_ERROR ="Ocurrió un error interno. Inténlo de nuevo o consulte con los administradores del sitio";
         public static final String SEND_EMAIL_SUCCESFUL ="Se envío correctamente el correo, no olvides revisar tu bandeja de spam";
         public static final String INSERT_SUCCESSFUL="Se ha realizado el registro exitosamente";
         public static final String SEARCH_SUCCESSFUL="Se ha realizado la búsqueda exitosamente";
@@ -118,8 +118,21 @@ public final class Constantes {
         public static final String GESTOR_DASHBOARD = "gestorViews/dashboard";
 
         public static final String USER_INDEX = "redirect:/bodegas";
+        public static final String WAREHOUSES_USER = "/bodegas";
 
         public static final String LISTADO_BODEGAS = "listadoBodegas";
+
+        public static final String PRODUCT_DETAIL = "productDetail";
+
+        public static final String REDIRECT_PREPARED_DETAIL = "redirect:/detalleProducto/";
+        public static final String PREPARED_DETAIL = "http://localhost:8080/detalleProducto/";
+        public static final String PAYMENT_INFORMATION = "paymentInformation";
+        public static final String PAYMENT_RENOVATION_INFORMATION = "userViews/paymentRenovationtInformation";
+        public static final String MY_WAREHOUSE_DETAIL = "userViews/myWarehouseDetail";
+        public static final String MY_WAREHOUSES = "misBodegas";
+        public static final String REDIRECT_DETAIL_RENOVATION = "redirect:/renovacionBodega/";
+
+
     }
 
     public static final class Stuff{
@@ -147,6 +160,8 @@ public final class Constantes {
         public static final String TERMSANDCONDTIONS = "termsAndConditions";
         public static final String POLICIES = "politicas";
         public static final String WAREHOUSES = "bodegas";
+        public static final String PAYMENT = "payment";
+
     }
 
     public static class ObjectMessages{
