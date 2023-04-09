@@ -10,5 +10,8 @@ public interface IStripeService {
 
     public ResponseEntity<Object> checkout(BeanWarehouse beanWarehouse, int meses);
 
+    public ResponseEntity<Object> checkoutRenovation(BeanWarehouse beanWarehouse, int meses, Long idPayment);
+
     public ResponseEntity<Object> paymentIntent(Session session, BeanUser user) throws StripeException;
+    public ResponseEntity<Object> paymentIntentRenovation(Session session, BeanUser user) ;
 }

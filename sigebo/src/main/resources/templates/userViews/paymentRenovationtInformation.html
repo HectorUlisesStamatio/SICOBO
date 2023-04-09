@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Bodegas</title>
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  <style>
+    /*=============== VARIABLES CSS ===============*/
+    :root {
+      --header-height: 3.5rem;
+
+      /*========== Colores ==========*/
+      --first-color: hsl(216, 76%, 67%);
+      --first-color-alt: rgb(77, 122, 190);
+      --first-color-light: hsl(228, 62%, 59%);
+      --first-color-lighten: hsl(228, 100%, 97%);
+      --second-color: hsl(338.69, 100%, 48%);
+      --title-color: hsl(228, 57%, 28%);
+      --text-color: hsl(228, 15%, 50%);
+      --text-color-light: hsl(228, 12%, 75%);
+      --border-color: hsl(228, 99%, 98%);
+      --body-color: #fff;
+      --container-color: #fff;
+
+      /*========== Fuete & Tipografía ==========*/
+      /*.5rem = 8px | 1rem = 16px ...*/
+      --body-font: 'Poppins', sans-serif;
+      --biggest-font-size: 2.25rem;
+      --h1-font-size: 1.5rem;
+      --h2-font-size: 1.25rem;
+      --h3-font-size: 1rem;
+      --normal-font-size: .938rem;
+      --small-font-size: .813rem;
+      --smaller-font-size: .75rem;
+
+      /*========== Font weight ==========*/
+      --font-medium: 500;
+      --font-semi-bold: 600;
+
+      /*========== z index ==========*/
+      --z-tooltip: 10;
+      --z-fixed: 100;
+    }
+
+    /* Responsive typography */
+    @media screen and (min-width: 1024px) {
+      :root {
+        --biggest-font-size: 4rem;
+        --h1-font-size: 2.25rem;
+        --h2-font-size: 1.5rem;
+        --h3-font-size: 1.25rem;
+        --normal-font-size: 1rem;
+        --small-font-size: .875rem;
+        --smaller-font-size: .813rem;
+      }
+    }
+
+
+    /*=============== POPULAR ===============*/
+
+    .popular__card {
+      width: 290px;
+      background-color: var(--container-color);
+      padding: .5rem .5rem 1.5rem;
+      border-radius: 1rem;
+      margin: 10px;
+      cursor: pointer;
+      transition: .4s;
+    }
+
+    .popular__img {
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      height: 60%;
+      width: 100%;
+    }
+
+    .popular__data {
+      padding: 0 1rem 0 .5rem;
+    }
+
+    .popular__price {
+      font-size: var(--h2-font-size);
+      color: var(--text-color);
+      margin-bottom: .25rem;
+    }
+
+    .popular__price span {
+      color: var(--second-color);
+    }
+
+    .popular__title {
+      font-size: var(--h3-font-size);
+      margin-bottom: .75rem;
+    }
+
+    .popular__description {
+      font-size: var(--small-font-size);
+    }
+
+    .popular__card:hover {
+      box-shadow: 0 12px 16px hsla(228, 66%, 45%, .1);
+    }
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #c4c4c4;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+
+    .style-two {
+      border: 0;
+      height: 1px;
+      background: #333;
+      background-image: linear-gradient(to right, #ccc, #333, #ccc);
+    }
+
+    .divider {
+      border: 0;
+      height: 2px;
+      background: #4154f1;
+      background-image: linear-gradient(to right, #ccc, #4154f1, #ccc);
+    }
+
+    .rowHeader{
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+    }
+
+  </style>
+
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/usuario/sidebarUsuario :: sidebar}"></aside>
+
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Factura</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+        <li class="breadcrumb-item active">Factura</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section profile">
+    <div class="row">
+      <div class="col-12">
+        <div th:if="${message != null}" class="alert alert-dismissible fade show" role="alert" th:classappend="${message.type} == 'success' ? 'alert-success' : 'alert-danger'">
+          <strong>[[${message.title}]]</strong> [[${message.message}]]
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-body">
+            <div class="container-fluid" th:if="${message.type  == 'success'}">
+              <div class="row mt-5">
+                <div class="col-12 col-sm-6 offset-sm-3 text-end">
+                  <button type="button" title="Descargar factura" class="btn btn-primary" th:onclick="pdf()">Descargar</button>
+                </div>
+              </div>
+              <div class="row mt-3" id="factura">
+                <div class="col-12 col-sm-6 offset-sm-3">
+                  <div class="card">
+                    <div class="row m-0 p-2 rowHeader" style="background-color: #4154f1; color: #fff">
+                      <div class="col-12 d-flex justify-content-between align-items-center my-2" >
+                        <h2>SICOBO</h2>
+                        <div>
+                          <label class="d-block">Fecha de pago: <span th:text="${#dates.format(payment.paymentDate, 'dd-MM-yyyy')}"></span></label>
+                          <label class="d-block">Lugar: Emiliano Zapata, Morelos</label>
+                          <label class="d-block">Telefono: 5341285463</label>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="row m-2">
+                      <div class="col-12 text-center">
+                        <h4>Información de la Bodega</h4>
+                      </div>
+                      <div class="col-12 mb-2">
+                        <label class="d-block">Seccion: <span th:text="${warehouse.section}"></span></label>
+                        <label class="d-block">Costo final x mes: <span th:text="${'$' +warehouse.finalCost}"></span></label>
+                        <label class="d-block">Tipo de Bodega: <span th:text="${warehouse.warehousesType.description}"></span></label>
+                        <label class="d-block">Lugar: <span th:text="${warehouse.beanSite.BeanState.name}"></span></label>
+                      </div>
+                    </div>
+
+                    <div class="divider mx-4"></div>
+                    <div class="row m-2">
+                      <div class="col-12 text-center">
+                        <h4>Factura de venta</h4>
+                      </div>
+                      <div class="col-12 mb-1">
+                        <label class="d-block">Fecha de vencimiento: <span th:text="${#dates.format(payment.dueDate, 'dd-MM-yyyy')}"></span></label>
+                        <label class="d-block">Cliente: <span th:text="${payment.beanUser.name + ' ' + payment.beanUser.lastname + ' ' + payment.beanUser.surname}"></span></label>
+                      </div>
+                    </div>
+                    <div class="row m-2">
+                      <div class="col-12 table-responsive">
+                        <table class="table">
+                          <thead>
+                          <tr>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Meses de pago</th>
+                            <th scope="col">Precio</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <th scope="row" th:text="${warehouse.section}"></th>
+                            <td>1</td>
+                            <td th:text="${payment.amountMonths}"></td>
+                            <td th:text="${'$' + payment.amount}"></td>
+                          </tr>
+                          <tr>
+                            <th class="text-end" scope="row" colspan="3">Total</th>
+                            <td th:text="${'$' + payment.amount}"></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="row mt-5 mb-3">
+                      <div class="col-12 text-center">
+                        <p class="m-0 fst-italic">Elaborado por: SICOBO</p>
+                        <p class="m-0 fst-italic">www.sicobo.mx</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+  window.html2canvas = html2canvas;
+  window.jsPDF = window.jspdf.jsPDF
+  function pdf() {
+    let doc = new jsPDF('p', 'pt', 'letter', { onePage: true });
+    doc.setPage(1)
+    var scale = (doc.internal.pageSize.width - 10 * 2) / document.getElementById('factura').scrollWidth;
+    doc.html(document.getElementById('factura'), {
+      callback: function (doc) {
+        // Descargamos el archivo PDF
+        doc.save("factura.pdf");
+      },
+      html2canvas: {
+        scale: scale,
+      },
+      x: 10,
+      y: 10
+    });
+  }
+</script>
+</body>
+
+</html>

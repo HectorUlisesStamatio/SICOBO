@@ -127,6 +127,12 @@ public final class Constantes {
         public static final String REDIRECT_PREPARED_DETAIL = "redirect:/detalleProducto/";
         public static final String PREPARED_DETAIL = "http://localhost:8080/detalleProducto/";
         public static final String PAYMENT_INFORMATION = "paymentInformation";
+        public static final String PAYMENT_RENOVATION_INFORMATION = "userViews/paymentRenovationtInformation";
+        public static final String MY_WAREHOUSE_DETAIL = "userViews/myWarehouseDetail";
+        public static final String MY_WAREHOUSES = "misBodegas";
+        public static final String REDIRECT_DETAIL_RENOVATION = "redirect:/renovacionBodega/";
+
+
     }
 
     public static final class Stuff{
@@ -155,6 +161,7 @@ public final class Constantes {
         public static final String POLICIES = "politicas";
         public static final String WAREHOUSES = "bodegas";
         public static final String PAYMENT = "payment";
+
     }
 
     public static class ObjectMessages{

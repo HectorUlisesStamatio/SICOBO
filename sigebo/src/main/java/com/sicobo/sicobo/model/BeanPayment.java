@@ -34,6 +34,7 @@ public class BeanPayment {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "user_id")
     private BeanUser beanUser;
 

@@ -1,6 +1,7 @@
 package com.sicobo.sicobo.service;
 
 import com.sicobo.sicobo.dto.DTOWarehouse;
+import com.sicobo.sicobo.model.BeanUser;
 import com.sicobo.sicobo.model.BeanWarehouse;
 import org.springframework.http.ResponseEntity;
 
@@ -21,6 +22,9 @@ public interface IWarehouseService {
     public ResponseEntity<Object> detalleBodega(Long id);
 
     public ResponseEntity<Object> rentar(Long id);
+
     public ResponseEntity<Object> buscarBodegaPorUsername(String username);
+
+    public ResponseEntity<Object> detalleBodegaRentada(Long id, BeanUser user);
 
 }

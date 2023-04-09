@@ -2,6 +2,7 @@ package com.sicobo.sicobo.service;
 
 import com.sicobo.sicobo.dto.DTOPayment;
 import com.sicobo.sicobo.model.BeanPayment;
+import com.sicobo.sicobo.model.BeanUser;
 import org.springframework.http.ResponseEntity;
 
 
@@ -15,4 +16,6 @@ public interface IPaymentService {
     public ResponseEntity<Object> eliminar(BeanPayment beanPayment);
 
     public ResponseEntity<Object> buscar(Long id);
+
+    public ResponseEntity<Object> buscarPagoRenovacion(Long id, BeanUser user);
 }

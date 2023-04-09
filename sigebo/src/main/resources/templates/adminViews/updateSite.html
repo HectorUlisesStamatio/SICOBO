@@ -110,8 +110,6 @@
             beanState.classList.remove('is-valid');
         }
 
-        console.log("Hola amigo")
-        console.log(parseInt(beanState.value))
         if((nameOriginalValue !== name.value) || (addressOriginalValue !== address.value) || (beanStateOriginalValue !== beanState.value && parseInt(beanState.value) !== 0)){
             if(parseInt(beanState.value) !== 0){
                 document.getElementById("actualizar").disabled = false;

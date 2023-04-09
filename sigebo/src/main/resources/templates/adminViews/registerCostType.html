@@ -110,7 +110,6 @@
         }
         let costTypes = [[${costTypes}]];
         var buttonCancel = document.getElementById("buttonCancel");
-        console.log(costTypes)
 
         buttonCancel.addEventListener("click", function() {
             hideErrorsCostType()
@@ -221,7 +220,6 @@
         })
 
         inputCostType.oninvalid = function() {
-            console.log(inputCostType.validity)
             if (inputCostType.validity.valueMissing) {
                 document.getElementById("costRequired").style.display = "block";
             }else{

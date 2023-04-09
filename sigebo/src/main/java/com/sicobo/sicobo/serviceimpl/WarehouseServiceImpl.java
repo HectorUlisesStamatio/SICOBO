@@ -2,10 +2,7 @@ package com.sicobo.sicobo.serviceimpl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.sicobo.sicobo.dao.DaoSiteAssigment;
-import com.sicobo.sicobo.dao.DaoUser;
-import com.sicobo.sicobo.dao.DaoWarehouse;
-import com.sicobo.sicobo.dao.DaoWarehouseImage;
+import com.sicobo.sicobo.dao.*;
 import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
@@ -47,6 +44,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Autowired
     DaoWarehouseImage daoWarehouseImage;
+
+    @Autowired
+    private DaoPayment daoPayment;
 
     private Cloudinary cloudinary;
 
@@ -212,10 +212,14 @@ public class WarehouseServiceImpl implements IWarehouseService {
             } else {
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No fue posible obtener la bodega para renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodega" + e.getMessage());
-            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> buscarBodegaPorUsername(String username) {
 
         List<Object[]> warehouses = daoWarehouse.findAllWarehousesByClient(username);
@@ -293,6 +297,40 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
 
 
+    }
+
+    @Override
+    public ResponseEntity<Object> detalleBodegaRentada(Long id, BeanUser user) {
+        BeanWarehouse beanWarehouse;
+
+        boolean existWarehouse = daoWarehouse.existsBeanWarehouseByIdAndStatusIsOrStatusIs(id, 1, 2);
+        boolean isMineWarehouse = daoPayment.existsBeanPaymentByBeanWarehouseIdAndBeanUserId(id, user.getId());
+        boolean existPaymentActive = daoPayment.existsBeanPaymentByBeanWarehouseIdAndBeanUserIdAndStatusIs(id, user.getId(), 1);
+        try{
+            if(!existWarehouse){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega seleccionada", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+            if(!isMineWarehouse){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No eres propietario de la bodega", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+            if(!existPaymentActive){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "El pago de tu bodega ha vencido", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<BeanWarehouse> beanWarehouseOptional = daoWarehouse.findBeanWarehouseById(id);
+            List<BeanWarehouseImage> warehouseImages = daoWarehouseImage.findAllByBeanWarehouseId(id);
+            if (beanWarehouseOptional.isPresent()) {
+                beanWarehouse = beanWarehouseOptional.get();
+                beanWarehouse.setImages(warehouseImages);
+                assert beanWarehouse != null;
+                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanWarehouse), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No fue posible obtener la bodega para renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodegaRentada" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
