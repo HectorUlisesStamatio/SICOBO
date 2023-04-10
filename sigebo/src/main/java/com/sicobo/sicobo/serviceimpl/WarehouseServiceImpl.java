@@ -8,15 +8,20 @@ import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
 import com.sicobo.sicobo.util.PaymentValidator;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 
 import java.sql.SQLException;
@@ -49,6 +54,12 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Autowired
     private DaoPayment daoPayment;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     private Cloudinary cloudinary;
 
@@ -343,9 +354,11 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 0 15 * ?")
+    //Scheduled(cron = "0 * * * * ?") Para las pruebas con este se ejecuta cada minuto
+    @Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
     @Transactional(rollbackFor = {SQLException.class})
     public void desalojarBodega() {
+        MimeMessage message = javaMailSender.createMimeMessage();
         try {
             List<BeanPayment> payments = daoPayment.findAllByStatusIs(1);
             List<BeanPayment> duePayments = new ArrayList<>();
@@ -370,11 +383,29 @@ public class WarehouseServiceImpl implements IWarehouseService {
                     }
                     if (user.isPresent()) {
                         BeanUser userSearched = user.get();
-                        // Aqui puedes ejecutar el metodo para enviar email
+                        BeanWarehouse beanWarehouse = warehouse.get();
+
+                        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                        Context context = new Context();
+                        Map<String,Object> model = new HashMap<>();
+
+                        model.put("userName", "Hola " +userSearched.getUsername());
+                        model.put("seccion"," " +beanWarehouse.getSection());
+                        model.put("dueDate", payment.getDueDate());
+                        model.put("paymenDate",payment.getPaymentDate());
+                        context.setVariables(model);
+
+                        String htmlText = templateEngine.process("emailDesalojo", context);
+                        helper.setFrom("sigebowarehouses@gmail.com");
+                        helper.setTo(userSearched.getEmail());
+                        helper.setSubject("Notificación por desalojo de bodega " + beanWarehouse.getSection());
+                        helper.setText(htmlText, true);
+                        javaMailSender.send(message);
                     }
                 }
             }
 
+            System.out.println("Se reviso las bodegas");
             if (!warehouses.isEmpty()) {
                 List<BeanWarehouse> warehousesUpdate = daoWarehouse.saveAll(warehouses);
             }
