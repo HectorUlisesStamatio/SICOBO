@@ -1215,6 +1215,6 @@ h6 {
 }
 
 .card-text-scrollable {
-  height: 8rem; /* ajusta la altura según lo que necesites */
+  height: 4rem; /* ajusta la altura según lo que necesites */
   overflow-y: auto;
 }

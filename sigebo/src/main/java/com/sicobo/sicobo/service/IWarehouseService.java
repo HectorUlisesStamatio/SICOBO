@@ -27,4 +27,6 @@ public interface IWarehouseService {
 
     public ResponseEntity<Object> detalleBodegaRentada(Long id, BeanUser user);
 
+    public void desalojarBodega();
+
 }

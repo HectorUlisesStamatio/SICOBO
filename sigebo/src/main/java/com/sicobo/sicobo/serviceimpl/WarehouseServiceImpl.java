@@ -7,11 +7,13 @@ import com.sicobo.sicobo.dto.DTOWarehouse;
 import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IWarehouseService;
 import com.sicobo.sicobo.util.Message;
+import com.sicobo.sicobo.util.PaymentValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +52,8 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     private Cloudinary cloudinary;
 
+    private PaymentValidator paymentValidator = new PaymentValidator();
+
     public WarehouseServiceImpl() {
         this.cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dg4kl7fvl",
@@ -58,6 +62,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Object[]>> listar(Long id, String username) {
         List<Object[]> resultados = daoWarehouse.findAllClienteWarehousesDetails(id, username);
         return new ResponseEntity<>(resultados, HttpStatus.OK);
@@ -87,6 +92,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> guardar(DTOWarehouse dtoWarehouse) {
         try{
             List<MultipartFile> images = dtoWarehouse.getImages();
@@ -236,19 +242,14 @@ public class WarehouseServiceImpl implements IWarehouseService {
             String warehouseTypeDescription = warehouse[2].toString();
             String warehouseStatus = warehouse[3].toString();
             String stateName = warehouse[4].toString();
-
-            List<String> urlImage = new ArrayList<>();
-            for (int i = 5; i < warehouse.length; i++) {
-                urlImage.add(warehouse[i].toString());
-            }
-
+            String urlImage = warehouse[5].toString();
             Long paymentId = Long.parseLong( warehouse[6].toString());
-
             Date dueDate = (Date) warehouse[7];
             Date paymentDate = (Date) warehouse[8];
+            Long paymentStatus = Long.parseLong( warehouse[9].toString());
+            boolean isRenovation = !paymentValidator.validDate(dueDate, new Date()) && !paymentValidator.validDateOut(dueDate, new Date()) && (paymentStatus == 1);
 
-
-            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate);
+            BeanWarehouseForClient beanWarehouseForClient = new BeanWarehouseForClient(siteName, warehouseDescription, warehouseTypeDescription, warehouseStatus, stateName, urlImage, paymentId,dueDate,paymentDate, paymentStatus, isRenovation);
             warehouseForClients.add(beanWarehouseForClient);
         }
 
@@ -273,6 +274,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object>   rentar(Long id) {
         Optional<BeanWarehouse> warehouseSearched = daoWarehouse.findBeanWarehouseById(id);
         boolean existWarehouse = daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1);
@@ -306,6 +308,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> detalleBodegaRentada(Long id, BeanUser user) {
         BeanWarehouse beanWarehouse;
 
@@ -336,6 +339,47 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }catch (Exception e){
             log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodegaRentada" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 0 15 * ?")
+    @Transactional(rollbackFor = {SQLException.class})
+    public void desalojarBodega() {
+        try {
+            List<BeanPayment> payments = daoPayment.findAllByStatusIs(1);
+            List<BeanPayment> duePayments = new ArrayList<>();
+            List<BeanWarehouse> warehouses = new ArrayList<>();
+            if (!payments.isEmpty()) {
+                for (BeanPayment payment : payments) {
+                    int result = payment.getDueDate().compareTo(new Date());
+                    if (result < 0) {
+                        payment.setStatus(0);
+                        duePayments.add(payment);
+                    }
+                }
+            }
+            if (!duePayments.isEmpty()) {
+                List<BeanPayment> paymentsUpdate = daoPayment.saveAll(duePayments);
+                for (BeanPayment payment : paymentsUpdate) { // Payment y Warehouse del User se proporcionan aqui
+                    Optional<BeanUser> user = daoUser.findById(payment.getBeanUser().getId());
+                    Optional<BeanWarehouse> warehouse = daoWarehouse.findById(payment.getBeanWarehouse().getId());
+                    if (warehouse.isPresent()) {
+                        warehouse.get().setStatus(1);
+                        warehouses.add(warehouse.get());
+                    }
+                    if (user.isPresent()) {
+                        BeanUser userSearched = user.get();
+                        // Aqui puedes ejecutar el metodo para enviar email
+                    }
+                }
+            }
+
+            if (!warehouses.isEmpty()) {
+                List<BeanWarehouse> warehousesUpdate = daoWarehouse.saveAll(warehouses);
+            }
+        }catch(Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - desalojarBodega" + e.getMessage());
         }
     }
 

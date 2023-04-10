@@ -11,7 +11,7 @@
                 <span>Mis bodegas</span>
             </a>
         </li>
-        <li class="nav-heading">Estados</li>
+        <li class="nav-heading" th:if="${states != null}">Estados</li>
         <li class="nav-item" th:each="tmpEstado: ${states}">
             <a class="nav-link collapsed" th:href="@{${'/bodegas/'}+${tmpEstado.name}}">
                 <i class="bi bi-geo-alt-fill"></i>
