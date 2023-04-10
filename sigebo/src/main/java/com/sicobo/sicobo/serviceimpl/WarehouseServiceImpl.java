@@ -358,7 +358,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    //@Scheduled(cron = "0 * * * * ?") //Para las pruebas con este se ejecuta cada minuto
     @Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
     @Transactional(rollbackFor = {SQLException.class})
     public void desalojarBodega() {
