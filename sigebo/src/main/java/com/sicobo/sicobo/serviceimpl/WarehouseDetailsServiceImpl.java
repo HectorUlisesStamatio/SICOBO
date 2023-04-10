@@ -54,7 +54,7 @@ public class WarehouseDetailsServiceImpl implements IWarehouseDetails {
         if(parametroUno!=null && parametroDos == null ) {
             if (bandera == 0) {
                 for (int i = 0; i < bodegas.size(); i++) {
-                    if (warehouseDetailsList.get(i).getName().equals(" " + parametroUno)) {
+                    if (warehouseDetailsList.get(i).getName().equals(parametroUno)) {
                         warehouseDetailsListMostrar.add(warehouseDetailsList.get(i));
                     }
                 }
@@ -69,7 +69,7 @@ public class WarehouseDetailsServiceImpl implements IWarehouseDetails {
             }
         }else if(parametroUno != null && parametroDos != null){
             for (int i = 0; i < bodegas.size(); i++) {
-                if (warehouseDetailsList.get(i).getFinal_cost().equals("$" + parametroDos) && warehouseDetailsList.get(i).getName().equals(" " + parametroUno)) {
+                if (warehouseDetailsList.get(i).getFinal_cost().equals("$" + parametroDos) && warehouseDetailsList.get(i).getName().equals(parametroUno)) {
                     warehouseDetailsListMostrar.add(warehouseDetailsList.get(i));
                 }
             }
