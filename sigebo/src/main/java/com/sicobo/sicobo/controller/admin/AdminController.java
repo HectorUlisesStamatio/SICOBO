@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
-import static com.sicobo.sicobo.util.Constantes.MessageCodes.SUCCESS_CODE;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.FAIL_CODE;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
@@ -39,26 +38,27 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.*;
 @Slf4j
 public class AdminController {
 
+    private final SiteServiceImpl siteService;
 
-    @Autowired
-    private SiteServiceImpl siteService;
+    private final StateServiceImpl stateService;
 
-    @Autowired
-    private StateServiceImpl stateService;
+    private final WarehousesTypeServiceImpl warehousesTypeService;
 
-
-
-    @Autowired
-    private WarehousesTypeServiceImpl warehousesTypeService;
-
-    @Autowired
-    private CostTypeServiceImpl costTypeService;
+    private final CostTypeServiceImpl costTypeService;
     
-    @Autowired
-    private UserServiceImpl userService;
+    private final UserServiceImpl userService;
+
+    private final PoliciesServiceImpl policiesService;
 
     @Autowired
-    private PoliciesServiceImpl policiesService;
+    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService) {
+        this.siteService = siteService;
+        this.stateService = stateService;
+        this.warehousesTypeService = warehousesTypeService;
+        this.costTypeService = costTypeService;
+        this.userService = userService;
+        this.policiesService = policiesService;
+    }
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/dashboard")
@@ -79,7 +79,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - listar" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         } catch (Exception e) {
-            log.error("Ocurrio un error en AdminController - listar" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - listar" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return ADMIN_LISTSITES;
@@ -133,7 +133,7 @@ public class AdminController {
             attributes.addFlashAttribute(MESSAGE, response);
         }catch (AssertionError e) {
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - saveSite" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - saveSite" + e.getMessage());
         }
         return REDIRECT_ADMIN_LISTSITES;
     }
@@ -158,7 +158,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - prepareModification" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - prepareModification" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - prepareModification" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
 
@@ -191,7 +191,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - updateSite" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - updateSite" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - updateSite" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_ADMIN_LISTSITES;
@@ -206,7 +206,7 @@ public class AdminController {
             BeanSite beanSite = new BeanSite();
             if (idSite.isPresent() && statusSite.isPresent()) {
                 beanSite.setId(idSite.get());
-                if(statusSite.get().booleanValue()){
+                if(statusSite.get()){
                     beanSite.setStatus(0);
                 }else{
                     beanSite.setStatus(1);
@@ -221,7 +221,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - changeStateSite" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - changeStateSite" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - changeStateSite" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_ADMIN_LISTSITES;
@@ -240,11 +240,8 @@ public class AdminController {
             model.addAttribute(WAREHOUSE_TYPES, warehouseTypes.getResult());
             model.addAttribute(COST_TYPES, costTypes.getResult());
             model.addAttribute(COST, costType);
-        }catch (AssertionError e) {
-            log.error("Ocurrio un error en AdminController - redirectCostType" + e.getMessage());
-            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-        }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - redirectCostType" + e.getMessage());
+        }catch (AssertionError | Exception e) {
+            log.error("Ocurrió un error en AdminController - redirectCostType" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return ADMIN_REGISTERCOSTTYPE;
@@ -275,7 +272,7 @@ public class AdminController {
             model.addAttribute(TERMSANDCONDTIONS, termsAndConditions);
         }catch (Exception e){
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - listarTerminosYCondiciones" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - listarTérminosYCondiciones" + e.getMessage());
         }
         return ADMIN_TERMSANDCONDITIONS;
     }
@@ -302,7 +299,7 @@ public class AdminController {
             Message response = (Message) responseEntity.getBody();
             assert response != null;
             if (response.getType().equals(FAILED)) {
-                model.addAttribute(MESSAGE, "Algo salio mál con el registro, corrobora que no ingreses carácteres que no esten integrados en la herramienta");
+                model.addAttribute(MESSAGE, "Algo salio mál con el registro, corrobora que no ingreses caracteres que no estén integrados en la herramienta");
                 model.addAttribute(TERMSANDCONDTIONS,termsAndConditions);
                 return ADMIN_REGISTERCOSTTYPE;
             }
@@ -310,7 +307,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute(MESSAGE,message);
         }catch (Exception e){
             redirectAttributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - guardarTerminosYCondiciones" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - guardarTérminosYCondiciones" + e.getMessage());
         }
         return REDIRECT_ADMIN_TERMSANDCONDITIONS;
     }
@@ -349,11 +346,8 @@ public class AdminController {
             }
 
             attributes.addFlashAttribute(MESSAGE, response);
-        }catch (AssertionError e) {
-            attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - saveCost" + e.getMessage());
-        }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - saveCost" + e.getMessage());
+        }catch (AssertionError | Exception e) {
+            log.error("Ocurrió un error en AdminController - saveCost" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
 
@@ -372,7 +366,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - al listar los gestores" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         } catch (Exception e) {
-            log.error("Ocurrio un error en AdminController - al listar los gestores" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - al listar los gestores" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return ADMIN_LISTGESTORES;
@@ -392,7 +386,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - registrarGestor" + e.getMessage());
         }  catch (Exception e) {
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - registrarGestor" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - registrarGestor" + e.getMessage());
         }
 
         return ADMIN_REGISTERGESTORES;
@@ -417,7 +411,7 @@ public class AdminController {
         attributes.addFlashAttribute(MESSAGE, response);
         }catch (AssertionError e) {
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-            log.error("Ocurrio un error en AdminController - saveGestor" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - saveGestor" + e.getMessage());
         }
         return REDIRECT_ADMIN_LISTGESTORES;
     }
@@ -442,7 +436,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - prepareEdicion" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - prepareEdicion" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - prepareEdicion" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
 
@@ -471,7 +465,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - updateGestores" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - updateGestores" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - updateGestores" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_ADMIN_LISTGESTORES;
@@ -486,7 +480,7 @@ public class AdminController {
             BeanUser beanUser = new BeanUser();
             if (idGestor.isPresent() && statusGestor.isPresent()) {
                 beanUser.setId(idGestor.get());
-                if(statusGestor.get().booleanValue()){
+                if(statusGestor.get()){
                     beanUser.setEnabled(0);
                 }else{
                     beanUser.setEnabled(1);
@@ -501,7 +495,7 @@ public class AdminController {
             log.error("Valor nulo un error en AdminController - changeStatGestores" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }catch(Exception e){
-            log.error("Ocurrio un error en AdminController - changeStatGestores" + e.getMessage());
+            log.error("Ocurrió un error en AdminController - changeStatGestores" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
         return REDIRECT_ADMIN_LISTGESTORES;

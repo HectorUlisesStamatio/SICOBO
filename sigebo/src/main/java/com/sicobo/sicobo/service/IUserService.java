@@ -4,8 +4,6 @@ import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanUser;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Date;
-
 public interface IUserService {
     public ResponseEntity<Object> listar();
 

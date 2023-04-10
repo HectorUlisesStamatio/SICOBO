@@ -144,7 +144,7 @@ public class PaymentServiceImpl  implements IPaymentService {
 
             return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, beanPayment), HttpStatus.OK);
         }catch (Exception e) {
-            log.error("Ocurrio un error en PaymentServiceImpl - buscarPagoRenovacion" + e.getMessage());
+            log.error("Ocurrió un error en PaymentServiceImpl - buscarPagoRenovacion" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

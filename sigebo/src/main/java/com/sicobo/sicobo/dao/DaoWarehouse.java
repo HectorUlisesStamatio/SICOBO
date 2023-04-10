@@ -2,7 +2,6 @@ package com.sicobo.sicobo.dao;
 
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanWarehouse;
-import com.sicobo.sicobo.model.BeanWarehouseDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +12,6 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
 
     boolean existsBeanWarehouseByBeanSite(BeanSite beanSite);
-    boolean existsBeanWarehouseByBeanSiteId(Long id);
     List<BeanWarehouse> findBeanWarehouseByBeanSite(BeanSite beanSite);
     List<BeanWarehouse> findAllByBeanSiteId(Long id);
 

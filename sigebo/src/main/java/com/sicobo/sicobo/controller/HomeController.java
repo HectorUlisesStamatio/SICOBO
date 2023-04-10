@@ -46,9 +46,6 @@ public class HomeController {
     private UserServiceImpl userService;
 
     @Autowired
-    private DaoUser userRepository;
-
-    @Autowired
     private WarehouseServiceImpl warehouseService;
     @Autowired
     private StateServiceImpl stateService;

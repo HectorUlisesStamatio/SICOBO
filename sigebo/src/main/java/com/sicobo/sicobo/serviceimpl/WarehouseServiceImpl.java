@@ -152,7 +152,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 return new ResponseEntity<>(new Message(FAILED_REGISTRATION,ERROR_IMAGES, FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
         }catch(Exception e){
-            log.error("Ocurrio un error en WarehouseServiceImpl - guardar" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - guardar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -179,7 +179,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
             daoWarehouse.save(beanWarehouseSave);
             return new ResponseEntity<>(new Message(typeTitle + " exitosa","Se ha realizado la " + typeMethod+ " exitosamente", SUCCESS,SUCCESS_CODE, beanWarehouseSave), HttpStatus.OK);
         }catch(Exception e){
-            log.error("Ocurrio un error en WarehouseServiceImpl - eliminar" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - eliminar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -201,7 +201,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
             beanWarehouse = beanWarehouseOptional.get();
             return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,beanWarehouse ), HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para modificaci[on", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,"No fue posible obtener la bodega para modificación", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -230,7 +230,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No fue posible obtener la bodega para renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodega" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - detalleBodega" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -277,7 +277,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 cloudinary.uploader().destroy(beanWarehouseImage.getPublicId(), ObjectUtils.emptyMap());
                 daoWarehouseImage.deleteById(beanWarehouseImage.getId());
             } catch (Exception e) {
-                log.error("Ocurrio un error en WarehouseServiceImpl - eliminarImagenes" + e.getMessage());
+                log.error("Ocurrió un error en WarehouseServiceImpl - eliminarImagenes" + e.getMessage());
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -298,7 +298,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 if (warehouseisRented) {
                     return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No es posible rentar una bodega en renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
                 }else{
-                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega jsjbsngshgs", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentra la bodega", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
                 }
             }
 
@@ -310,7 +310,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
             return new ResponseEntity<>(new Message(SUCCESSFUL_UPDATE, UPDATE_SUCCESSFUL, SUCCESS,SUCCESS_CODE, warehouseRented), HttpStatus.OK);
 
         }catch (Exception e){
-            log.error("Ocurrio un error en WarehouseServiceImpl - rentar" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - rentar" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -348,7 +348,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No fue posible obtener la bodega para renta", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
         }catch (Exception e){
-            log.error("Ocurrio un error en WarehouseServiceImpl - detalleBodegaRentada" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - detalleBodegaRentada" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -410,7 +410,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                 List<BeanWarehouse> warehousesUpdate = daoWarehouse.saveAll(warehouses);
             }
         }catch(Exception e){
-            log.error("Ocurrio un error en WarehouseServiceImpl - desalojarBodega" + e.getMessage());
+            log.error("Ocurrió un error en WarehouseServiceImpl - desalojarBodega" + e.getMessage());
         }
     }
 

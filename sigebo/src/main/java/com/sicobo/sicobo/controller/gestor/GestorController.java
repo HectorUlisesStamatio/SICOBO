@@ -28,7 +28,6 @@ import static com.sicobo.sicobo.util.Constantes.MessageType.FAILED;
 import static com.sicobo.sicobo.util.Constantes.ObjectMessages.MESSAGE_CATCH_ERROR;
 import static com.sicobo.sicobo.util.Constantes.Redirects.*;
 import static com.sicobo.sicobo.util.Constantes.MessageCodes.*;
-import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_ADMIN;
 import static com.sicobo.sicobo.util.Constantes.Roles.ROLE_GESTOR;
 import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 
@@ -36,17 +35,21 @@ import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 @RequestMapping("/gestor")
 @Slf4j
 public class GestorController {
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
-    private SiteServiceImpl siteService;
-    @Autowired
-    private WarehouseServiceImpl warehouseService;
-    @Autowired
-    private WarehousesTypeServiceImpl warehousesTypeService;
+    private final UserServiceImpl userService;
+    private final SiteServiceImpl siteService;
+    private final WarehouseServiceImpl warehouseService;
+    private final WarehousesTypeServiceImpl warehousesTypeService;
+
+    private final CostTypeServiceImpl costTypeService;
 
     @Autowired
-    private CostTypeServiceImpl costTypeService;
+    public GestorController(UserServiceImpl userService, SiteServiceImpl siteService, WarehouseServiceImpl warehouseService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService) {
+        this.userService = userService;
+        this.siteService = siteService;
+        this.warehouseService = warehouseService;
+        this.warehousesTypeService = warehousesTypeService;
+        this.costTypeService = costTypeService;
+    }
 
     @Secured({ROLE_GESTOR})
     @GetMapping("/dashboard")
@@ -85,7 +88,7 @@ public class GestorController {
 
             return GESTOR_REGISTERWAREHOUSE;
         }catch (Exception e){
-            log.error("Ocurrio un error en GestorController - prepareRegisterWarehouse" + e.getMessage());
+            log.error("Ocurrió un error en GestorController - prepareRegisterWarehouse" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
             return REDIRECT_ERROR;
         }
@@ -143,7 +146,7 @@ public class GestorController {
 
             return GESTOR_REGISTERWAREHOUSE;
         }catch (Exception e){
-            log.error("Ocurrio un error en GestorController - prepareUpdateWarehouse" + e.getMessage());
+            log.error("Ocurrió un error en GestorController - prepareUpdateWarehouse" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
             return REDIRECT_ERROR;
         }
@@ -293,7 +296,7 @@ public class GestorController {
 
             return GESTOR_WAREHOUSES;
         } catch (Exception e) {
-            log.error("Ocurrio un error en GestorController - listWarehouses" + e.getMessage());
+            log.error("Ocurrió un error en GestorController - listWarehouses" + e.getMessage());
             redirectAttributes.addFlashAttribute(STATUS,SERVER_FAIL_CODE);
             return REDIRECT_ERROR;
         }
@@ -308,7 +311,7 @@ public class GestorController {
             BeanWarehouse beanWarehouse = new BeanWarehouse();
             if (idWarehouse.isPresent() && statusWarehouse.isPresent()) {
                 beanWarehouse.setId(idWarehouse.get());
-                if(statusWarehouse.get().booleanValue()){
+                if(statusWarehouse.get()){
                     beanWarehouse.setStatus(0);
                 }else{
                     beanWarehouse.setStatus(1);

@@ -7,7 +7,7 @@ public class CostTypeValidator {
         boolean flag = false;
         if(amount == null){
             flag = true;
-        }else if(amount.doubleValue() < 1){
+        }else if(amount < 1){
             flag = true;
         }
 
