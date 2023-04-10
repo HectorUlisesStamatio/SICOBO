@@ -51,12 +51,6 @@ public class GestorController {
         this.costTypeService = costTypeService;
     }
 
-    @Secured({ROLE_GESTOR})
-    @GetMapping("/dashboard")
-    public String dashboardGestor(Model model){
-        model.addAttribute(OPTION, null);
-        return GESTOR_DASHBOARD;
-    }
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararRegistro")
@@ -343,6 +337,46 @@ public class GestorController {
         }
 
     }
+
+    @Secured({ROLE_GESTOR})
+    @GetMapping("/dashboard")
+    public String warehousesAll(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Message gestorInfo = (Message) userService.buscarGestor(auth.getName()).getBody();
+
+        if (gestorInfo.getType().equals(FAILED)) {
+            return ERRORS;
+        }
+
+        long userId = 0;
+        String siteName = null;
+
+        List<BeanGestorInfo> gestorInfosList = (List<BeanGestorInfo>) gestorInfo.getResult();
+        for (BeanGestorInfo gestor : gestorInfosList) {
+            userId = gestor.getUserId();
+            siteName = gestor.getSiteName();
+        }
+
+        ResponseEntity<List<Object[]>> response = warehouseService.listar(userId, siteName);
+        int bodegasDisponibles = 0;
+        int bodegasRentadas = 0;
+
+        for (Object[] resultado : response.getBody()) {
+            int status = (int) resultado[4];
+            if (status == 1) {
+                bodegasDisponibles++;
+            } else if (status == 2) {
+                bodegasRentadas++;
+            }
+        }
+        model.addAttribute("bodegasDisponibles", bodegasDisponibles);
+        model.addAttribute("bodegasRentadas", bodegasRentadas);
+
+        model.addAttribute(RESPONSE, response.getBody());
+        return GESTOR_DASHBOARD;
+    }
+
 
     private String handleErrorMessage(Message message) {
         if(message.getType().equals(FAILED)) {

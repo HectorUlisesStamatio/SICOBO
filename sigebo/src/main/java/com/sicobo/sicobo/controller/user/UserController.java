@@ -26,8 +26,9 @@ public class UserController {
     }
 
     @Secured({ROLE_USUARIO})
-    @GetMapping("/misBodegas")
+    @GetMapping("/usuario/misBodegas")
     public String misBodegas(Model model) {
+        model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         Message warehousesClient = (Message) warehouseService.buscarBodegaPorUsername(auth.getName()).getBody();

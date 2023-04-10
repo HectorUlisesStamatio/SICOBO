@@ -75,7 +75,7 @@ public class HomeController {
             if (Objects.equals(rol, "[ROLE_ADMIN]")) {
                 return REDIRECT_ADMIN_DASHBOARD;
             } else if (Objects.equals(rol, "[ROLE_GESTOR]")) {
-                return "redirect:/warehousesAll";
+                return REDIRECT_GESTOR_DASHBOARD;
             } else if (Objects.equals(rol, "[ROLE_USUARIO]")) {
                 return USER_INDEX;
             } else {
@@ -107,45 +107,6 @@ public class HomeController {
             log.error("Ocurrió un error en UserController - mostrarContenido" + e.getMessage());
         }
         return USER_TERMSANDCONDITIONS;
-    }
-
-    @Secured({ROLE_GESTOR})
-    @GetMapping("/warehousesAll")
-    public String warehousesAll(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        Message gestorInfo = (Message) userService.buscarGestor(auth.getName()).getBody();
-
-        if (gestorInfo.getType().equals(FAILED)) {
-            return ERRORS;
-        }
-
-        long userId = 0;
-        String siteName = null;
-
-        List<BeanGestorInfo> gestorInfosList = (List<BeanGestorInfo>) gestorInfo.getResult();
-        for (BeanGestorInfo gestor : gestorInfosList) {
-            userId = gestor.getUserId();
-            siteName = gestor.getSiteName();
-        }
-
-        ResponseEntity<List<Object[]>> response = warehouseService.listar(userId, siteName);
-        int bodegasDisponibles = 0;
-        int bodegasRentadas = 0;
-
-        for (Object[] resultado : response.getBody()) {
-            int status = (int) resultado[4];
-            if (status == 1) {
-                bodegasDisponibles++;
-            } else if (status == 2) {
-                bodegasRentadas++;
-            }
-        }
-        model.addAttribute("bodegasDisponibles", bodegasDisponibles);
-        model.addAttribute("bodegasRentadas", bodegasRentadas);
-
-        model.addAttribute(RESPONSE, response.getBody());
-        return GESTOR_DASHBOARD;
     }
 
 
@@ -277,8 +238,9 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @GetMapping(value = {"/bodegas", "/bodegas/{parametroUno}", "/bodegas/{parametroUno}/{parametroDos}"})
+    @GetMapping(value = {"/usuario/bodegas", "/usuario/bodegas/{parametroUno}", "/usuario/bodegas/{parametroUno}/{parametroDos}"})
     public String listarBodegas(@PathVariable(required = false) Optional<String> parametroUno, @PathVariable(required = false) Optional<String> parametroDos, RedirectAttributes attributes, Model model) {
+        model.addAttribute(OPTION, WAREHOUSE_OPTION);
         try {
             String parametro = null;
             String segundoParametro = null;
@@ -308,9 +270,9 @@ public class HomeController {
 
 
     @Secured({ROLE_USUARIO})
-    @GetMapping("/detalleProducto/{idWarehouse}")
+    @GetMapping("/usuario/detalleProducto/{idWarehouse}")
     public String preparedDetail(@PathVariable Optional<String> idWarehouse, Model model) {
-
+        model.addAttribute(OPTION, WAREHOUSE_OPTION);
         try {
             if (!idWarehouse.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
@@ -346,8 +308,9 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @PostMapping("/prepararCompra")
+    @PostMapping("/usuario/prepararCompra")
     public String preparedBuy(@RequestParam("idWarehouse") Optional<Long> idWarehouse, @RequestParam("finalCost") Optional<Double> finalCost, @RequestParam("months") Optional<Integer> months, RedirectAttributes attributes, Model model) {
+        model.addAttribute(OPTION, WAREHOUSE_OPTION);
         try {
             if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent()) {
                 attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
@@ -382,8 +345,9 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @GetMapping("/estadoPago")
+    @GetMapping("/usuario/estadoPago")
     public String succesPayment(Model model) {
+        model.addAttribute(OPTION, WAREHOUSE_OPTION);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
@@ -394,7 +358,7 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
-                return WAREHOUSES_USER;
+                return PAYMENT_INFORMATION;
             }
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
@@ -428,8 +392,9 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @GetMapping("/renovacionBodega/{idPayment}")
+    @GetMapping("/usuario/renovacionBodega/{idPayment}")
     public String detailRenovation(@PathVariable("idPayment") Optional<String> idPayment, Model model) {
+        model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         try {
             if (!idPayment.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
@@ -491,17 +456,19 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @PostMapping("/prepararRenovacion")
+    @PostMapping("/usuario/prepararRenovacion")
     public String prepareRenovation(
             @RequestParam("idWarehouse") Optional<Long> idWarehouse,
             @RequestParam("finalCost") Optional<Double> finalCost,
             @RequestParam("months") Optional<Integer> months,
             @RequestParam("idPayment") Optional<Long> idPayment,
             RedirectAttributes attributes, Model model) {
+        model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         try {
+            System.out.println(!idPayment.isPresent());
             if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent() || !idPayment.isPresent()) {
-                attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
-                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+                model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                return MY_WAREHOUSE_DETAIL;
             }
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -512,8 +479,8 @@ public class HomeController {
             assert message != null;
 
             if (message.getType().equals(FAILED)) {
-                attributes.addFlashAttribute(MESSAGE, message);
-                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+                model.addAttribute(MESSAGE, message);
+                return MY_WAREHOUSE_DETAIL;
             }
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
@@ -522,8 +489,8 @@ public class HomeController {
             Message messageResponse = (Message) warehouseService.detalleBodegaRentada(idWarehouse.get(), user).getBody();
             assert messageResponse != null;
             if (messageResponse.getType().equals(FAILED)) {
-                attributes.addFlashAttribute(MESSAGE, messageResponse);
-                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+                model.addAttribute(MESSAGE, messageResponse);
+                return MY_WAREHOUSE_DETAIL;
             }
 
 
@@ -533,8 +500,8 @@ public class HomeController {
             Message response = (Message) stripeService.checkoutRenovation(warehouse, months.get(), idPayment.get()).getBody();
             assert response != null;
             if (response.getType().equals(FAILED)) {
-                attributes.addFlashAttribute(MESSAGE, response);
-                return REDIRECT_DETAIL_RENOVATION + idPayment.get();
+                model.addAttribute(MESSAGE, response);
+                return MY_WAREHOUSE_DETAIL;
             }
             sessionRenovation = (Session) response.getResult();
             assert sessionRenovation != null;
@@ -550,8 +517,9 @@ public class HomeController {
 
 
     @Secured({ROLE_USUARIO})
-    @GetMapping("/estadoRenovacion")
+    @GetMapping("/usuario/estadoRenovacion")
     public String succesPaymentRenovation(Model model) {
+        model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
@@ -562,7 +530,7 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
-                return WAREHOUSES_USER;
+                return PAYMENT_RENOVATION_INFORMATION;
             }
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
