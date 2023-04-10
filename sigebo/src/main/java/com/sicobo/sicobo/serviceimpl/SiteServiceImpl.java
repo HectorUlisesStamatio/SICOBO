@@ -189,5 +189,7 @@ public class SiteServiceImpl implements ISiteService {
 
     }
 
-
+    public ResponseEntity<Object> findBeanSiteByStatus() {
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,"La consulta de sitios ha sido exitosa", SUCCESS,SUCCESS_CODE, daoSite.findAllByStatusIs(1)), HttpStatus.OK);
+    }
 }

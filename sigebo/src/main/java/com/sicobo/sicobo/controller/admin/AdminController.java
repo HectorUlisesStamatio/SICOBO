@@ -413,7 +413,7 @@ public class AdminController {
     public String registrarGestor(Model model, DTOUser user){
         model.addAttribute(OPTION, GESTORES);
         try {
-            Message response = (Message) siteService.listar().getBody();
+            Message response = (Message) siteService.findBeanSiteByStatus().getBody();
             assert response != null;
             model.addAttribute(SITES, response.getResult());
             model.addAttribute(USER, user);
@@ -436,12 +436,18 @@ public class AdminController {
             for (ObjectError error: result.getAllErrors()){
                 log.error(ERRORS + error.getDefaultMessage());
             }
+            Message response = (Message) siteService.findBeanSiteByStatus().getBody();
+            assert response != null;
+            model.addAttribute(SITES, response.getResult());
             return ADMIN_REGISTERGESTORES;
         }
         Message response = (Message) userService.guardar(user).getBody();
         assert response != null;
         if(response.getType().equals(FAILED)){
             model.addAttribute(MESSAGE, response);
+            Message responseSite = (Message) siteService.findBeanSiteByStatus().getBody();
+            assert responseSite != null;
+            model.addAttribute(SITES, responseSite.getResult());
             return ADMIN_REGISTERGESTORES;
         }
         attributes.addFlashAttribute(MESSAGE, response);
@@ -463,7 +469,7 @@ public class AdminController {
                 attributes.addFlashAttribute(MESSAGE, message);
                 return REDIRECT_ADMIN_LISTGESTORES;
             }
-            Message responseSite = (Message) siteService.listar().getBody();
+            Message responseSite = (Message) siteService.findBeanSiteByStatus().getBody();
             assert responseSite != null;
             model.addAttribute(SITES, responseSite.getResult());
             model.addAttribute(RESPONSE, message);
@@ -488,12 +494,18 @@ public class AdminController {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
                 }
+                Message responseSite = (Message) siteService.findBeanSiteByStatus().getBody();
+                assert responseSite != null;
+                model.addAttribute(SITES, responseSite.getResult());
                 return ADMIN_UPDATEGESTORES;
             }
             Message response = (Message) userService.editar(user).getBody();
             assert response !=null;
             if (response.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, response);
+                Message responseSite = (Message) siteService.findBeanSiteByStatus().getBody();
+                assert responseSite != null;
+                model.addAttribute(SITES, responseSite.getResult());
                 return ADMIN_UPDATEGESTORES;
             }
             attributes.addFlashAttribute(MESSAGE, response);
