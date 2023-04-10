@@ -338,7 +338,7 @@ public class UserServiceImpl implements IUserService
         if(userOptional.isPresent()){
             user = userOptional.get();
         }
-        Optional<BeanSiteAssigment> siteAssigmentOptional = Optional.ofNullable(siteAssigment.findByBeanUserId(user.getId()));
+        Optional<BeanSiteAssigment> siteAssigmentOptional = Optional.ofNullable(siteAssigment.findByBeanUserIdAndStatusIs(user.getId(), 1));
 
         if(siteAssigmentOptional.isPresent()){
             beanSiteAssigment = siteAssigmentOptional.get();

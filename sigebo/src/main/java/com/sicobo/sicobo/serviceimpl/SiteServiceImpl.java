@@ -128,10 +128,6 @@ public class SiteServiceImpl implements ISiteService {
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El sitio ha "+ typeChange +" no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-        if(beanSite.getStatus() == 1  && !daoSiteAssigment.existsBeanSiteAssigmentByBeanSiteIdAndStatusIs(beanSite.getId(), 1)){
-            return new ResponseEntity(new Message("Ejecución fallida","El sitio ha "+ typeChange +" no contiene gestores para ser administrado", "failed",400, null), HttpStatus.BAD_REQUEST);
-        }
-
         if(beanSite.getStatus() == 0 && daoWarehouse.existsBeanWarehouseByBeanSiteIdAndStatusIsNot(beanSite.getId(),0)){
             List<BeanWarehouse> warehousesBySite = daoWarehouse.findAllByBeanSiteId(beanSite.getId());
             for (BeanWarehouse warehouse:

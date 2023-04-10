@@ -130,12 +130,12 @@
 
                             <div class="col-12 mb-3">
                                 <label for="beanSiteAssigment" class="form-label">Sitio</label>
-                                <select class="form-select" th:field="*{beanSiteAssigment}" id="beanSiteAssigment">
-                                    <option value="0" disabled >Selecciona una opción...</option>
+                                <select class="form-select" th:field="*{beanSiteAssigment}" id="beanSiteAssigment" required>
+                                    <option value="0">Selecciona una opción...</option>
                                     <option th:each="tmpSite: ${sitios}" th:value="${tmpSite.id}"
-                                            th:text="${tmpSite.name}"></option>
+                                            th:text="${tmpSite.name}" th:selected="${tmpSite.id==user.beanSiteAssigment}"></option>
                                 </select>
-                                <div th:unless="${#fields.hasErrors('beanSiteAssigment')}" th:text="#{registerSite.estado.error}" class="invalid-feedback" id="beanStateRequired"></div>
+                                <div th:unless="${#fields.hasErrors('beanSiteAssigment')}" th:text="#{registerGestor.site.error}" class="invalid-feedback" id="beanStateRequired"></div>
                                 <div th:if="${#fields.hasErrors('beanSiteAssigment')}" th:errors="*{beanSiteAssigment}" class="alert alert-danger mb-3 mt-3">
                             </div>
 
@@ -160,9 +160,20 @@
 
 <script>
 
+    let selectBeanSiteAssigment = document.getElementById("beanSiteAssigment");
+
+
+
+
     $('#formValid').submit(function (event) {
         event.preventDefault();
-
+        if (parseInt(selectBeanSiteAssigment.value) === 0) {
+            selectBeanSiteAssigment.setCustomValidity('Seleccione una opción válida');
+            document.getElementById("beanStateRequired").style.display = "block";
+        }else{
+            selectBeanSiteAssigment.setCustomValidity('');
+            document.getElementById("beanStateRequired").style.display = "none";
+        }
         Swal.fire({
             title: '¿Estás seguro de guardar los cambios?',
             showCancelButton: true,

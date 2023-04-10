@@ -8,6 +8,7 @@ import java.util.List;
 public interface DaoSiteAssigment extends JpaRepository<BeanSiteAssigment,Long> {
 
     BeanSiteAssigment findByBeanUserId(Long id);
+    BeanSiteAssigment findByBeanUserIdAndStatusIs(Long id, int status);
 
     List<BeanSiteAssigment> findAllByBeanSiteId(Long id);
 
