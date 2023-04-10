@@ -4,6 +4,8 @@ import com.sicobo.sicobo.dto.DTOUser;
 import com.sicobo.sicobo.model.BeanUser;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
+
 public interface IUserService {
     public ResponseEntity<Object> listar();
 
@@ -25,5 +27,7 @@ public interface IUserService {
     public ResponseEntity<Object> editarPerfil(DTOUser dtoUser);
 
     public ResponseEntity<Object> buscarGestor(String username);
+
+    public ResponseEntity<Object> renovacionBodegaEmail(String correo, String username, String seccion, String dueDate, String paymentDate);
 
 }

@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -440,6 +441,11 @@ public class HomeController {
                 model.addAttribute(MESSAGE, messageResponse);
                 return MY_WAREHOUSE_DETAIL;
             }
+
+
+
+
+
             model.addAttribute(WAREHOUSE, messageResponse);
             model.addAttribute(PAYMENT, idPayment.get());
         } catch (NullPointerException e){
@@ -543,6 +549,23 @@ public class HomeController {
             assert warehouse != null;
             BeanPayment payment = (BeanPayment) mapResult.get("payment");
             assert warehouse != null;
+
+            //Envío del correo
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            String correo = user.getEmail();
+            String usernameUser = user.getUsername();
+            String nombreBodega = warehouse.getSection();
+            String dueDate = dateFormat.format(payment.getDueDate());
+            String paymentDay = dateFormat.format(payment.getPaymentDate());
+
+            ResponseEntity<?> responseEntityEmail = userService.renovacionBodegaEmail
+                    (correo,usernameUser,nombreBodega, dueDate, paymentDay);
+            Message messageEmail = (Message) responseEntityEmail.getBody();
+
+            if (messageEmail == null){
+                System.out.println("Hubo un error al enviar el email");
+            }
 
             model.addAttribute(MESSAGE, messageResult);
             model.addAttribute(WAREHOUSE, warehouse);
