@@ -142,7 +142,7 @@
                   </div>
                 </div>
                 <div class="row align-items-start">
-                  <article th:each="tmpBodega: ${bodegas}" th:onclick="detailProduct(${tmpBodega.id})" class="popular__card swiper-slide">
+                  <article th:each="tmpBodega: ${bodegas}" th:onclick="detailProduct([[${tmpBodega.id}]])" class="popular__card swiper-slide">
                     <img th:src="${tmpBodega.secure_url}" alt="" class="popular__img">
 
                     <div class="popular__data">
@@ -171,7 +171,7 @@
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
-<script>
+<script th:inline="javascript">
 
   let $ = jQuery;
 
@@ -244,7 +244,8 @@
   });
 
   const detailProduct = (id) =>{
-    console.log(id)
+    let path = `http://localhost:8080/detalleProducto/${id}`
+    window.location.replace(path);
   }
 </script>
 </body>

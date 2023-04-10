@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>SICOBO | Registro de gestor</title>
+    <title>SICOBO | Modificación de gestor</title>
 </head>
 <head th:insert="~{layout/admin/head :: head}"></head>
 <body>
@@ -16,7 +16,6 @@
         <h1>Gestores</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/dash}">Gestores</a></li>
                 <li class="breadcrumb-item"><a th:href="@{/admin/listarGestores}">Lista de gestores</a></li>
                 <li class="breadcrumb-item active">Modificación</li>
             </ol>
@@ -41,7 +40,7 @@
                             <h5 class="card-title">Modificar Gestor</h5>
                             <input type="hidden" th:field="*{id}" id="id" />
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="name" class="form-label">Nombre(s)</label>
                                 <input th:field="*{name}" type="text" class="form-control" id="name"
                                        pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
@@ -50,7 +49,7 @@
                                 <div th:unless="${#fields.hasErrors('name')}" th:text="#{register.name.error}"
                                      class="invalid-feedback"></div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="lastname" class="form-label">Apellido Paterno</label>
                                 <input th:field="*{lastname}" type="text" class="form-control" id="lastname"
                                        pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
@@ -59,7 +58,7 @@
                                 <div th:unless="${#fields.hasErrors('lastname')}" th:text="#{register.lastname.error}"
                                      class="invalid-feedback"></div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="surname" class="form-label">Apellido Materno</label>
                                 <input th:field="*{surname}" type="text" class="form-control" id="surname"
                                        pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
@@ -68,7 +67,7 @@
                                 <div th:unless="${#fields.hasErrors('surname')}" th:text="#{register.surname.error}"
                                      class="invalid-feedback"></div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="rfc" class="form-label">RFC</label>
                                 <input th:field="*{rfc}" type="text" class="form-control" id="rfc"
                                        pattern="^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$"
@@ -79,7 +78,7 @@
                                      class="invalid-feedback"></div>
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="phone_number" class="form-label">Número de Teléfono</label>
                                 <input th:field="*{phoneNumber}" type="number" class="form-control" id="phone_number"
                                        pattern="[0-9]{1,12}" required>
@@ -90,7 +89,7 @@
                             </div>
 
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="username" class="form-label">Usuario</label>
                                 <input th:field="*{username}" type="text" class="form-control" id="username"
                                        pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
@@ -100,7 +99,7 @@
                                      class="invalid-feedback"></div>
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="email" class="form-label">Correo</label>
                                 <input th:field="*{email}" type="email" class="form-control" id="email" name="email"
                                        required>
@@ -110,7 +109,7 @@
                                      class="invalid-feedback"></div>
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
                                 <input th:field="*{password}" type="text" class="form-control" id="password" name="password"
                                        pattern="^(?=^.{10,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
@@ -129,7 +128,7 @@
                                     }catch(e){}
                             </script>
 
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <label for="beanSiteAssigment" class="form-label">Sitio</label>
                                 <select class="form-select" th:field="*{beanSiteAssigment}" id="beanSiteAssigment">
                                     <option value="0" disabled >Selecciona una opción...</option>

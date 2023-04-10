@@ -62,6 +62,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Object[]>> listar(Long id, String username) {
         List<Object[]> resultados = daoWarehouse.findAllClienteWarehousesDetails(id, username);
         return new ResponseEntity<>(resultados, HttpStatus.OK);
@@ -91,6 +92,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> guardar(DTOWarehouse dtoWarehouse) {
         try{
             List<MultipartFile> images = dtoWarehouse.getImages();
@@ -272,6 +274,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object>   rentar(Long id) {
         Optional<BeanWarehouse> warehouseSearched = daoWarehouse.findBeanWarehouseById(id);
         boolean existWarehouse = daoWarehouse.existsBeanWarehouseByIdAndStatusIs(id, 1);
@@ -305,6 +308,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> detalleBodegaRentada(Long id, BeanUser user) {
         BeanWarehouse beanWarehouse;
 
@@ -339,9 +343,44 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    @Scheduled(cron = "0 29 16 ? * *")
+    @Scheduled(cron = "0 0 0 15 * ?")
+    @Transactional(rollbackFor = {SQLException.class})
     public void desalojarBodega() {
+        try {
+            List<BeanPayment> payments = daoPayment.findAllByStatusIs(1);
+            List<BeanPayment> duePayments = new ArrayList<>();
+            List<BeanWarehouse> warehouses = new ArrayList<>();
+            if (!payments.isEmpty()) {
+                for (BeanPayment payment : payments) {
+                    int result = payment.getDueDate().compareTo(new Date());
+                    if (result < 0) {
+                        payment.setStatus(0);
+                        duePayments.add(payment);
+                    }
+                }
+            }
+            if (!duePayments.isEmpty()) {
+                List<BeanPayment> paymentsUpdate = daoPayment.saveAll(duePayments);
+                for (BeanPayment payment : paymentsUpdate) { // Payment y Warehouse del User se proporcionan aqui
+                    Optional<BeanUser> user = daoUser.findById(payment.getBeanUser().getId());
+                    Optional<BeanWarehouse> warehouse = daoWarehouse.findById(payment.getBeanWarehouse().getId());
+                    if (warehouse.isPresent()) {
+                        warehouse.get().setStatus(1);
+                        warehouses.add(warehouse.get());
+                    }
+                    if (user.isPresent()) {
+                        BeanUser userSearched = user.get();
+                        // Aqui puedes ejecutar el metodo para enviar email
+                    }
+                }
+            }
 
+            if (!warehouses.isEmpty()) {
+                List<BeanWarehouse> warehousesUpdate = daoWarehouse.saveAll(warehouses);
+            }
+        }catch(Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - desalojarBodega" + e.getMessage());
+        }
     }
 
 
