@@ -370,7 +370,7 @@ public class UserServiceImpl implements IUserService
                 daoUser.save(user);
 
                 String htmlText = templateEngine.process("emailTemplate", context);
-                helper.setFrom("20203TN058@utez.edu.mx");
+                helper.setFrom("sigebowarehouses@gmail.com");
                 helper.setTo(user.getEmail());
                 helper.setSubject("Recuperar Contraseña");
                 helper.setText(htmlText, true);
@@ -500,6 +500,33 @@ public class UserServiceImpl implements IUserService
         }
 
         return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, gestorInfos), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> renovacionBodegaEmail(String correo, String username, String seccion, String dueDate, String paymentDate) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+            try {
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                Context context = new Context();
+                Map<String,Object> model = new HashMap<>();
+
+                model.put("userName", "Hola " +username);
+                model.put("seccion"," " + seccion );
+                model.put("dueDate", dueDate);
+                model.put("paymenDate",paymentDate);
+                context.setVariables(model);
+
+                String htmlText = templateEngine.process("emailPayment", context);
+                helper.setFrom("sigebowarehouses@gmail.com");
+                helper.setTo(correo);
+                helper.setSubject("Renovación de pago para la bodega " + seccion);
+                helper.setText(htmlText, true);
+                javaMailSender.send(message);
+                return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEND_EMAIL_SUCCESFUL, SUCCESS,SUCCESS_CODE, "Si se envio"), HttpStatus.OK);
+            } catch (jakarta.mail.MessagingException e) {
+                log.error("Ocurrió un error al buscar" + e.getMessage());
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
     }
 
     public ResponseEntity<Object> findBeanUserByUsername(String user) {
