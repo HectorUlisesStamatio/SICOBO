@@ -1,5 +1,6 @@
 package com.sicobo.sicobo.controller.user;
 
+import com.sicobo.sicobo.serviceimpl.StateServiceImpl;
 import com.sicobo.sicobo.serviceimpl.WarehouseServiceImpl;
 import com.sicobo.sicobo.util.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +21,12 @@ import static com.sicobo.sicobo.util.Constantes.Stuff.*;
 public class UserController {
     private final WarehouseServiceImpl warehouseService;
 
+    private final StateServiceImpl stateService;
+
     @Autowired
-    public UserController(WarehouseServiceImpl warehouseService) {
+    public UserController(WarehouseServiceImpl warehouseService, StateServiceImpl stateService) {
         this.warehouseService = warehouseService;
+        this.stateService = stateService;
     }
 
     @Secured({ROLE_USUARIO})
@@ -30,7 +34,9 @@ public class UserController {
     public String misBodegas(Model model) {
         model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         Message warehousesClient = (Message) warehouseService.buscarBodegaPorUsername(auth.getName()).getBody();
         
         model.addAttribute(RESPONSE, warehousesClient.getResult());

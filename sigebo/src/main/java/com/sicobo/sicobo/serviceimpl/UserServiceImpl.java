@@ -285,6 +285,12 @@ public class UserServiceImpl implements IUserService
         if(!userSearched.isPresent()){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El gestor ha "+ typeChange +" no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
+        Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(beanUser.getId()));
+        if(beanSiteAssigment.isPresent()) {
+            if(siteAssigment.findAllByBeanSiteId(beanSiteAssigment.get().getBeanSite().getId()).size()==1){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El gestor no se puede deshabilitar si es el único asignado a ese sitio", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+            }
+        }
         BeanUser userPrepared =userSearched.get();
         userPrepared.setEnabled(beanUser.getEnabled());
         try{

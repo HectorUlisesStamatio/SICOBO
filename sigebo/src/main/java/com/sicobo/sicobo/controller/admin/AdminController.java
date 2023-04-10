@@ -8,7 +8,6 @@ import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -47,7 +46,7 @@ public class AdminController {
 
     private final CostTypeServiceImpl costTypeService;
 
-    private WarehouseServiceImpl warehouseService;
+    private final WarehouseServiceImpl warehouseService;
 
     private final UserServiceImpl userService;
 
@@ -57,14 +56,14 @@ public class AdminController {
 
     @Autowired
 
-    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService, PaymentServiceImpl paymentService) {
+    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, WarehouseServiceImpl warehouseService, UserServiceImpl userService, PoliciesServiceImpl policiesService, PaymentServiceImpl paymentService) {
         this.siteService = siteService;
         this.stateService = stateService;
         this.warehousesTypeService = warehousesTypeService;
         this.costTypeService = costTypeService;
+        this.warehouseService = warehouseService;
         this.userService = userService;
         this.policiesService = policiesService;
-        this.warehouseService = warehouseService;
         this.paymentService = paymentService;
 
     }

@@ -29,7 +29,18 @@
                         <div class="card mb-3">
 
                             <div class="card-body">
+                                <div sec:authorize="isAuthenticated()">
+                                    <input type="hidden" value="hola" id="logueado">
+                                </div>
 
+                                <script>
+                                    try {
+                                        let x = document.getElementById("logueado").value;
+                                        if(x !== null){
+                                            window.location.href="http://localhost:8080/";
+                                        }
+                                    }catch(e){}
+                                </script>
                                 <div class="pt-4 pb-2">
                                     <h5 class="card-title text-center pb-0 fs-4">Crea una cuenta</h5>
                                     <p class="text-center small">Ingresa los datos necesarios para empezar</p>

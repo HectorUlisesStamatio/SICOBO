@@ -218,12 +218,18 @@ public class HomeController {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
                 }
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return USER_PROFILE;
             }
             Message response = (Message) userService.editarPerfil(user).getBody();
             assert response != null;
             if (response.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, response);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return USER_PROFILE;
             }
             attributes.addFlashAttribute(MESSAGE, response);
@@ -277,6 +283,9 @@ public class HomeController {
             if (!idWarehouse.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return PRODUCT_DETAIL;
             }
 
@@ -288,6 +297,9 @@ public class HomeController {
                 if (message.getType().equals(FAILED)) {
                     model.addAttribute(MESSAGE, message);
                     model.addAttribute(WAREHOUSE, null);
+                    Message responseStates = (Message) stateService.listar().getBody();
+                    assert responseStates != null;
+                    model.addAttribute(STATES, responseStates.getResult());
                     return PRODUCT_DETAIL;
                 }
 
@@ -295,6 +307,9 @@ public class HomeController {
             } catch (NumberFormatException e) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return PRODUCT_DETAIL;
             }
 
@@ -303,7 +318,9 @@ public class HomeController {
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - preparedDatail" + e.getMessage());
         }
-
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         return PRODUCT_DETAIL;
     }
 
@@ -314,6 +331,9 @@ public class HomeController {
         try {
             if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent()) {
                 attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return REDIRECT_PREPARED_DETAIL + idWarehouse;
             }
 
@@ -321,6 +341,9 @@ public class HomeController {
             assert message != null;
             if (message.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, message);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return REDIRECT_PREPARED_DETAIL + idWarehouse;
             }
             BeanWarehouse warehouse = (BeanWarehouse) message.getResult();
@@ -330,6 +353,9 @@ public class HomeController {
             assert response != null;
             if (response.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, response);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return REDIRECT_PREPARED_DETAIL + warehouse.getId();
             }
             session = (Session) response.getResult();
@@ -340,7 +366,9 @@ public class HomeController {
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - preparedBuy" + e.getMessage());
         }
-
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         return "redirect:" + session.getUrl();
     }
 
@@ -358,6 +386,9 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return PAYMENT_INFORMATION;
             }
             BeanUser user = (BeanUser) message.getResult();
@@ -368,6 +399,9 @@ public class HomeController {
 
             if (messageResult.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, messageResult);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return PAYMENT_INFORMATION;
             }
 
@@ -387,7 +421,9 @@ public class HomeController {
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - succesPayment" + e.getMessage());
         }
-
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         return PAYMENT_INFORMATION;
     }
 
@@ -398,6 +434,9 @@ public class HomeController {
         try {
             if (!idPayment.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSES;
             }
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -409,6 +448,9 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSES;
             }
             BeanUser user = (BeanUser) message.getResult();
@@ -424,6 +466,9 @@ public class HomeController {
                 if (messagePayment.getType().equals(FAILED)) {
                     model.addAttribute(WAREHOUSE, null);
                     model.addAttribute(MESSAGE, messagePayment);
+                    Message responseStates = (Message) stateService.listar().getBody();
+                    assert responseStates != null;
+                    model.addAttribute(STATES, responseStates.getResult());
                     return MY_WAREHOUSE_DETAIL;
                 }
 
@@ -435,6 +480,9 @@ public class HomeController {
                 if (messageResponse.getType().equals(FAILED)) {
                     model.addAttribute(WAREHOUSE, null);
                     model.addAttribute(MESSAGE, messageResponse);
+                    Message responseStates = (Message) stateService.listar().getBody();
+                    assert responseStates != null;
+                    model.addAttribute(STATES, responseStates.getResult());
                     return MY_WAREHOUSE_DETAIL;
                 }
 
@@ -443,6 +491,9 @@ public class HomeController {
             } catch (NumberFormatException e) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
+                Message responseStates = (Message) stateService.listar().getBody();
+                assert responseStates != null;
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSE_DETAIL;
             }
 
@@ -452,6 +503,9 @@ public class HomeController {
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - detailRenovation" + e.getMessage());
         }
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         return MY_WAREHOUSE_DETAIL;
     }
 
@@ -463,11 +517,15 @@ public class HomeController {
             @RequestParam("months") Optional<Integer> months,
             @RequestParam("idPayment") Optional<Long> idPayment,
             RedirectAttributes attributes, Model model) {
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
         try {
             System.out.println(!idPayment.isPresent());
             if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent() || !idPayment.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSE_DETAIL;
             }
 
@@ -480,6 +538,7 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSE_DETAIL;
             }
             BeanUser user = (BeanUser) message.getResult();
@@ -490,6 +549,7 @@ public class HomeController {
             assert messageResponse != null;
             if (messageResponse.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, messageResponse);
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSE_DETAIL;
             }
 
@@ -501,6 +561,7 @@ public class HomeController {
             assert response != null;
             if (response.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, response);
+                model.addAttribute(STATES, responseStates.getResult());
                 return MY_WAREHOUSE_DETAIL;
             }
             sessionRenovation = (Session) response.getResult();
@@ -511,7 +572,7 @@ public class HomeController {
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - prepareRenovation" + e.getMessage());
         }
-
+        model.addAttribute(STATES, responseStates.getResult());
         return "redirect:" + sessionRenovation.getUrl();
     }
 
@@ -520,6 +581,9 @@ public class HomeController {
     @GetMapping("/usuario/estadoRenovacion")
     public String succesPaymentRenovation(Model model) {
         model.addAttribute(OPTION, MYWAREHOUSE_OPTION);
+        Message responseStates = (Message) stateService.listar().getBody();
+        assert responseStates != null;
+        model.addAttribute(STATES, responseStates.getResult());
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
@@ -530,6 +594,7 @@ public class HomeController {
 
             if (message.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, message);
+                model.addAttribute(STATES, responseStates.getResult());
                 return PAYMENT_RENOVATION_INFORMATION;
             }
             BeanUser user = (BeanUser) message.getResult();
@@ -541,6 +606,7 @@ public class HomeController {
 
             if (messageResult.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, messageResult);
+                model.addAttribute(STATES, responseStates.getResult());
                 return PAYMENT_RENOVATION_INFORMATION;
             }
 
@@ -571,13 +637,14 @@ public class HomeController {
 
             model.addAttribute(MESSAGE, messageResult);
             model.addAttribute(WAREHOUSE, warehouse);
+            model.addAttribute(STATES, responseStates.getResult());
             model.addAttribute(PAYMENT, payment);
         } catch (NullPointerException e) {
             log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
         } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
         }
-
+        model.addAttribute(STATES, responseStates.getResult());
         return PAYMENT_RENOVATION_INFORMATION;
     }
 
