@@ -3,21 +3,17 @@ package com.sicobo.sicobo.serviceimpl;
 
 import com.sicobo.sicobo.dao.DaoPolicies;
 import com.sicobo.sicobo.dto.DTOPolicies;
-import com.sicobo.sicobo.model.BeanCostType;
 import com.sicobo.sicobo.model.BeanPolicies;
-import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.service.IPoliciesService;
 import com.sicobo.sicobo.util.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;

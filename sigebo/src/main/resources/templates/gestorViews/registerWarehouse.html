@@ -170,79 +170,7 @@
     let images
 
 
-
     window.addEventListener('load', function() {
-        const hideErrorsInputSection = () =>{
-            document.getElementById("sectionRequired").style.display = "none";
-            document.getElementById("sectionPattern").style.display = "none";
-            document.getElementById("sectionMax").style.display = "none";
-            document.getElementById("sectionMin").style.display = "none";
-        }
-
-        const hideErrorsInputDescription = () =>{
-            description.setCustomValidity("");
-            document.getElementById("descriptionRequired").style.display = "none";
-            document.getElementById("descriptionPattern").style.display = "none";
-            document.getElementById("descriptionMax").style.display = "none";
-            document.getElementById("descriptionMin").style.display = "none";
-        }
-
-        const hideErrorsInputWarehouseType = () =>{
-            document.getElementById("warehousesTypeRequired").style.display = "none";
-        }
-
-        const hideErrorsInputFinalCosto = () =>{
-            document.getElementById("finalCostRequired").style.display = "none";
-            document.getElementById("finalCostPattern").style.display = "none";
-            document.getElementById("finalCostTypeMin").style.display = "none";
-        }
-
-        const hideErrorsInputImages = () =>{
-            document.getElementById("imagesRequired").style.display = "none";
-            document.getElementById("imagesAccept").style.display = "none";
-            document.getElementById("imagesMaxSize").style.display = "none";
-            document.getElementById("imagesMaxLength").style.display = "none";
-        }
-        const mostrarCosto = () =>{
-
-            let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
-            if(warehouseTypeId == null || warehouseTypeId == 0) {
-                finalCost.disabled = true;
-                finalCost.value = "";
-            } else {
-                let costTypes = [[${costTypes}]];
-                let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseTypeId)
-                hideErrorsInputFinalCosto()
-                warehousesType.classList.remove('is-invalid');
-                warehousesType.classList.add('is-valid');
-                finalCost.classList.remove('is-invalid');
-                finalCost.classList.add('is-valid');
-                finalCost.disabled = false;
-                finalCost.value = costType.amount;
-
-            }
-        }
-
-        $('#formValid').submit(function(event) {
-            event.preventDefault();
-            if(this.checkValidity() === true){
-                Swal.fire({
-                    title: '¿Estás seguro de guardar los cambios?',
-                    showCancelButton: true,
-                    confirmButtonText: 'Confirmar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const loader = document.getElementById("loader");
-                        loader.style.display = "block";
-                        document.querySelector('.loader').classList.add('centered-animation');
-                        this.submit();
-
-                    }
-                })
-            }else{
-                event.stopPropagation();
-            }
-        })
 
         section= document.getElementById("section");
         description= document.getElementById("description");
@@ -455,7 +383,78 @@
 
     });
 
+    const hideErrorsInputSection = () =>{
+        document.getElementById("sectionRequired").style.display = "none";
+        document.getElementById("sectionPattern").style.display = "none";
+        document.getElementById("sectionMax").style.display = "none";
+        document.getElementById("sectionMin").style.display = "none";
+    }
 
+    const hideErrorsInputDescription = () =>{
+        description.setCustomValidity("");
+        document.getElementById("descriptionRequired").style.display = "none";
+        document.getElementById("descriptionPattern").style.display = "none";
+        document.getElementById("descriptionMax").style.display = "none";
+        document.getElementById("descriptionMin").style.display = "none";
+    }
+
+    const hideErrorsInputWarehouseType = () =>{
+        document.getElementById("warehousesTypeRequired").style.display = "none";
+    }
+
+    const hideErrorsInputFinalCosto = () =>{
+        document.getElementById("finalCostRequired").style.display = "none";
+        document.getElementById("finalCostPattern").style.display = "none";
+        document.getElementById("finalCostTypeMin").style.display = "none";
+    }
+
+    const hideErrorsInputImages = () =>{
+        document.getElementById("imagesRequired").style.display = "none";
+        document.getElementById("imagesAccept").style.display = "none";
+        document.getElementById("imagesMaxSize").style.display = "none";
+        document.getElementById("imagesMaxLength").style.display = "none";
+    }
+
+    function mostrarCosto(){
+
+        let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
+        if(warehouseTypeId == null || warehouseTypeId == 0) {
+            finalCost.disabled = true;
+            finalCost.value = "";
+        } else {
+            let costTypes = [[${costTypes}]];
+            let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseTypeId)
+            hideErrorsInputFinalCosto()
+            warehousesType.classList.remove('is-invalid');
+            warehousesType.classList.add('is-valid');
+            finalCost.classList.remove('is-invalid');
+            finalCost.classList.add('is-valid');
+            finalCost.disabled = false;
+            finalCost.value = costType.amount;
+
+        }
+    }
+
+    $('#formValid').submit(function(event) {
+        event.preventDefault();
+        if(this.checkValidity() === true){
+            Swal.fire({
+                title: '¿Estás seguro de guardar los cambios?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const loader = document.getElementById("loader");
+                    loader.style.display = "block";
+                    document.querySelector('.loader').classList.add('centered-animation');
+                    this.submit();
+
+                }
+            })
+        }else{
+            event.stopPropagation();
+        }
+    })
 
 </script>
 

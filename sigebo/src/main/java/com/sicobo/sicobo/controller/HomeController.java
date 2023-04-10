@@ -1,12 +1,10 @@
 package com.sicobo.sicobo.controller;
 
 import com.sicobo.sicobo.dao.DaoUser;
+import com.sicobo.sicobo.dto.DTOPolicies;
 import com.sicobo.sicobo.dto.DTOUser;
-import com.sicobo.sicobo.model.BeanPayment;
-import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.model.BeanWarehouse;
+import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.serviceimpl.*;
-import com.sicobo.sicobo.model.BeanGestorInfo;
 import com.sicobo.sicobo.util.Message;
 import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
@@ -60,6 +58,9 @@ public class HomeController {
     @Autowired
     private PaymentServiceImpl paymentService;
 
+    @Autowired
+    private PoliciesServiceImpl policiesService;
+
     private Session session;
 
     private Session sessionRenovation;
@@ -86,6 +87,27 @@ public class HomeController {
         return INDEX;
     }
 
+    @GetMapping("/politicas")
+    public String mostrarContenido(Model model, DTOPolicies termsAndConditions) {
+        try{
+            ResponseEntity<?> responseEntity = policiesService.listar();
+            Message message = (Message) responseEntity.getBody();
+            assert message != null;
+            BeanPolicies termsAndConditionsSearched = (BeanPolicies) message.getResult();
+
+            if (termsAndConditionsSearched.getDescription() != null){
+                termsAndConditions.setDescription(termsAndConditionsSearched.getDescription());
+            }else{
+                termsAndConditions.setDescription("No se han establecido los términos y condiciones");
+            }
+
+            model.addAttribute(TERMSANDCONDTIONS, termsAndConditions);
+        }catch (Exception e){
+            model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
+            log.error("Ocurrió un error en UserController - mostrarContenido" + e.getMessage());
+        }
+        return USER_TERMSANDCONDITIONS;
+    }
 
 
     @GetMapping("/register")
