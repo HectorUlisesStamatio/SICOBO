@@ -96,6 +96,7 @@
         if (result.isConfirmed) {
           const loader = document.getElementById("loader");
           loader.style.display = "block";
+          document.querySelector('.loader').classList.add('centered-animation');
           this.submit();
         }
       })
