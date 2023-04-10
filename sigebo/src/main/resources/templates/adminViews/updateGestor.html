@@ -16,7 +16,7 @@
         <h1>Gestores</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Lista de gestores</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/listarGestores}">Lista de gestores</a></li>
                 <li class="breadcrumb-item active">Modificación</li>
             </ol>
         </nav>
@@ -167,13 +167,7 @@
 
     $('#formValid').submit(function (event) {
         event.preventDefault();
-        if (parseInt(selectBeanSiteAssigment.value) === 0) {
-            selectBeanSiteAssigment.setCustomValidity('Seleccione una opción válida');
-            document.getElementById("beanStateRequired").style.display = "block";
-        }else{
-            selectBeanSiteAssigment.setCustomValidity('');
-            document.getElementById("beanStateRequired").style.display = "none";
-        }
+
         Swal.fire({
             title: '¿Estás seguro de guardar los cambios?',
             showCancelButton: true,

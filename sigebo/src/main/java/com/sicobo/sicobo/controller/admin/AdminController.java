@@ -517,6 +517,16 @@ public class AdminController {
                 model.addAttribute(SITES, responseSite.getResult());
                 return ADMIN_UPDATEGESTORES;
             }
+
+            if(user.getBeanSiteAssigment() == 0){
+                Message message = (Message) userService.buscarGestor(user.getId()).getBody();
+                assert message != null;
+                DTOUser dtoUser = (DTOUser) message.getResult();
+                assert  dtoUser != null;
+                user.setBeanSiteAssigment(dtoUser.getBeanSiteAssigment());
+            }
+
+
             Message response = (Message) userService.editar(user).getBody();
             assert response !=null;
             if (response.getType().equals(FAILED)) {

@@ -342,7 +342,7 @@ public class UserServiceImpl implements IUserService
 
         if(siteAssigmentOptional.isPresent()){
             beanSiteAssigment = siteAssigmentOptional.get();
-            DTOUser dtoUser = new DTOUser(user.getId(), user.getName(),user.getLastname(),user.getSurname(),user.getEmail(),user.getRfc(),user.getPhoneNumber(), user.getEnabled(), user.getUsername(),user.getPassword(),user.getRole(),beanSiteAssigment.getBeanSite().getId().intValue());
+            DTOUser dtoUser = new DTOUser(user.getId(), user.getName(),user.getLastname(),user.getSurname(),user.getEmail(),user.getRfc(),user.getPhoneNumber(), user.getEnabled(), user.getUsername(),user.getPassword(),user.getRole(), (int) beanSiteAssigment.getBeanSite().getId().longValue());
             return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH,SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE,dtoUser ), HttpStatus.OK);
         }
         DTOUser dtoUser = new DTOUser(user.getId(),user.getName(),user.getLastname(),user.getSurname(),user.getEmail(),user.getRfc(),user.getPhoneNumber(), user.getEnabled(), user.getUsername(),user.getPassword(),user.getRole(),0);
