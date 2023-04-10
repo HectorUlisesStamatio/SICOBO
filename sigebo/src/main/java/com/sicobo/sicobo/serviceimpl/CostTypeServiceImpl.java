@@ -88,20 +88,20 @@ public class CostTypeServiceImpl implements ICostTypeService {
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> editar(DTOCostType dtoCostType) {
         BeanCostType a = new BeanCostType();
-        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(a)), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION,INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE,daoCostType.save(a)), HttpStatus.OK);
     }
 
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> eliminar(BeanCostType beanCostType) {
-        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,daoCostType.save(beanCostType)), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION,INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE,daoCostType.save(beanCostType)), HttpStatus.OK);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
         Optional<BeanCostType> optionalBeanCostType = daoCostType.findById(id);
-        return new ResponseEntity<>(new Message("Usuario registrado","HOLA", "success",200,optionalBeanCostType), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(SUCCESSFUL_REGISTRATION,INSERT_SUCCESSFUL, SUCCESS,SUCCESS_CODE,optionalBeanCostType), HttpStatus.OK);
     }
 
 
