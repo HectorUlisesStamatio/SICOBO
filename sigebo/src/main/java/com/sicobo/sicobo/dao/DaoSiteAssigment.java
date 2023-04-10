@@ -10,4 +10,6 @@ public interface DaoSiteAssigment extends JpaRepository<BeanSiteAssigment,Long> 
     BeanSiteAssigment findByBeanUserIdAndStatus(Long id, int status);
 
     BeanSiteAssigment findByBeanUserId(Long id);
+
+    boolean existsBeanSiteAssigmentByBeanSiteIdAndStatusIs(Long id, int status);
 }

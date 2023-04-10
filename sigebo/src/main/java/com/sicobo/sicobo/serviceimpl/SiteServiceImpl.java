@@ -8,6 +8,7 @@ import com.sicobo.sicobo.dto.DTOSite;
 import com.sicobo.sicobo.model.BeanSite;
 import com.sicobo.sicobo.model.BeanState;
 import com.sicobo.sicobo.model.BeanUser;
+import com.sicobo.sicobo.model.BeanWarehouse;
 import com.sicobo.sicobo.service.ISiteService;
 import com.sicobo.sicobo.util.Message;
 import com.sicobo.sicobo.util.SiteValidator;
@@ -54,7 +55,7 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> guardar(DTOSite dtoSite) {
-        BeanSite beanSite = new BeanSite(dtoSite.getName(), 0, dtoSite.getAddress(), new BeanState((long)dtoSite.getBeanState()));
+        BeanSite beanSite = new BeanSite(dtoSite.getName(), 1, dtoSite.getAddress(), new BeanState((long)dtoSite.getBeanState()));
         if(daoSite.existsBeanSiteByName(beanSite.getName())){
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El nombre que has elegido ya está en uso. Por favor, elige otro nombre y vuelve a intentarlo", FAILED, FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
@@ -127,19 +128,19 @@ public class SiteServiceImpl implements ISiteService {
             return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El sitio ha "+ typeChange +" no se encuentra registrado en el sistema", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
         }
 
-       /* if(beanSite.getStatus() == 1  && !daoSiteAssigment.existsBeanSiteAssigmentByBeanSite_Id(beanSite.getId())){
+        if(beanSite.getStatus() == 1  && !daoSiteAssigment.existsBeanSiteAssigmentByBeanSiteIdAndStatusIs(beanSite.getId(), 1)){
             return new ResponseEntity(new Message("Ejecución fallida","El sitio ha "+ typeChange +" no contiene gestores para ser administrado", "failed",400, null), HttpStatus.BAD_REQUEST);
         }
 
-        if(beanSite.getStatus() == 0 && daoWarehouse.existsBeanWarehouseByBeanSite_Id(beanSite.getId())){
-            List<BeanWarehouse> warehousesBySite = daoWarehouse.findBeanWarehouseByBeanSite_Id(beanSite.getId());
+        if(beanSite.getStatus() == 0 && daoWarehouse.existsBeanWarehouseByBeanSiteIdAndStatusIsNot(beanSite.getId(),0)){
+            List<BeanWarehouse> warehousesBySite = daoWarehouse.findAllByBeanSiteId(beanSite.getId());
             for (BeanWarehouse warehouse:
                  warehousesBySite) {
-                if(daoPayment.existsBeanPaymentByBeanWarehouse_IdAndStatusEquals(warehouse.getId(), 1)){
+                if(daoPayment.existsBeanPaymentByBeanWarehouseIdAndStatusIs(warehouse.getId(), 1)){
                     return new ResponseEntity(new Message("Ejecución fallida","El sitio ha "+ typeChange +" contiene bodegas", "failed",400, null), HttpStatus.BAD_REQUEST);
                 }
             }
-        }*/
+        }
 
         BeanSite sitePrepared =siteSearched.get();
         sitePrepared.setStatus(beanSite.getStatus());

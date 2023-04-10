@@ -67,4 +67,6 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
             "WHERE\n" +
             "    users.username = :username", nativeQuery = true)
     List<Object[]> findAllWarehousesByClient(String username);
+
+    boolean existsBeanWarehouseByBeanSiteIdAndStatusIsNot(Long id, int status);
 }
