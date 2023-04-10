@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Gestores</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<script th:inline="javascript">
+
+
+</script>
+
+<main id="main" class="main">
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="pagetitle">
+        <h1>Lista de pagos por bodega</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Listado</a></li>
+                <li class="breadcrumb-item active">De pagos</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col">Listado de Pagos</div>
+                            </div>
+                        </h5>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col table-responsive">
+                                    <table class="table table-borderless datatable" id="sitesTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Nombre bodega</th>
+                                            <th scope="col">Sitio de la bodega</th>
+                                            <th scope="col">Estado de la bodega</th>
+                                            <th scope="col">Costo Final</th>
+                                            <th scope="col">Fecha de renta</th>
+                                            <th scope="col">Fecha de vencimiento</th>
+                                            <th scope="col">Estatus del pago</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="text-center" th:each="payment, index: ${response}">
+                                            <th scope="row" th:text="${index.count}"> </th>
+                                            <td th:text="${payment.fullName}"></td>
+                                            <td th:text="${payment.section}"></td>
+                                            <td th:text="${payment.siteName}"></td>
+                                            <td th:text="${payment.stateName}"></td>
+                                            <td th:text="${payment.finalCost}"></td>
+                                            <td th:text="${#dates.format(payment.paymentDate, 'dd/MM/yyyy')}"></td>
+                                            <td th:text="${#dates.format(payment.dueDate, 'dd/MM/yyyy')}"></td>
+                                            <td th:class="${payment.status == 0} ? 'badge text-bg-danger mt-2' : 'badge text-bg-success mt-2'" th:text="${payment.status == 0} ? 'Inactivo' : 'Activo'"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+
+</body>
+
+</html>
