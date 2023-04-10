@@ -26,10 +26,9 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     boolean existsBeanWarehouseByIdAndStatusIs(Long id, int status);
     boolean existsBeanWarehouseByIdAndStatusIsOrStatusIs(Long id, int status, int otherStatus);
 
-    @Query("SELECT  w.finalCost,w.section, w.description, wi.secureUrl, wt.description "+ "as " + "costo" +", s.address," +
-            " st.name, w.id FROM BeanWarehouse w inner join BeanWarehouseImage wi on wi.id = w.id inner join" +
-            " BeanWarehousesType wt on w.warehousesType.id = wt.id inner join BeanSite s on" +
-            " w.beanSite.id = s.id inner join BeanState st on s.beanState.id = st.id where w.status = 1")
+    @Query(value = "SELECT w.final_cost,w.section,w.description, wi.secure_url, wt.description, s.address, st.name, w.id  FROM warehouse w inner join \n" +
+            "warehouse_images wi on wi.warehouse_id = w.id inner join warehouses_type wt on w.warehouses_types = wt.id\n" +
+            "inner join site s on w.site_id_site = s.id inner join state st on s.states_id = st.id where w.status = 1", nativeQuery = true)
     List<Object[]> findAllWarehouseDetails();
 
 
