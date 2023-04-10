@@ -18,4 +18,6 @@ public interface IPaymentService {
     public ResponseEntity<Object> buscar(Long id);
 
     public ResponseEntity<Object> buscarPagoRenovacion(Long id, BeanUser user);
+
+    public ResponseEntity<Object> listarPayments();
 }

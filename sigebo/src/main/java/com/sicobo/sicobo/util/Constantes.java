@@ -124,6 +124,8 @@ public final class Constantes {
 
         public static final String PRODUCT_DETAIL = "productDetail";
 
+        public static final String LISTPAYMENTS = "adminViews/listPayments";
+
         public static final String REDIRECT_PREPARED_DETAIL = "redirect:/detalleProducto/";
         public static final String PREPARED_DETAIL = "http://localhost:8080/detalleProducto/";
         public static final String PAYMENT_INFORMATION = "paymentInformation";

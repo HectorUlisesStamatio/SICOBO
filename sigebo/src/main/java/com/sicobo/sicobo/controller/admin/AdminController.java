@@ -50,14 +50,17 @@ public class AdminController {
 
     private final PoliciesServiceImpl policiesService;
 
+    private final PaymentServiceImpl paymentService;
+
     @Autowired
-    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService) {
+    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService, PaymentServiceImpl paymentService) {
         this.siteService = siteService;
         this.stateService = stateService;
         this.warehousesTypeService = warehousesTypeService;
         this.costTypeService = costTypeService;
         this.userService = userService;
         this.policiesService = policiesService;
+        this.paymentService = paymentService;
     }
 
     @Secured({ROLE_ADMIN})
@@ -65,6 +68,20 @@ public class AdminController {
     public String dash(Model model) {
         model.addAttribute(OPTION, null);
         return ADMIN_DASHBOARD;
+    }
+
+    @Secured({ROLE_ADMIN})
+    @GetMapping("/listPayments")
+    public String listPayment(Model model) {
+        model.addAttribute(OPTION, "listPayments");
+
+        ResponseEntity<?> responseEntity = paymentService.listarPayments();
+        Message message = (Message) responseEntity.getBody();
+        assert message != null;
+
+
+        model.addAttribute(RESPONSE, message.getResult());
+        return LISTPAYMENTS;
     }
 
     @Secured({ROLE_ADMIN})

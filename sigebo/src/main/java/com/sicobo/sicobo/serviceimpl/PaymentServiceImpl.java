@@ -3,9 +3,7 @@ package com.sicobo.sicobo.serviceimpl;
 import com.sicobo.sicobo.dao.DaoPayment;
 import com.sicobo.sicobo.dao.DaoUser;
 import com.sicobo.sicobo.dto.DTOPayment;
-import com.sicobo.sicobo.model.BeanPayment;
-import com.sicobo.sicobo.model.BeanUser;
-import com.sicobo.sicobo.model.BeanWarehouse;
+import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.service.IPaymentService;
 import com.sicobo.sicobo.util.Message;
 import com.sicobo.sicobo.util.PaymentValidator;
@@ -17,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
@@ -147,5 +147,34 @@ public class PaymentServiceImpl  implements IPaymentService {
             log.error("Ocurrió un error en PaymentServiceImpl - buscarPagoRenovacion" + e.getMessage());
             return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Object> listarPayments() {
+
+        List<Object[]> payments = daoPayment.findAllPayments();
+
+        if (payments == null){
+            return new ResponseEntity<>(new Message(FAILED_SEARCH,"No existen registros", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
+        }
+
+        List<BeanListPayments> listPayments = new ArrayList<>();
+
+        for (Object[] payment : payments) {
+            String fullName = payment[0].toString();
+            Date dueDate = (Date) payment[1];
+            Date paymentDate = (Date) payment[2];
+            Long amountMonths = Long.parseLong( payment[3].toString());
+            Long status = Long.parseLong( payment[4].toString());
+            String section = payment[5].toString();
+            Double finalCost = (Double) payment[6];
+            String siteName = payment[7].toString();
+            String stateName = payment[8].toString();
+
+            BeanListPayments beanListPayments = new BeanListPayments(fullName,dueDate,paymentDate,amountMonths,status,section,finalCost,siteName,stateName);
+            listPayments.add(beanListPayments);
+        }
+
+        return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, listPayments), HttpStatus.OK);
     }
 }
