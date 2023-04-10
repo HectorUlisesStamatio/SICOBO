@@ -15,5 +15,6 @@ public class Message {
     private String type;
 
     private int code;
+
     private Object result;
 }

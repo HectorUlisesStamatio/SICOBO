@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Dashboard</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/gestor/sidebarGestor :: sidebar}"></aside>
+
+<main id="main" class="main">
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section dashboard">
+        <div class="content-wrapper">
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <div class="row">
+                    <div class="col-12 col-lg-12 mb-4 order-0">
+                        <div class="card">
+                            <div class="d-flex align-items-end row">
+                                <div class="col-sm-7">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary">Hola, ¿Como estas? 🎉</h5>
+                                        <p class="mb-4" style="text-align: justify">
+                                            <span class="fw-bold">¡Bienvenido!</span> Nos alegra que estés aquí. Este es tu espacio para descubrir todas las herramientas y recursos que tenemos disponibles para ti. Estamos aquí para apoyarte en cada paso del camino. <span class="fw-bold"> ¡Empecemos!</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 text-center text-sm-left mb-4">
+                                    <div class="card-body pb-0 px-0 px-md-4">
+                                        <img
+                                                th:src="@{/img/manWithLaptop.png}"
+                                                height="140rem"
+                                                alt="View Badge User"
+                                                data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                                                data-app-light-img="illustrations/man-with-laptop-light.png"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-12 col-md-4">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-12 col-lg-4">
+                                    <div class="card info-card sales-card">
+
+                                        <div class="card-body">
+                                            <h5 class="card-title">Bodegas disponibles <span>| Este Año</span></h5>
+
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-boxes"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>[[${bodegasDisponibles}]]</h6>
+                                                    <span class="text-success small pt-1 fw-bold">22%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="card info-card revenue-card">
+
+                                        <div class="card-body">
+                                            <h5 class="card-title">Dinero <span>| Este Año</span></h5>
+
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-currency-dollar"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>$20,264</h6>
+                                                    <span class="text-success small pt-1 fw-bold">28%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="card info-card customers-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Bodegas rentadas <span>| Este Año</span></h5>
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-boxes"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>[[${bodegasRentadas}]]</h6>
+                                                    <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">Decremento</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- / Content -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+                            <div class="card-body">
+                                <h5 class="card-title">Últimas Rentas <span>| Hoy</span></h5>
+
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Cliente</th>
+                                        <th scope="col">Bodega</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col">Sitio</th>
+                                        <th scope="col">Estatus</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="resultado, iteracion : ${response}">
+                                            <td th:text="${iteracion.count}"></td>
+                                            <td th:text="${resultado[0]}"></td>
+                                            <td th:text="${resultado[6]}"></td>
+                                            <td th:text="'$'+${resultado[5]}"></td>
+                                            <td th:text="${resultado[2]}"></td>
+                                            <td th:text="${resultado[4] == 1} ? 'Disponible' : (${resultado[4] == 2} ? 'Rentada' : 'Desactivada')"
+                                                th:class="${resultado[4] == 1} ? 'badge bg-success mt-2' : (${resultado[4] == 2} ? 'badge bg-danger mt-2' : 'badge bg-dark mt-2')">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>

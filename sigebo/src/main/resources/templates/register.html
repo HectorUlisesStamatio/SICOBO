@@ -4,16 +4,21 @@
     <title>SICOBO | Registro</title>
 </head>
 <head th:insert="~{layout/admin/head :: head}"></head>
-
-<body>
+<div th:insert="~{layout/extras/captcha :: captcha}"></div>
+<body onload="generate()">
 
 <main>
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <input th:if="${message != null}" name="status" id="status" type="hidden" th:value="${message.code}">
+    <input th:unless="${message != null}" name="status" id="status" type="hidden" value="200">
     <div class="container">
 
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                    <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
 
                         <div class="d-flex justify-content-center py-4">
                             <a href="index.html" class="logo d-flex align-items-center w-auto">
@@ -29,37 +34,90 @@
                                     <h5 class="card-title text-center pb-0 fs-4">Crea una cuenta</h5>
                                     <p class="text-center small">Ingresa los datos necesarios para empezar</p>
                                 </div>
+                                <div class="col-12">
+                                    <div th:if="${message != null}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                                        <strong>[[${message.title}]]</strong> [[${message.message}]]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                                <form class="row g-3 needs-validation" th:action="@{/registrarUsuario}" th:object="${user}" method="post" id="myForm" novalidate>
+                                    <div class="col-12">
+                                        <label for="name" class="form-label">Nombre(s)</label>
+                                        <input th:field="*{name}" type="text" class="form-control" id="name" pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('name')}" th:text="#{register.name.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label for="lastname" class="form-label">Apellido Paterno</label>
+                                        <input th:field="*{lastname}" type="text" class="form-control" id="lastname" pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                        <div th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('lastname')}" th:text="#{register.lastname.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label for="surname" class="form-label">Apellido Materno</label>
+                                        <input th:field="*{surname}" type="text" class="form-control" id="surname" pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                        <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('surname')}" th:text="#{register.surname.error}" class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="rfc" class="form-label">RFC</label>
+                                        <input th:field="*{rfc}" type="text" class="form-control" id="rfc" pattern="^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$" required>
+                                        <div th:if="${#fields.hasErrors('rfc')}" th:errors="*{rfc}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('rfc')}" th:text="#{register.rfc.error}" class="invalid-feedback"></div>
+                                    </div>
 
-                                <form class="row g-3 needs-validation" novalidate>
+                                    <div class="col-12">
+                                        <label for="phone_number" class="form-label">Número de Teléfono</label>
+                                        <input th:field="*{phoneNumber}" type="number" class="form-control" id="phone_number" pattern="[0-9]{1,12}" required>
+                                        <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('phoneNumber')}" th:text="#{register.phone_number.error}" class="invalid-feedback"></div>
+                                    </div>
+
                                     <div class="col-12">
                                         <label for="username" class="form-label">Usuario</label>
-                                        <input type="text" name="name" class="form-control" id="username" required>
-                                        <div th:text="#{register.usuario.error}" class="invalid-feedback"></div>
+                                        <input th:field="*{username}" type="text" class="form-control" id="username" pattern="^(?!\s)(?!.*\s$)[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9&%#\s]+$" required>
+                                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('username')}" th:text="#{register.usuario.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <label for="email" class="form-label">Correo</label>
-                                        <input type="email" name="email" class="form-control" id="email" required>
-                                        <div th:text="#{register.correo.error}" class="invalid-feedback"></div>
+                                        <input th:field="*{email}" type="email" class="form-control" id="email" name="email" required>
+                                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('email')}" th:text="#{register.correo.error}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" name="password" class="form-control" id="password" pattern="^(?=^.{12,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" minlength="12" required>
-                                        <div th:text="#{register.password.error}" class="invalid-feedback"></div>
+                                        <input th:field="*{password}" type="password" class="form-control" id="password" pattern="^(?=^.{10,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" minlength="10" required>
+                                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger mb-3 mt-3"></div>
+                                        <div th:unless="${#fields.hasErrors('password')}" th:text="#{register.password.error}" class="invalid-feedback"></div>
                                         <div th:text="#{register.password.error.hint}" class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="form-check">
-                                            <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
-                                            <label class="form-check-label" for="acceptTerms">Estoy de acuerdo y acepto los <a href="#">Términos y Condiciones</a></label>
-                                            <div th:text="#{register.terms.error}" class="invalid-feedback"></div>
+                                            <input th:field="*{policyAcceptance}" class="form-check-input" type="checkbox" value="1" id="policy_acceptance" required>
+                                            <label class="form-check-label" for="policy_acceptance">Estoy de acuerdo y acepto los <a th:href="@{/politicas}">Términos y Condiciones</a></label>
+                                            <div th:if="${#fields.hasErrors('policyAcceptance')}" th:text="#{register.terms.error}" class="alert alert-danger mb-3 mt-3"></div>
+                                            <div th:unless="${#fields.hasErrors('policyAcceptance')}" th:text="#{register.terms.error}" class="invalid-feedback"></div>
                                         </div>
                                     </div>
+
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Crear Cuenta</button>
+                                        <div class="align-center" onclick="generate()">
+                                            <i class="fas fa-sync"></i>
+                                        </div>
+                                        <div class="img-fluid" id="image" selectable="False"></div>
+                                        <label for="submit" class="form-label">Captcha</label>
+                                        <input class="form-control" id="submit" type="text" required>
                                     </div>
+
+                                    <div class="col-12" id="contenedorSubmit">
+                                        <button class="btn btn-primary w-100" type="button" id="botonDeSubmit"  onclick="printmsg()">Crear Cuenta</button>
+                                    </div>
+
+
                                     <div class="col-12">
                                         <p class="small mb-0"> ¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia Sesión</a></p>
                                     </div>

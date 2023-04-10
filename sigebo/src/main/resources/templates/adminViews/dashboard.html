@@ -9,290 +9,83 @@
 <aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
 
 <main id="main" class="main">
-
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
     <div class="pagetitle">
-        <h1>Dashboard</h1>
+        <h1>Bodegas rentadas por sitio</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Inicio</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
         </nav>
     </div>
 
     <section class="section dashboard">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-xxl-4 col-md-6">
+                <div class="row mb-3">
+                    <div class="col-12" th:if="${message != null}">
+                        <div  class="alert alert-danger alert-dismissible fade show" role="alert" >
+                            <strong>[[${message.title}]]</strong> [[${message.message}]]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 text-end offset-sm-8">
+                        <div class="form-floating">
+                            <select id="state" name="state" class="form-select" aria-label="Floating label select example">
+                                <option selected>Cualquier estado</option>
+                                <option th:each="tmpCost: ${states}" th:text="${tmpCost.name}" th:value="${tmpCost.id}" th:selected="${tmpCost.id == selectOption}" ></option>
+                            </select>
+                            <label for="state">Estados</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" th:if="${response != null}" >
+                    <div class="col-12" th:if="${#arrays.length(response.result) == 0}">
+                        <div class="alert alert-warning" role="alert">
+                            No existen sitios disponibles según sus parametros.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" th:if="${response != null}" >
+                    <div class="col-xxl-4 col-md-6" th:unless="${#arrays.length(response.result) == 0}" th:each="tmpSite: ${response.result}">
                         <div class="card info-card sales-card">
 
                             <div class="card-body">
-                                <h5 class="card-title">Rentas <span>| Este Mes</span></h5>
+                                <h5 class="card-title" >[[${tmpSite.site.name}]] <span th:text="${ '| ' +tmpSite.site.beanState.name}"></span></h5>
 
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-cart"></i>
+                                        <i class="bi bi-house-door"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>245</h6>
-                                        <span class="text-success small pt-1 fw-bold">22%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
+                                        <h6 th:text="${#arrays.length(tmpSite.warehouses)}"></h6>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="card info-card revenue-card">
 
-                            <div class="card-body">
-                                <h5 class="card-title">Dinero <span>| Este Mes</span></h5>
-
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-currency-dollar"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6>$20,264</h6>
-                                        <span class="text-success small pt-1 fw-bold">28%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-xxl-4 col-xl-12">
-                        <div class="card info-card customers-card">
-                            <div class="card-body">
-                                <h5 class="card-title">Gestores <span>| Este Mes</span></h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-people"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6>230</h6>
-                                        <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">Decremento</span>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Movimientos <span>| Esta Semana</span></h5>
-                                <div id="reportsChart"></div>
-                                <script>
-                                    document.addEventListener("DOMContentLoaded", () => {
-                                        new ApexCharts(document.querySelector("#reportsChart"), {
-                                            series: [{
-                                                name: 'Ventas',
-                                                data: [31, 40, 28, 51, 42, 82, 56],
-                                            }, {
-                                                name: 'Dinero',
-                                                data: [11, 32, 45, 32, 34, 52, 41]
-                                            }, {
-                                                name: 'Gestores',
-                                                data: [15, 11, 32, 18, 9, 24, 11]
-                                            }],
-                                            chart: {
-                                                height: 350,
-                                                type: 'area',
-                                                toolbar: {
-                                                    show: false
-                                                },
-                                            },
-                                            markers: {
-                                                size: 4
-                                            },
-                                            colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                                            fill: {
-                                                type: "gradient",
-                                                gradient: {
-                                                    shadeIntensity: 1,
-                                                    opacityFrom: 0.3,
-                                                    opacityTo: 0.4,
-                                                    stops: [0, 90, 100]
-                                                }
-                                            },
-                                            dataLabels: {
-                                                enabled: false
-                                            },
-                                            stroke: {
-                                                curve: 'smooth',
-                                                width: 2
-                                            },
-                                            xaxis: {
-                                                type: 'datetime',
-                                                categories: ["2023-09-19T00:00:00.000Z", "2023-09-19T01:30:00.000Z", "2023-09-19T02:30:00.000Z", "2023-09-19T03:30:00.000Z", "2023-09-19T04:30:00.000Z", "2023-09-19T05:30:00.000Z", "2023-09-19T06:30:00.000Z"]
-                                            },
-                                            tooltip: {
-                                                x: {
-                                                    format: 'dd/MM/yy HH:mm'
-                                                },
-                                            }
-                                        }).render();
-                                    });
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card recent-sales overflow-auto">
-                            <div class="card-body">
-                                <h5 class="card-title">Últimas Rentas <span>| Hoy</span></h5>
-
-                                <table class="table table-borderless datatable">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Cliente</th>
-                                        <th scope="col">Bodega</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col">Estado</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2457</a></th>
-                                        <td>Jose Luis</td>
-                                        <td><a href="#" class="text-primary">Bodega Grande</a></td>
-                                        <td>$12000</td>
-                                        <td><span class="badge bg-success">Vigente</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2147</a></th>
-                                        <td>Juan Perez</td>
-                                        <td><a href="#" class="text-primary">Bodega de Lujo</a></td>
-                                        <td>$4700</td>
-                                        <td><span class="badge bg-warning">En proceso</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><a href="#">#2644</a></th>
-                                        <td>Adrian López</td>
-                                        <td><a href="#" class="text-primar">Bodega Chica</a></td>
-                                        <td>$3000</td>
-                                        <td><span class="badge bg-danger">Cancelado</span></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body pb-0">
-                        <h5 class="card-title">Tipos de Bodegas <span>| Este Mes</span></h5>
-                        <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", () => {
-                                var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
-                                    legend: {
-                                        data: ['Bodegas Existentes', 'Rentadas']
-                                    },
-                                    radar: {
-                                        indicator: [
-                                            {
-                                                name: 'Simple',
-                                                max: 6500
-                                            },
-                                            {
-                                                name: 'Media',
-                                                max: 16000
-                                            },
-                                            {
-                                                name: 'Especial',
-                                                max: 30000
-                                            },
-                                            {
-                                                name: 'Empresarial',
-                                                max: 38000
-                                            },
-                                        ]
-                                    },
-                                    series: [{
-                                        name: 'Actuales vs Rentadas',
-                                        type: 'radar',
-                                        data: [{
-                                            value: [4200, 3000, 20000, 35000],
-                                            name: 'Bodegas Existentes'
-                                        },
-                                            {
-                                                value: [5000, 14000, 28000, 26000],
-                                                name: 'Rentadas'
-                                            }
-                                        ]
-                                    }]
-                                });
-                            });
-                        </script>
-
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body pb-0">
-                        <h5 class="card-title">Visitas de Usuarios <span>| Este Mes</span></h5>
-                        <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", () => {
-                                echarts.init(document.querySelector("#trafficChart")).setOption({
-                                    tooltip: {
-                                        trigger: 'item'
-                                    },
-                                    legend: {
-                                        top: '5%',
-                                        left: 'center'
-                                    },
-                                    series: [{
-                                        name: 'Visitas',
-                                        type: 'pie',
-                                        radius: ['40%', '70%'],
-                                        avoidLabelOverlap: false,
-                                        label: {
-                                            show: false,
-                                            position: 'center'
-                                        },
-                                        emphasis: {
-                                            label: {
-                                                show: true,
-                                                fontSize: '18',
-                                                fontWeight: 'bold'
-                                            }
-                                        },
-                                        labelLine: {
-                                            show: false
-                                        },
-                                        data: [
-                                            {
-                                                value: 1048,
-                                                name: 'Gestores'
-                                            },
-                                            {
-                                                value: 735,
-                                                name: 'Clientes'
-                                            },
-                                            {
-                                                value: 580,
-                                                name: 'Invitados'
-                                            },
-                                        ]
-                                    }]
-                                });
-                            });
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 </main>
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 </body>
+
+<script>
+    let selectSate = document.getElementById("state");
+
+    selectSate.addEventListener("input", function (e) {
+        if(!isNaN(selectSate.value)){
+            let url = "http://localhost:8080/admin/dashboard/" + selectSate.value;
+            window.location.replace(url)
+        }else{
+            let url = "http://localhost:8080/admin/dashboard";
+            window.location.replace(url)
+        }
+    })
+</script>
 </html>

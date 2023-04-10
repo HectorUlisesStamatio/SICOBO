@@ -17,32 +17,32 @@
 
 <h1>✔️Características</h1>
 
-- [ ] 🔑Control de Acceso
-    - [ ] Inicio de Sesión - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
-    - [ ] AutoRegistro - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
-- [ ] 👤Perfiles
-    - [ ] Modificación de Perfil - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Recuperar Contraseña - [@Nahum](https://www.github.com/GaticaNahum)
+- [X] 🔑Control de Acceso
+    - [X] Inicio de Sesión - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
+    - [X] AutoRegistro - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
+- [X] 👤Perfiles
+    - [X] Modificación de Perfil - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Recuperar Contraseña - [@Nahum](https://www.github.com/GaticaNahum)
 
-- [ ] 🏫Sitios
-    - [ ] Consulta de sitios - [@Omar](https://www.github.com/20203tn096)
-    - [ ] Registro de sitio - [@Omar](https://www.github.com/20203tn096)
-    - [ ] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
-    - [ ] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
-- [ ] 👷Gestores
-    - [ ] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+- [X] 🏫Sitios
+    - [X] Consulta de sitios - [@Omar](https://www.github.com/20203tn096)
+    - [X] Registro de sitio - [@Omar](https://www.github.com/20203tn096)
+    - [X] Modificación de sitio - [@Omar](https://www.github.com/20203tn096)
+    - [X] Cambiar estado del sitio - [@Omar](https://www.github.com/20203tn096)
+- [X] 👷Gestores
+    - [X] Consulta de gestores - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Registro de gestores - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Modificación de gestor - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Cambiar estado del gestor - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Asignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Desasignación de gestor a bodega - [@Nathaly](https://www.github.com/20203tn082)
 - [ ] 🗃️Bodegas
-    - [ ] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
-    - [ ] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Consulta de bodegas por sitio - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Registro de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Modificación de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Cambiar estado de bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Consulta general de bodegas - [@Nathaly](https://www.github.com/20203tn082)
+    - [X] Desalojar bodega - [@Diego](https://www.github.com/DevDiegoVillalobos)
     - [ ] Consultar bodegas rentadas y disponibles - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Consultar bodegas por cliente - [@Nahum](https://www.github.com/GaticaNahum)
 
@@ -53,14 +53,17 @@
     - [ ] Notificación por renovación de pago - [@Nahum](https://www.github.com/GaticaNahum)
     - [ ] Notificación por desalojo - [@Nahum](https://www.github.com/GaticaNahum)
 
- - [ ] ⚙️Extras
-    - [ ] Consulta de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos)
-    - [ ] Modificación de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos) 
+ - [X] ⚙️Extras
+    - [X] Consulta de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos)
+    - [X] Modificación de términos y condiciones - [@Diego](https://www.github.com/DevDiegoVillalobos) 
     - [X] Páginas de error - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     - [X] LandingPage - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     - [X] Base del Proyecto - [@Ulises](https://www.github.com/HectorUlisesStamatio)
     - [X] Base de datos - [@Ulises](https://www.github.com/HectorUlisesStamatio) 
     
+ - [X] 💰Tipos de bodegas
+    - [X] Consulta de tipos de bodegas
+    - [X] Modificación de tipos de bodegas
 
 ## ⚠️Commits
 

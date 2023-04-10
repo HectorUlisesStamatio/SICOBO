@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:th=" http://wwww.thymeleaf.org">
+<head>
+  <title>Recuperación de contraseña</title>
+  <style>
+
+    .container {
+      margin: 20px auto;
+      max-width: 600px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 20px;
+    }
+
+    p {
+      margin: 0 0 10px;
+    }
+
+    .color{
+      color: #316DCF;
+    }
+
+    .colorR{
+      color: red;
+    }
+
+    .colorB{
+      color: black;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="color">Recuperación de contraseña - SICOBO</h1>
+  <h3 class="color" th:text="${userName}"></h3>
+  <h3 class="colorB" th:text="${token}"></h3>
+  <p class="colorB">Hemos recibido una solicitud para restablecer la contraseña de su cuenta. Para continuar, haga clic en el siguiente enlace:</p>
+  <p><a th:href="@{${url}}">Recuperar Contraseña</a></p>
+  <p class="colorR">Si no ha solicitado esta acción, puede ignorar este mensaje y su contraseña no cambiará.</p>
+</div>
+</body>
+</html>

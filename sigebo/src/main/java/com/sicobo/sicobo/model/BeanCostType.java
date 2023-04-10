@@ -1,7 +1,6 @@
 package com.sicobo.sicobo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ public class BeanCostType {
     private int status;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "warehouses_type_id")
     private BeanWarehousesType beanWarehousesType;
 

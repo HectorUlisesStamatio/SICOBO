@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Bodegas</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/gestor/sidebarGestor :: sidebar}"></aside>
+
+<script th:inline="javascript">
+
+</script>
+
+<main id="main" class="main">
+  <div id="loader">
+    <div class="loader"></div>
+  </div>
+  <div class="pagetitle">
+    <h1>Bodegas</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Listar Bodegas</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <input name="status" id="status" type="hidden" th:if="${message}" th:value="${message.code}">
+  <section class="section">
+    <div class="row">
+      <div class="col-12">
+        <div th:if="${message}" th:classappend="${message.code == 200} ? 'alert-success' : 'alert-danger'" class="alert alert-dismissible fade show" role="alert" >
+          <strong>[[${message.title}]]</strong> [[${message.message}]]
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="col-12" th:if="${response != null}">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <div class="row justify-content-between align-items-center">
+                <div class="col">Listado de bodegas</div>
+                <div class="col text-end" >
+                  <form th:action="@{/gestor/prepararRegistro}" method="POST" >
+                    <input type="hidden" name="idSite" th:value="${sitioId}">
+                    <button type="submit" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </h5>
+            <div class="container-fluid">
+              <div class="row" >
+                <div class="col table-responsive">
+                  <table class="table table-borderless datatable" id="warehousesTable">
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Imágenes</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col">Sección</th>
+                      <th scope="col">Descripción</th>
+                      <th scope="col">Costo</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Acciones</th>
+                      <th scope="col">Habilitar o Deshabilitar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:if="${#arrays.length(response.result) > 0}" th:each="warehouse, index: ${response.result}" >
+                        <th scope="row" th:text="${index.index + 1 }"></th>
+                        <td>
+                          <div th:id="'carousel-' + ${warehouse.id}"  class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                              <div th:each="image, i : ${warehouse.images}"
+                                   class="carousel-item"
+                                   th:classappend="${i.index == 0} ? 'active'" data-bs-interval="3000">
+                                <div class="d-flex justify-content-center" style="max-width: 200px; max-height: 90px;">
+                                  <img th:src="${image.secureUrl}" class="img-fluid" style="width: 200px; height: 90px;">
+                                </div>
+                              </div>
+                            </div>
+                            <button th:if="${#lists.size(warehouse.images) > 1}" class="carousel-control-prev" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button th:if="${#lists.size(warehouse.images) > 1}"  class="carousel-control-next" type="button" th:data-bs-target="'#carousel-' + ${warehouse.id}" data-bs-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Next</span>
+                            </button>
+                          </div>
+                        </td>
+                        <td th:text="${warehouse.warehousesType.description}"></td>
+                        <td th:text="${warehouse.section}"></td>
+                        <td th:text="${#strings.length(warehouse.description) > 50 ? (warehouse.description.substring(0,50) +  '...') : warehouse.description}"></td>
+                        <td th:text="'$' + ${warehouse.finalCost} + 'MXN'"></td>
+                        <td>
+                          <span class="badge" th:text="${warehouse.status == 0 ? 'Deshabilitada' : (warehouse.status == 1 ? 'Disponible' : 'En renta')}"
+                                th:classappend="${warehouse.status == 0 ? 'bg-danger' : (warehouse.status == 1 ? 'bg-success' : 'bg-warning')}"></span>
+                        </td>
+                        <td class="text-center" >
+                          <form id="formUpdate" th:action="@{/gestor/prepararModificacion}" method="POST"  th:title="${warehouse.status == 2 ? 'Solo se puede modificar una bodega si no esta rentada' : 'Modificar'}">
+                            <input type="hidden" name="idSite" th:value="${sitioId}">
+                            <input type="hidden" name="idWarehouse" th:value="${warehouse.id}">
+                            <button type="submit" class="btn btn-outline-warning"  data-action="modificar"
+                                    th:attr="disabled=${warehouse.status == 2} ? true : null">
+                              <i class="bi bi-pencil-fill" data-action="modificar"></i></button>
+                          </form>
+                        </td>
+                        <td >
+                          <form  th:action="@{/gestor/cambiarEstadoBodega}" method="POST" class="d-flex justify-content-center" th:id="'form-' + ${warehouse.id}" th:title="${warehouse.status == 2 ? 'El estado solo puede cambiar si la bodega no esta en renta' : (warehouse.status == 1 ? 'Deshabilitar' : 'Habilitar')}">
+                            <input type="hidden" name="idWarehouse" id="idWarehouse" th:value="${warehouse.id}">
+                            <input type="hidden" name="statusWarehouse" id="statusWarehouse" th:value="${warehouse.status == 1}">
+                            <div class="form-check form-switch" >
+                              <input class="form-check-input" type="checkbox" role="switch" th:checked="${warehouse.status == 1}"
+                                     th:id="'switch-' + ${warehouse.id}"  th:attr="disabled=${warehouse.status == 2} ? true : null">
+                            </div>
+                          </form>
+                        </td>
+                      </tr>
+                      <tr th:unless="${#arrays.length(response.result) > 0}">
+                        <td colspan="7" class="text-center fw-semibold">No hay bodegas registradas en el sistema para su sitio.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script>
+  let $ = jQuery;
+
+  const tableBody = document.querySelector('#warehousesTable tbody');
+  tableBody.addEventListener('change', function(event) {
+    let switchInput = event.target;
+    let form = switchInput.form;
+    Swal.fire({
+      title: '¿Estás seguro de guardar los cambios?',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }else{
+        document.getElementById(switchInput.id+"").checked = !event.target.checked;
+      }
+    })
+  });
+
+
+</script>
+</body>
+
+</html>

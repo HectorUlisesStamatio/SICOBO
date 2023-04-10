@@ -22,9 +22,6 @@ public class BeanSite {
 
     private String address;
 
-    @OneToOne(mappedBy = "beanSite")
-    private BeanSiteAssigment beanSiteAssigment;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "states_id")
@@ -34,6 +31,26 @@ public class BeanSite {
 
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
+
+    public BeanSite() {
+
+    }
+    public BeanSite(Long id, String name, int status, String address, BeanState beanState) {
+        this.name = name;
+        this.status = status;
+        this.address = address;
+        this.beanState = beanState;
+        this.id =id;
+    }
+
+
+
+    public BeanSite(String name, int status, String address, BeanState beanState) {
+        this.name = name;
+        this.status = status;
+        this.address = address;
+        this.beanState = beanState;
+    }
 
     @PrePersist
     private void prePersist(){
@@ -45,4 +62,16 @@ public class BeanSite {
         this.fechaActualizacion = LocalDateTime.now();
     }
 
+    @Override
+    public String toString() {
+        return "BeanSite{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                ", address='" + address + '\'' +
+                ", beanState=" + beanState +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                '}';
+    }
 }

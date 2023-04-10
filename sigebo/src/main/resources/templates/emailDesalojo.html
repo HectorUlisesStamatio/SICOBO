@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:th=" http://wwww.thymeleaf.org">
+<head>
+    <title>Recuperación de contraseña</title>
+    <!-- Importar Bootstrap -->
+    <style>
+
+        .container {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 20px;
+        }
+
+        p {
+            margin: 0 0 10px;
+        }
+
+        .color{
+            color: #316DCF;
+        }
+
+        .colorR{
+            color: red;
+        }
+
+        .colorB{
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="color">Aviso de desalojo de la bodega - SICOBO</h1>
+    <h3 class="color" th:text="${userName}"></h3>
+    <p class="colorB">Hemos verificado que su bodega rebaso el límite de renovación <span class="color" th:text="${seccion}"> </span>
+    <p class="colorB">Fecha de renovación de la bodega: <span class="color" th:text="${paymenDate}"></span> </p>
+    <p class="colorB">Fecha de vencimiento: <span class="colorR" th:text="${dueDate}"> </span></p>
+    <p class="colorB">Si quiere seguir gozando de sus beneficios recuerde que siempre puede rentar una bodega</p>
+    <p class="colorB">Att. El equipo de SIGEBO</p>
+</div>
+</body>
+</html>

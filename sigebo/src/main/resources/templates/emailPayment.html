@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:th=" http://wwww.thymeleaf.org">
+<head>
+    <title>Notificación de desalojo</title>
+    <!-- Importar Bootstrap -->
+    <style>
+
+        .container {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 20px;
+        }
+
+        p {
+            margin: 0 0 10px;
+        }
+
+        .color{
+            color: #316DCF;
+        }
+
+        .colorR{
+            color: red;
+        }
+
+        .colorB{
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="color">Aviso de renovación de pago - SICOBO</h1>
+    <h3 class="color" th:text="${userName}"></h3>
+    <p class="colorB">Hemos recibido su solicitud para renovación de pago, se le informa que la bodega <span class="color" th:text="${seccion}"> </span> se renovó  correctamente
+    <p class="colorB">Fecha de renovación de la bodega: <span class="color" th:text="${paymenDate}"></span> </p>
+    <p class="colorB">Fecha de vencimiento: <span class="colorR" th:text="${dueDate}"> </span></p>
+    <p class="colorB">Muchas gracias por preferirnos</p>
+    <p class="colorB">Att. El equipo de SIGEBO</p>
+</div>
+</body>
+</html>

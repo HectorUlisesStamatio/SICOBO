@@ -1,15 +1,15 @@
 package com.sicobo.sicobo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class BeanUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,42 +23,61 @@ public class BeanUser {
 
     private String email;
 
-    @Column(length = 13)
+    @Length(max = 13)
     private String rfc;
 
-    @Column(length = 15)
-    private String phone_number;
+
+    @Length(max = 15)
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     private String username;
 
-    @Length(min = 12)
+    @Length(min = 10)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Rol role;
+    private String role;
 
-    private int number_attempts;
+
+    @Column(name = "number_attempts")
+    private int numberAttempts;
+
+    @Column(columnDefinition = "integer default 1", name = "policy_acceptance")
+    private int policyAcceptance;
 
     @Column(columnDefinition = "integer default 1")
-    private int policy_acceptance;
-
-    @Column(columnDefinition = "integer default 1")
-    private int status;
-
-    @OneToOne(mappedBy = "beanUser")
-    private BeanSiteAssigment beanSiteAssigment;
-
+    private int enabled;
 
     private LocalDateTime fechaCreacion;
 
     @Column(name = "fecha_act")
     private LocalDateTime fechaActualizacion;
 
-    public enum Rol {
-        ADMIN,
-        GESTOR,
-        USUARIO
+    @Column(name = "token_password",nullable = true)
+    private String tokenPassword;
+
+    @Column(nullable = true)
+    private Instant creation_time;
+
+    public BeanUser() {
+
     }
+
+    public BeanUser(String name, String lastname, String surname, String email, String rfc, String phoneNumber, String username, String password, String role, int numberAttempts, int policyAcceptance, int enabled) {
+        this.name = name;
+        this.lastname = lastname;
+        this.surname = surname;
+        this.email = email;
+        this.rfc = rfc;
+        this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.numberAttempts = numberAttempts;
+        this.policyAcceptance = policyAcceptance;
+        this.enabled = enabled;
+    }
+
 
     @PrePersist
     private void prePersist(){

@@ -1,9 +1,11 @@
 package com.sicobo.sicobo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+
 
 import java.time.LocalDateTime;
 
@@ -17,6 +19,13 @@ public class BeanWarehouseImage {
 
     private String url;
 
+    @Column(name = "secure_url")
+    private String secureUrl;
+
+    @Column(name = "public_id")
+    private String publicId;
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "warehouse_id")
@@ -35,5 +44,17 @@ public class BeanWarehouseImage {
     @PreUpdate
     private void preUpdate(){
         this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "BeanWarehouseImage{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", secureUrl='" + secureUrl + '\'' +
+                ", publicId='" + publicId + '\'' +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                '}';
     }
 }

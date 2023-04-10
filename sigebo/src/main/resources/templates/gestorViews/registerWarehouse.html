@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title th:text="${warehouse.id} ? 'SICOBO | Modificación de bodega': 'SICOBO | Registro de bodega'"></title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<div id="loader">
+    <div class="loader"></div>
+</div>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/gestor/sidebarGestor :: sidebar}"></aside>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Bodegas</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/gestor/bodegas}">Listar Bodegas</a></li>
+                <li class="breadcrumb-item active" th:text="${warehouse.id} ? 'Modificación': 'Registro'"></li>
+            </ol>
+        </nav>
+    </div>
+    <input th:if="${message != null}" name="status" type="hidden" th:value="${message.code}">
+    <input th:unless="${message != null}" name="status" type="hidden" value="200">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${message != null}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${warehouse.id}" class="alert alert-warning alert-dismissible fade show" role="alert" >
+                    <strong>Advertencia</strong> Al modificar se borrarán tus imágenes previamente guardadas
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="col-12">
+                <form class="row g-3 needs-validation" th:action="@{/gestor/guardarBodega}" th:object="${warehouse}" method="post" novalidate id="formValid" enctype="multipart/form-data">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${warehouse.id} ? 'Modificar bodega': 'Registrar bodega'">Registrar Bodega</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="section" class="form-label">Sección</label>
+                                    <div class="form-group has-validation" >
+                                        <input type="text" th:field="*{section}" id="section" class="form-control" required maxlength="100" minlength="5" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$">
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorRequired}" class="invalid-feedback" id="sectionRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorPattern}" class="invalid-feedback" id="sectionPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMax}" class="invalid-feedback" id="sectionMax"></div>
+                                        <div th:unless="${#fields.hasErrors('section')}" th:text="#{registerWarehouse.section.errorMin}" class="invalid-feedback" id="sectionMin"></div>
+                                        <div th:if="${#fields.hasErrors('section')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{section}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <div class="form-group has-validation">
+                                        <textarea type="text" th:field="*{description}"  class="form-control" id="description" required maxlength="1200" minlength="3" pattern="^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$"></textarea>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorRequired}" class="invalid-feedback" id="descriptionRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorPattern}" class="invalid-feedback" id="descriptionPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMax}" class="invalid-feedback" id="descriptionMax"></div>
+                                        <div th:unless="${#fields.hasErrors('description')}" th:text="#{registerWarehouse.description.errorMin}" class="invalid-feedback" id="descriptionMin"></div>
+                                        <div th:if="${#fields.hasErrors('description')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{description}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <label for="warehousesType" class="form-label">Tipo de bodega</label>
+                                    <select class="form-select" th:field="*{warehousesType}" id="warehousesType" required onchange="mostrarCosto()">
+                                        <option th:each="tmpWarehouseType: ${response.result}" th:value="${tmpWarehouseType.id}"
+                                                th:text="${tmpWarehouseType.description}" th:selected="${tmpWarehouseType.id == response.result[0].id}"></option>
+                                    </select>
+                                    <div th:unless="${#fields.hasErrors('warehousesType')}" th:text="#{registerWarehouse.warehousesType.errorRequired}" class="invalid-feedback" id="warehousesTypeRequired"></div>
+                                    <div th:if="${#fields.hasErrors('warehousesType')}"  class="alert alert-danger mb-3 mt-3">
+                                        <div class="row">
+                                            <div th:errors="*{warehousesType}" class="col-9"></div>
+                                            <div class="col-3 text-end">
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <label for="section" class="form-label">Costo</label>
+
+                                    <div class="form-group has-validation" >
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" th:field="*{finalCost}" id="finalCost" class="form-control" minlength="1" step="any" pattern="/^(?!0\d|$)\d*(\.\d{1,2})?$/" required />
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorRequired}" class="invalid-feedback" id="finalCostRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorPattern}" class="invalid-feedback" id="finalCostPattern"></div>
+                                        <div th:unless="${#fields.hasErrors('finalCost')}" th:text="#{registerWarehouse.finalCost.errorMin}" class="invalid-feedback" id="finalCostTypeMin"></div>
+                                        <div th:if="${#fields.hasErrors('finalCost')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{finalCost}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div  class="col-12 mb-3">
+                                    <label for="images" class="form-label">Imágen(es):</label>
+                                    <div class="form-group has-validation" >
+                                        <input type="file" id="images"  class="form-control" th:field="*{images}" name="images" multiple maxsize="1000000" accept="image/png,image/jpeg" required>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorRequired}" class="invalid-feedback" id="imagesRequired"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorAccept}" class="invalid-feedback" id="imagesAccept"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxSize}" class="invalid-feedback" id="imagesMaxSize"></div>
+                                        <div th:unless="${#fields.hasErrors('images')}" th:text="#{registerWarehouse.images.errorMaxLength}" class="invalid-feedback" id="imagesMaxLength"></div>
+                                        <div th:if="${#fields.hasErrors('images')}"  class="alert alert-danger mb-3 mt-3">
+                                            <div class="row">
+                                                <div th:errors="*{images}" class="col-9"></div>
+                                                <div class="col-3 text-end">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" class="form-control" id="id" name="id" th:field="*{id}" >
+                            <input type="hidden" class="form-control" id="beanSite" name="beanSite" th:field="*{beanSite}" >
+                            <input type="hidden" class="form-control" id="wareHouseStatus" name="status" th:field="*{status}" >
+
+                            <div class="card-footer text-end">
+                                <a th:href="@{/gestor/bodegas}" class="btn btn-danger mt-2 mb-2">Cancelar</a>
+                                <button type="submit" class="btn btn-success mt-2 mb-2 ml-3">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script th:inline="javascript">
+    let section
+    let description
+    let warehousesType
+    let finalCost
+    let images
+
+
+    window.addEventListener('load', function() {
+
+        section= document.getElementById("section");
+        description= document.getElementById("description");
+        warehousesType= document.getElementById("warehousesType");
+        finalCost= document.getElementById("finalCost");
+        images= document.getElementById("images");
+
+        if(finalCost.value === "") {
+            mostrarCosto()
+        }else{
+            $('#finalCost').prop('disabled', false);
+        }
+
+        section.addEventListener("input", function(event) {
+            hideErrorsInputSection();
+            if (section.validity.valueMissing) {
+                document.getElementById("sectionRequired").style.display = "block";
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+            }else if (section.validity.patternMismatch) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionPattern").style.display = "block";
+            }else  if (section.validity.tooLong) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionMax").style.display = "block";
+            }else if (section.validity.tooShort) {
+                section.classList.remove('is-valid');
+                section.classList.add('is-invalid');
+                document.getElementById("sectionMin").style.display = "block";
+            }else{
+                section.classList.remove('is-invalid');
+                section.classList.add('is-valid');
+                hideErrorsInputSection();
+            }
+
+        });
+
+        section.oninvalid = function() {
+            document.getElementById("sectionRequired").style.display = section.validity.valueMissing ? "block" : "none";
+            document.getElementById("sectionPattern").style.display = section.validity.patternMismatch ? "block" : "none";
+            document.getElementById("sectionMax").style.display = section.validity.tooLong ? "block" : "none";
+            document.getElementById("sectionMin").style.display = section.validity.tooShort ? "block" : "none";
+
+            if (section.validity.valid)
+                hideErrorsInputSection();
+        };
+
+        description.oninvalid = function() {
+            document.getElementById("descriptionRequired").style.display = description.validity.valueMissing ? "block" : "none";
+            document.getElementById("descriptionPattern").style.display = description.value.match(/^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$/) === null ? "block" : "none";
+            document.getElementById("descriptionMax").style.display = description.validity.tooLong ? "block" : "none";
+            document.getElementById("descriptionMin").style.display = description.validity.tooShort ? "block" : "none";
+
+            if (description.validity.valid)
+                hideErrorsInputDescription();
+        };
+
+        description.addEventListener("input", function(event) {
+            hideErrorsInputDescription();
+            if (description.validity.valueMissing) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionRequired").style.display = "block";
+            }else if (description.value.match(/^(?!\s)(?!.*\s$)[a-zA-Z0-9#%&.,áéíóúÁÉÍÓÚüÜñÑ\s]*$/) === null) {
+                description.setCustomValidity("Valor invalido");
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionPattern").style.display = "block";
+            }else  if (description.validity.tooLong) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionMax").style.display = "block";
+            }else if (description.validity.tooShort) {
+                description.classList.remove('is-valid');
+                description.classList.add('is-invalid');
+                document.getElementById("descriptionMin").style.display = "block";
+            }else{
+                description.classList.remove('is-invalid');
+                description.classList.add('is-valid');
+                hideErrorsInputDescription();
+            }
+        });
+
+        warehousesType.oninvalid = function() {
+            document.getElementById("warehousesTypeRequired").style.display = warehousesType.validity.valueMissing ? "block" : "none";
+
+            if (warehousesType.validity.valid)
+                hideErrorsInputWarehouseType();
+        };
+
+        warehousesType.addEventListener("input", function(event) {
+            hideErrorsInputWarehouseType();
+            if (warehousesType.validity.valueMissing) {
+                warehousesType.classList.remove('is-valid');
+                warehousesType.classList.add('is-invalid');
+                document.getElementById("warehousesTypeRequired").style.display = "block";
+            }if (parseInt(warehousesType.value) === 0) {
+                warehousesType.classList.remove('is-valid');
+                warehousesType.classList.add('is-invalid');
+                document.getElementById("warehousesTypeRequired").style.display = "block";
+            }else{
+                warehousesType.classList.remove('is-invalid');
+                warehousesType.classList.add('is-valid');
+                hideErrorsInputWarehouseType();
+            }
+        });
+
+        finalCost.addEventListener("input", function(event) {
+            hideErrorsInputFinalCosto();
+            if (finalCost.validity.valueMissing) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostRequired").style.display = "block";
+            }else if (finalCost.validity.patternMismatch) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostPattern").style.display = "block";
+            }else  if (finalCost.validity.tooShort) {
+                finalCost.classList.remove('is-valid');
+                finalCost.classList.add('is-invalid');
+                document.getElementById("finalCostTypeMin").style.display = "block";
+            }else{
+                finalCost.classList.remove('is-invalid');
+                finalCost.classList.add('is-valid');
+                hideErrorsInputFinalCosto();
+            }
+        });
+
+        finalCost.oninvalid = function() {
+            document.getElementById("finalCostRequired").style.display = finalCost.validity.valueMissing ? "block" : "none";
+            document.getElementById("finalCostPattern").style.display = finalCost.validity.patternMismatch ? "block" : "none";
+            document.getElementById("finalCostTypeMin").style.display = finalCost.validity.rangeUnderflow ? "block" : "none";
+
+            if (finalCost.validity.valid)
+                hideErrorsInputFinalCosto();
+        };
+
+        images.oninvalid = function() {
+            document.getElementById("imagesRequired").style.display = images.validity.valueMissing ? "block" : "none";
+            document.getElementById("imagesAccept").style.display = images.validity.patternMismatch ? "block" : "none";
+            document.getElementById("imagesMaxLength").style.display = "none";
+
+            const input = document.getElementById("images");
+            const maxFileSize = input.getAttribute("maxsize");
+            const files = input.files;
+            let flag = false;
+            if(files.length <= 3){
+                for (let i = 0; i < files.length; i++) {
+                    const fileSize = files[i].size;
+                    if (fileSize > maxFileSize) {
+                        flag = true;
+                        break;
+                    }
+                }
+                document.getElementById("imagesMaxSize").style.display = flag ? "block" : "none";
+            }else{
+                document.getElementById("imagesMaxLength").style.display = "block";
+            }
+
+
+            if (images.validity.valid)
+                hideErrorsInputImages();
+        };
+
+        images.addEventListener("input", function(event) {
+            hideErrorsInputImages();
+            if (images.validity.valueMissing) {
+                images.classList.remove('is-valid');
+                images.classList.add('is-invalid');
+                document.getElementById("imagesRequired").style.display = "block";
+            }else if (images.validity.typeMismatch) {
+                images.classList.remove('is-valid');
+                images.classList.add('is-invalid');
+                document.getElementById("imagesAccept").style.display = "block";
+            }else {
+                const input = document.getElementById("images");
+                const maxFileSize = input.getAttribute("maxsize");
+                const files = input.files;
+                let flag = false;
+
+                if(files.length <= 3){
+                    for (let i = 0; i < files.length; i++) {
+                        const fileSize = files[i].size;
+                        if (fileSize > maxFileSize) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        images.setCustomValidity("Error en la cantidad de MB")
+                        images.classList.remove('is-valid');
+                        images.classList.add('is-invalid');
+                        document.getElementById("imagesMaxSize").style.display = "block";
+                    } else {
+                        images.setCustomValidity("")
+                        images.classList.remove('is-invalid');
+                        images.classList.add('is-valid');
+                        hideErrorsInputImages();
+                    }
+                }else{
+                    images.setCustomValidity("Error en la cantidad de MB")
+                    images.classList.remove('is-valid');
+                    images.classList.add('is-invalid');
+                    document.getElementById("imagesMaxLength").style.display = "block";
+                }
+            }
+        });
+
+    });
+
+    const hideErrorsInputSection = () =>{
+        document.getElementById("sectionRequired").style.display = "none";
+        document.getElementById("sectionPattern").style.display = "none";
+        document.getElementById("sectionMax").style.display = "none";
+        document.getElementById("sectionMin").style.display = "none";
+    }
+
+    const hideErrorsInputDescription = () =>{
+        description.setCustomValidity("");
+        document.getElementById("descriptionRequired").style.display = "none";
+        document.getElementById("descriptionPattern").style.display = "none";
+        document.getElementById("descriptionMax").style.display = "none";
+        document.getElementById("descriptionMin").style.display = "none";
+    }
+
+    const hideErrorsInputWarehouseType = () =>{
+        document.getElementById("warehousesTypeRequired").style.display = "none";
+    }
+
+    const hideErrorsInputFinalCosto = () =>{
+        document.getElementById("finalCostRequired").style.display = "none";
+        document.getElementById("finalCostPattern").style.display = "none";
+        document.getElementById("finalCostTypeMin").style.display = "none";
+    }
+
+    const hideErrorsInputImages = () =>{
+        document.getElementById("imagesRequired").style.display = "none";
+        document.getElementById("imagesAccept").style.display = "none";
+        document.getElementById("imagesMaxSize").style.display = "none";
+        document.getElementById("imagesMaxLength").style.display = "none";
+    }
+
+    function mostrarCosto(){
+
+        let warehouseTypeId = parseInt(document.getElementById("warehousesType").value);
+        if(warehouseTypeId == null || warehouseTypeId == 0) {
+            finalCost.disabled = true;
+            finalCost.value = "";
+        } else {
+            let costTypes = [[${costTypes}]];
+            let costType = costTypes.find(cost => cost.beanWarehousesType.id == warehouseTypeId)
+            hideErrorsInputFinalCosto()
+            warehousesType.classList.remove('is-invalid');
+            warehousesType.classList.add('is-valid');
+            finalCost.classList.remove('is-invalid');
+            finalCost.classList.add('is-valid');
+            finalCost.disabled = false;
+            finalCost.value = costType.amount;
+
+        }
+    }
+
+    $('#formValid').submit(function(event) {
+        event.preventDefault();
+        if(this.checkValidity() === true){
+            Swal.fire({
+                title: '¿Estás seguro de guardar los cambios?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const loader = document.getElementById("loader");
+                    loader.style.display = "block";
+                    document.querySelector('.loader').classList.add('centered-animation');
+                    this.submit();
+
+                }
+            })
+        }else{
+            event.stopPropagation();
+        }
+    })
+
+</script>
+
+</body>
+
+</html>

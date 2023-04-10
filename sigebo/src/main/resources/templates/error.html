@@ -5,13 +5,16 @@
 <head th:insert="~{layout/admin/head :: head}"></head>
 <body>
 <main>
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
     <div class="container">
 
         <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
             <h1 id="codigo">Error</h1>
             <h2 id="descripcion">Descripcion del error.</h2>
             <a class="btn" th:href="@{/}">Volver al inicio</a>
-            <img src="./img/500.svg" class="img-fluid py-5" alt=" ">
+            <img src="https://em-content.zobj.net/source/microsoft-teams/337/construction-worker_light-skin-tone_1f477-1f3fb_1f3fb.png" class="img-fluid py-5" alt=" ">
             <div th:insert="~{layout/extras/credits :: credits}"></div>
         </section>
 
@@ -19,7 +22,7 @@
 </main>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <input type="hidden" id="estado" th:value="${status}">
-
+<input type="hidden" id="mensaje" th:value="${message}" th:if="${message}">
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
@@ -34,6 +37,12 @@
             let tipo = document.getElementById("estado").value;
             let codigo = parseInt(tipo);
             switch(codigo){
+                case 400:
+                    let mensaje = document.getElementById("mensaje").value;
+                    document.getElementById("codigo").innerHTML = "400";
+                    document.getElementById("descripcion").innerHTML = mensaje;
+                    document.title = "Error 400 | SICOBO";
+                    break;
                 case 404:
                     document.getElementById("codigo").innerHTML = "404";
                     document.getElementById("descripcion").innerHTML = "La pagina que buscas no fue encontrada.";
@@ -50,7 +59,7 @@
                     document.title = "Error 500 | SICOBO";
                     break;
                 default:
-                    document.getElementById("codigo").innerHTML = "Error Inesperado";
+                    document.getElementById("codigo").innerHTML = "Oh no";
                     document.getElementById("descripcion").innerHTML = "Parece que ocurrió un error inesperado, intente nuevamente.";
                     document.title = "Error Desconocido | SICOBO";
             }

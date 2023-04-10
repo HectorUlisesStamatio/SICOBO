@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SICOBO | Gestores</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/admin/sidebar :: sidebar}"></aside>
+
+<script th:inline="javascript">
+
+
+</script>
+
+<main id="main" class="main">
+    <div id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="pagetitle">
+        <h1>Gestores</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dash}">Gestores</a></li>
+                <li class="breadcrumb-item active">Lista de gestores</li>
+            </ol>
+        </nav>
+    </div>
+
+    <input name="status" id="status" type="hidden" th:value="${response.code}">
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${message != null}" class="alert alert-dismissible fade show" role="alert" th:classappend="${message.type} == 'success' ? 'alert-success' : 'alert-danger'">
+                    <strong>[[${message.title}]]</strong> [[${message.message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col">Listado de gestores</div>
+                                <div class="col text-end"> <a th:href="@{/admin/registrarGestor}" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></a></div>
+                            </div>
+                        </h5>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col table-responsive">
+                                    <table class="table table-borderless datatable" id="sitesTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Apellido paterno</th>
+                                            <th scope="col">Apellido materno</th>
+                                            <th scope="col">Correo electrónico</th>
+                                            <th scope="col">Usuario</th>
+                                            <th scope="col">Teléfono</th>
+                                            <th scope="col">Estado</th>
+                                            <th scope="col">Acciones</th>
+                                            <th scope="col">Habilitar o Deshabilitar</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="gestor, index: ${response.result}" th:if="${#arrays.length(response.result) > 0}">
+                                            <th scope="row" th:text="${index.index + 1 }"></th>
+                                            <td th:text="${gestor.name}"></td>
+                                            <td th:text="${gestor.lastname}"></td>
+                                            <td th:text="${gestor.surname}"></td>
+                                            <td th:text="${gestor.email}"></td>
+                                            <td th:text="${gestor.username}"></td>
+                                            <td th:text="${gestor.phoneNumber}"></td>
+
+
+                                            <td>
+                                                <span th:if="${gestor.enabled == 1}" class="badge bg-success">Activo</span>
+                                                <span th:unless="${gestor.enabled == 1}" class="badge bg-secondary">Inactivo</span>
+
+                                            </td>
+
+                                            <td class="text-center">
+                                                <form th:action="@{/admin/prepararEdicion}" method="POST" >
+                                                    <input type="hidden" name="idGestor" id="idGestor" th:value="${gestor.id}">
+                                                    <button type="submit" class="btn btn-outline-warning"><i
+                                                            class="bi bi-pencil-fill"></i></button>
+                                                </form>
+
+                                            </td>
+
+                                            <td >
+                                                <form  th:action="@{/admin/cambiarEstadoGestor}" method="POST" class="d-flex justify-content-center" th:id="'form-' + ${gestor.id}">
+                                                    <input type="hidden" name="idGestor2" id="idGestor2" th:value="${gestor.id}">
+                                                    <input type="hidden" name="statusGestor" id="statusGestor" th:value="${gestor.enabled == 1}">
+                                                    <div class="form-check form-switch" >
+                                                        <input class="form-check-input" type="checkbox" role="switch" th:checked="${gestor.enabled == 1}"
+                                                               th:id="'switch-' + ${gestor.id}">
+                                                    </div>
+                                                </form>
+                                            </td>
+
+                                        </tr>
+                                        <tr th:unless="${#arrays.length(response.result) > 0}">
+                                            <td colspan="7" class="text-center fw-semibold">No hay gestores registrados en el sistema.</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+<script>
+    let $ = jQuery;
+
+    const tableBody = document.querySelector('#sitesTable tbody');
+    tableBody.addEventListener('change', function(event) {
+        let switchInput = event.target;
+        let form = switchInput.form;
+        Swal.fire({
+            title: '¿Estás seguro de guardar los cambios?',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }else{
+                document.getElementById(switchInput.id+"").checked = !event.target.checked;
+            }
+        })
+    });
+
+
+</script>
+
+</body>
+
+</html>

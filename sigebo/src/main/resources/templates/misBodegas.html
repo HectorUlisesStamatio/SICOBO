@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SICOBO | Mis bodegas</title>
+</head>
+<head th:insert="~{layout/admin/head :: head}"></head>
+<body>
+<header th:insert="~{layout/admin/header :: header}"></header>
+<aside th:insert="~{layout/usuario/sidebarUsuario :: sidebar}"></aside>
+<style>
+  /*=============== VARIABLES CSS ===============*/
+  :root {
+    --header-height: 3.5rem;
+
+    /*========== Colores ==========*/
+    --first-color: hsl(216, 76%, 67%);
+    --first-color-alt: rgb(77, 122, 190);
+    --first-color-light: hsl(228, 62%, 59%);
+    --first-color-lighten: hsl(228, 100%, 97%);
+    --second-color: hsl(338.69, 100%, 48%);
+    --title-color: hsl(228, 57%, 28%);
+    --text-color: hsl(228, 15%, 50%);
+    --text-color-light: hsl(228, 12%, 75%);
+    --border-color: hsl(228, 99%, 98%);
+    --body-color: #fff;
+    --container-color: #fff;
+
+    /*========== Fuete & Tipografía ==========*/
+    /*.5rem = 8px | 1rem = 16px ...*/
+    --body-font: 'Poppins', sans-serif;
+    --biggest-font-size: 2.25rem;
+    --h1-font-size: 1.5rem;
+    --h2-font-size: 1.25rem;
+    --h3-font-size: 1rem;
+    --normal-font-size: .938rem;
+    --small-font-size: .813rem;
+    --smaller-font-size: .75rem;
+
+    /*========== Font weight ==========*/
+    --font-medium: 500;
+    --font-semi-bold: 600;
+
+    /*========== z index ==========*/
+    --z-tooltip: 10;
+    --z-fixed: 100;
+  }
+
+  /* Responsive typography */
+  @media screen and (min-width: 1024px) {
+    :root {
+      --biggest-font-size: 4rem;
+      --h1-font-size: 2.25rem;
+      --h2-font-size: 1.5rem;
+      --h3-font-size: 1.25rem;
+      --normal-font-size: 1rem;
+      --small-font-size: .875rem;
+      --smaller-font-size: .813rem;
+    }
+  }
+
+
+  /*=============== POPULAR ===============*/
+
+  .popular__card {
+    width: 290px;
+    background-color: var(--container-color);
+    padding: .5rem .5rem 1.5rem;
+    border-radius: 1rem;
+    margin: 10px;
+    cursor: pointer;
+    transition: .4s;
+  }
+
+  .popular__img {
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    height: 60%;
+    width: 100%;
+  }
+
+  .popular__data {
+    padding: 0 1rem 0 .5rem;
+  }
+
+  .popular__price {
+    font-size: var(--h2-font-size);
+    color: var(--text-color);
+    margin-bottom: .25rem;
+  }
+
+  .popular__price span {
+    color: var(--second-color);
+  }
+
+  .popular__title {
+    font-size: var(--h3-font-size);
+    margin-bottom: .75rem;
+  }
+
+  .popular__description {
+    font-size: var(--small-font-size);
+  }
+
+  .popular__card:hover {
+    box-shadow: 0 12px 16px hsla(228, 66%, 45%, .1);
+  }
+  .divider {
+    border: 0;
+    height: 1px;
+    background-color: #000;
+  }
+
+</style>
+
+<main id="main" class="main">
+  <div id="loader">
+    <div class="loader"></div>
+  </div>
+  <div class="pagetitle">
+    <h1>Bodegas</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+        <li class="breadcrumb-item active">Mis bodegas</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section profile">
+    <div class="row">
+
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-body">
+
+            <div class="tab-content pt-2">
+
+              <div class="tab-pane fade show active profile-overview pt-1" id="profile-overview">
+                <div class="row align-items-start">
+                  <div class="container">
+                      <div class="row">
+                        <div th:each="warehouse : ${response}" class="col-12 col-sm-6 col-xl-4 col-xxl-3 p-2">
+                          <div class="card h-100 " >
+                            <img th:src="${warehouse.warehouseImageUrl}" class="card-img-custom-w" alt="...">
+                            <div class="card-body">
+                              <div class="row justify-content-between align-items-center">
+                                <div class="col-12 col-sm-6 text-start text-sm-start">
+                                  <h5 class="card-title" th:text="${warehouse.siteName}"></h5>
+                                </div>
+                                <div class="col-12 col-sm-6 text-center text-sm-end">
+                                  <span class="badge text-bg-secondary" style="font-size: 0.8rem" th:if="${warehouse.paymentStatus == 0}">Renta finalizada</span>
+                                </div>
+                              </div>
+                              <div class="card-text-scrollable mb-2">
+                                <p th:text="${warehouse.warehouseDescription}"></p>
+                              </div>
+                              <div class="divider mx-2"></div>
+                              <ul class="list-group list-group-flush  mt-2">
+                                  <strong>Tipo de Bodega: <span class="float-end text-primary"th:text="${warehouse.warehouseTypeDescription}"></span></strong>
+                                <hr>
+                                  <strong>Estado de la bodega: <span class="float-end text-info" th:text="${warehouse.stateName}"></span></strong>
+                                <hr>
+                                  <strong>Estatus de la renta: <span class="float-end text-success" th:text="${warehouse.paymentStatus == 0 } ? 'Finalizada' : 'En renta'"></span> </strong>
+                                <hr>
+                                  <strong>Fecha de renta: <span class="float-end text-success" th:text="${#dates.format(warehouse.paymentDate, 'dd/MM/yyyy')}"></span> </strong>
+                                <hr>
+                                  <strong>Fecha de vencimiento: <span class="float-end text-danger" th:text="${#dates.format(warehouse.dueDate, 'dd/MM/yyyy')}"></span> </strong>
+                                <hr>
+                              </ul>
+                              <div class="mt-3" th:if="${warehouse.isRenovation}">
+                                <a th:href="@{/usuario/renovacionBodega/{id} (id=${warehouse.paymentId})}" class="btn btn-primary ms-1 w-100 mx-3 my-1">Renovar</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12" th:if="${warehouse == null}">
+                          <div class="alert alert-warning" role="alert">
+                            No hay bodegas para mostrar.
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer th:insert="~{layout/admin/footer :: footer}"></footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<div th:insert="~{layout/admin/scripts :: scripts}"></div>
+
+</body>
+
+</html>
