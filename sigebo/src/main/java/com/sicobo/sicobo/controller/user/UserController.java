@@ -32,8 +32,7 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         Message warehousesClient = (Message) warehouseService.buscarBodegaPorUsername(auth.getName()).getBody();
-
-        model.addAttribute(OPTION,"MyWarehouses");
+        
         model.addAttribute(RESPONSE, warehousesClient.getResult());
 
         return MIS_BODEGAS;
