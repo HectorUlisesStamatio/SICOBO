@@ -24,9 +24,14 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
     boolean existsBeanWarehouseByIdAndStatusIs(Long id, int status);
     boolean existsBeanWarehouseByIdAndStatusIsOrStatusIs(Long id, int status, int otherStatus);
 
-    @Query(value = "SELECT w.final_cost,w.section,w.description, wi.secure_url, wt.description, s.address, st.name, w.id  FROM warehouse w inner join \n" +
-            "warehouse_images wi on wi.warehouse_id = w.id inner join warehouses_type wt on w.warehouses_types = wt.id\n" +
-            "inner join site s on w.site_id_site = s.id inner join state st on s.states_id = st.id where w.status = 1", nativeQuery = true)
+    @Query(value = "SELECT w.final_cost, w.section, w.description, wi.secure_url, wt.description, s.address, st.name, w.id \n" +
+            "FROM warehouse w \n" +
+            "INNER JOIN warehouse_images wi ON wi.warehouse_id = w.id \n" +
+            "INNER JOIN warehouses_type wt ON w.warehouses_types = wt.id\n" +
+            "INNER JOIN site s ON w.site_id_site = s.id \n" +
+            "INNER JOIN state st ON s.states_id = st.id \n" +
+            "WHERE w.status = 1 \n" +
+            "GROUP BY w.id;", nativeQuery = true)
     List<Object[]> findAllWarehouseDetails();
 
 
