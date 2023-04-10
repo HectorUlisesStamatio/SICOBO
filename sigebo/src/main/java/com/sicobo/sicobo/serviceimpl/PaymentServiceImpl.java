@@ -9,6 +9,7 @@ import com.sicobo.sicobo.util.Message;
 import com.sicobo.sicobo.util.PaymentValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -107,8 +108,25 @@ public class PaymentServiceImpl  implements IPaymentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> buscar(Long id) {
-        return null;
+        try{
+            boolean existPayment = daoPayment.existsById(id);
+
+            if(!existPayment){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentró el pago de la bodega seleccionada", FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            Optional<BeanPayment> payment = daoPayment.findById(id);
+            if(!payment.isPresent()){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentró el pago de la bodega seleccionada", FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            BeanPayment paymentSearched = payment.get();
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, paymentSearched), HttpStatus.OK);
+        }catch (Exception e) {
+            log.error("Ocurrió un error en PaymentServiceImpl - buscar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override

@@ -12,6 +12,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,13 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+
 
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.sicobo.sicobo.util.Constantes.MessageBody.*;
@@ -360,9 +358,8 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    @Scheduled(cron = "0 * * * * ?") //Para las pruebas con este se ejecuta cada minuto
-    //@Scheduled(cron = "0 08 11 ? * *") //Para las pruebas con este se ejecuta cada minuto
-    //@Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
+    //@Scheduled(cron = "0 * * * * ?") //Para las pruebas con este se ejecuta cada minuto
+    @Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
     @Transactional(rollbackFor = {SQLException.class})
     public void desalojarBodega() {
         try {
@@ -411,8 +408,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
                     }
                 }
             }
-
-            System.out.println("Se reviso las bodegas");
             if (!warehouses.isEmpty()) {
                 List<BeanWarehouse> warehousesUpdate = daoWarehouse.saveAll(warehouses);
             }
@@ -466,6 +461,27 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> buscarPorId(Long id) {
+        try{
+            boolean existWarehouse = daoWarehouse.existsById(id);
+
+            if(!existWarehouse){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentró la bodega seleccionada", FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            Optional<BeanWarehouse> warehouse = daoWarehouse.findById(id);
+            if(!warehouse.isPresent()){
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No se encuentró la bodega seleccionada", FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            BeanWarehouse warehouseSearched = warehouse.get();
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, warehouseSearched), HttpStatus.OK);
+        }catch (Exception e) {
+            log.error("Ocurrió un error en PaymentServiceImpl - buscar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 }

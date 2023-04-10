@@ -135,6 +135,7 @@ public final class Constantes {
         public static final String MY_WAREHOUSE_DETAIL = "userViews/myWarehouseDetail";
         public static final String MY_WAREHOUSES = "misBodegas";
         public static final String REDIRECT_DETAIL_RENOVATION = "redirect:/renovacionBodega/";
+        public static final String INVOICE = "userViews/invoice";
 
 
     }

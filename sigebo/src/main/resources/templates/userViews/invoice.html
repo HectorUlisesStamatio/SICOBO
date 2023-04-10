@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>SICOBO | Factura renta</title>
+  <title>SICOBO | Detalle factura</title>
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
   <style>
     /*=============== VARIABLES CSS ===============*/
@@ -149,8 +149,8 @@
     <h1>Factura</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/usuario/bodegas}">Bodegas</a></li>
-        <li class="breadcrumb-item active">Factura renta</li>
+        <li class="breadcrumb-item"><a th:href="@{/usuario/misBodegas}">Mis bodegas</a></li>
+        <li class="breadcrumb-item active">Detalle de factura</li>
       </ol>
     </nav>
   </div>
@@ -166,10 +166,10 @@
 
         <div class="card">
           <div class="card-body">
-            <div class="container-fluid" th:if="${message.type  == 'success'}">
+            <div class="container-fluid" th:if="${payment != null}">
               <div class="row mt-5">
                 <div class="col-12 col-sm-6 offset-sm-3 text-end">
-                  <button type="button" title="Descargar factura" class="btn btn-primary" th:onclick="pdf()       ">Descargar</button>
+                  <button type="button" title="Descargar factura" class="btn btn-primary" th:onclick="pdf()">Descargar</button>
                 </div>
               </div>
               <div class="row mt-3" id="factura">
@@ -193,7 +193,7 @@
                       </div>
                       <div class="col-12 mb-2">
                         <label class="d-block">Seccion: <span th:text="${warehouse.section}"></span></label>
-                        <label class="d-block">Costo final x mes: <span th:text="${'$' +warehouse.finalCost}"></span></label>
+                        <label class="d-block">Costo final x mes: <span th:text="${'$' + (payment.amount / payment.amountMonths)}"></span></label>
                         <label class="d-block">Tipo de Bodega: <span th:text="${warehouse.warehousesType.description}"></span></label>
                         <label class="d-block">Lugar: <span th:text="${warehouse.beanSite.BeanState.name}"></span></label>
                       </div>
