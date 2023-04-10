@@ -8,6 +8,7 @@ import com.sicobo.sicobo.model.*;
 import com.sicobo.sicobo.serviceimpl.*;
 import com.sicobo.sicobo.util.Message;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -45,27 +46,62 @@ public class AdminController {
     private final WarehousesTypeServiceImpl warehousesTypeService;
 
     private final CostTypeServiceImpl costTypeService;
-    
+
+    private WarehouseServiceImpl warehouseService;
+
     private final UserServiceImpl userService;
 
     private final PoliciesServiceImpl policiesService;
 
     @Autowired
-    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService) {
+    public AdminController(SiteServiceImpl siteService, StateServiceImpl stateService, WarehousesTypeServiceImpl warehousesTypeService, CostTypeServiceImpl costTypeService, UserServiceImpl userService, PoliciesServiceImpl policiesService, WarehouseServiceImpl warehouseService) {
         this.siteService = siteService;
         this.stateService = stateService;
         this.warehousesTypeService = warehousesTypeService;
         this.costTypeService = costTypeService;
         this.userService = userService;
         this.policiesService = policiesService;
+        this.warehouseService = warehouseService;
     }
 
     @Secured({ROLE_ADMIN})
-    @GetMapping("/dashboard")
-    public String dash(Model model) {
+    @GetMapping(value = {"/dashboard", "/dashboard/{state}"})
+    public String dashboard(Model model,@PathVariable("state")  Optional<String> state){
         model.addAttribute(OPTION, null);
+        try{
+
+            Message response = (Message) stateService.listar().getBody();
+            assert response != null;
+            model.addAttribute(STATES, response.getResult());
+
+            if(state.isPresent()){
+                try {
+                    Long idState = Long.parseLong(state.get());
+                    Message message = (Message) warehouseService.ocupacionBodegasPorSitioById(idState).getBody();
+                    assert message != null;
+                    model.addAttribute(SELECT_OPTION, idState);
+                    model.addAttribute(RESPONSE, message);
+                    return ADMIN_DASHBOARD;
+                } catch (NumberFormatException e) {
+                    model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                    model.addAttribute(RESPONSE, null);
+                    return ADMIN_DASHBOARD;
+                }
+            }
+
+            Message message = (Message) warehouseService.ocupacionBodegasPorSitio().getBody();
+            assert message != null;
+            model.addAttribute(RESPONSE, message);
+        }catch (NullPointerException e) {
+            log.error("Valor nulo un error en AdminController - dashboard" + e.getMessage());
+        }catch (Exception e){
+            log.error("Ocurrio un error en AdminController - dashboard" + e.getMessage());
+        }
+
+
         return ADMIN_DASHBOARD;
     }
+
 
     @Secured({ROLE_ADMIN})
     @GetMapping("/sitios")
@@ -500,6 +536,7 @@ public class AdminController {
         }
         return REDIRECT_ADMIN_LISTGESTORES;
     }
+
 
 
 

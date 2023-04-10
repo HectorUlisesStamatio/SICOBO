@@ -29,4 +29,8 @@ public interface IWarehouseService {
 
     public void desalojarBodega();
 
+    public ResponseEntity<Object> ocupacionBodegasPorSitio();
+
+    public ResponseEntity<Object> ocupacionBodegasPorSitioById(Long id);
+
 }

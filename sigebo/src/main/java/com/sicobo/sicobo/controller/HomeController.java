@@ -67,35 +67,34 @@ public class HomeController {
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @GetMapping("/")
-    public String inicio(Model model){
+    public String inicio(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String rol = auth.getAuthorities().toString();
-        try{
-            if(Objects.equals(rol, "[ROLE_ADMIN]")) {
-                return ADMIN_DASHBOARD;
-            }else if(Objects.equals(rol, "[ROLE_GESTOR]")) {
+        try {
+            if (Objects.equals(rol, "[ROLE_ADMIN]")) {
+                return REDIRECT_ADMIN_DASHBOARD;
+            } else if (Objects.equals(rol, "[ROLE_GESTOR]")) {
                 return "redirect:/warehousesAll";
-            }else if(Objects.equals(rol, "[ROLE_USUARIO]")) {
+            } else if (Objects.equals(rol, "[ROLE_USUARIO]")) {
                 return USER_INDEX;
-            }else{
+            } else {
                 return INDEX;
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             log.warn("No se pudo realizar la validación del rol");
         }
         return INDEX;
     }
 
 
-
     @Secured({ROLE_GESTOR})
     @GetMapping("/warehousesAll")
-    public String warehousesAll(Model model){
+    public String warehousesAll(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         Message gestorInfo = (Message) userService.buscarGestor(auth.getName()).getBody();
 
-        if(gestorInfo.getType().equals(FAILED)){
+        if (gestorInfo.getType().equals(FAILED)) {
             return ERRORS;
         }
 
@@ -129,23 +128,23 @@ public class HomeController {
 
 
     @GetMapping("/register")
-    public String register(Model model, DTOUser user){
+    public String register(Model model, DTOUser user) {
         model.addAttribute(USER, user);
         return REGISTER;
     }
 
     @PostMapping("/registrarUsuario")
-    public String registrarUsuario(@Validated @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model){
+    public String registrarUsuario(@Validated @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
 
-        if(result.hasErrors()){
-            for (ObjectError error: result.getAllErrors()){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
                 log.error(ERRORS, error.getDefaultMessage());
             }
             return REGISTER;
         }
         Message message = (Message) userService.registrar(user).getBody();
         assert message != null;
-        if(message.getType().equals(FAILED)){
+        if (message.getType().equals(FAILED)) {
             model.addAttribute(MESSAGE, message);
             return REGISTER;
         }
@@ -153,12 +152,12 @@ public class HomeController {
     }
 
     @GetMapping("/forgotPassword")
-    public String forgotPassword(Model model){
+    public String forgotPassword(Model model) {
         return FORGOT_PASSWORD;
     }
 
     @GetMapping("/resetPassword")
-    public String resetPassword(){
+    public String resetPassword() {
         return RESET_PASSWORD;
     }
 
@@ -169,18 +168,18 @@ public class HomeController {
         Message message = (Message) responseEntity.getBody();
         assert message != null;
 
-        if(message.getType().equals(FAILED)) {
-            model.addAttribute(MESSAGE,message);
+        if (message.getType().equals(FAILED)) {
+            model.addAttribute(MESSAGE, message);
             return LOGIN;
-        }else{
-            model.addAttribute(MESSAGE,message);
+        } else {
+            model.addAttribute(MESSAGE, message);
             return LOGIN;
         }
 
     }
 
     @PostMapping("/changePassword")
-    public String changePassword(@RequestParam("pass") String pass,@RequestParam("password") String password,@RequestParam("token") String token ,Model model) {
+    public String changePassword(@RequestParam("pass") String pass, @RequestParam("password") String password, @RequestParam("token") String token, Model model) {
 
         if (!pass.equals(password)) {
             model.addAttribute("invalidPass", "Las contraseñas no coinciden");
@@ -191,20 +190,20 @@ public class HomeController {
         Message message = (Message) responseEntity.getBody();
         assert message != null;
 
-        if(message.getType().equals(FAILED)) {
-            model.addAttribute(MESSAGE,message);
+        if (message.getType().equals(FAILED)) {
+            model.addAttribute(MESSAGE, message);
             return RESET_PASSWORD;
-        }else{
-            model.addAttribute(MESSAGE,message);
+        } else {
+            model.addAttribute(MESSAGE, message);
             return LOGIN;
         }
 
     }
 
-    @Secured({ROLE_ADMIN,ROLE_GESTOR,ROLE_USUARIO})
+    @Secured({ROLE_ADMIN, ROLE_GESTOR, ROLE_USUARIO})
     @GetMapping("/preferencias/perfil")
-    public String profile(Model model,RedirectAttributes attributes){
-        try{
+    public String profile(Model model, RedirectAttributes attributes) {
+        try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Message response = (Message) stateService.listar().getBody();
             assert response != null;
@@ -217,10 +216,10 @@ public class HomeController {
             }
             model.addAttribute(RESPONSE, message);
             model.addAttribute(USER, message.getResult());
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - perfil" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - perfil" + e.getMessage());
             model.addAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
@@ -228,10 +227,10 @@ public class HomeController {
         return USER_PROFILE;
     }
 
-    @Secured({ROLE_ADMIN,ROLE_GESTOR,ROLE_USUARIO})
+    @Secured({ROLE_ADMIN, ROLE_GESTOR, ROLE_USUARIO})
     @PostMapping("/preferencias/actualizarPerfil")
     public String updateGestor(@Valid @ModelAttribute(USER) DTOUser user, BindingResult result, RedirectAttributes attributes, Model model) {
-        try{
+        try {
             if (result.hasErrors()) {
                 for (ObjectError error : result.getAllErrors()) {
                     log.error("Error: " + error.getDefaultMessage());
@@ -239,16 +238,16 @@ public class HomeController {
                 return USER_PROFILE;
             }
             Message response = (Message) userService.editarPerfil(user).getBody();
-            assert response !=null;
+            assert response != null;
             if (response.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, response);
                 return USER_PROFILE;
             }
             attributes.addFlashAttribute(MESSAGE, response);
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - perfil" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - perfil" + e.getMessage());
             attributes.addFlashAttribute(MESSAGE, MESSAGE_CATCH_ERROR);
         }
@@ -256,30 +255,30 @@ public class HomeController {
     }
 
     @Secured({ROLE_USUARIO})
-    @GetMapping(value = {"/bodegas","/bodegas/{parametroUno}","/bodegas/{parametroUno}/{parametroDos}"})
+    @GetMapping(value = {"/bodegas", "/bodegas/{parametroUno}", "/bodegas/{parametroUno}/{parametroDos}"})
     public String listarBodegas(@PathVariable(required = false) Optional<String> parametroUno, @PathVariable(required = false) Optional<String> parametroDos, RedirectAttributes attributes, Model model) {
         try {
-            String parametro=null;
-            String segundoParametro=null;
-            if(parametroUno.isPresent()){
+            String parametro = null;
+            String segundoParametro = null;
+            if (parametroUno.isPresent()) {
                 parametro = parametroUno.get();
             }
-            if(parametroDos.isPresent()) {
+            if (parametroDos.isPresent()) {
                 segundoParametro = parametroDos.get();
             }
 
             Message response = (Message) stateService.listar().getBody();
             Message responseCosto = (Message) costTypeService.listar().getBody();
-            Message responseBodegas = (Message) warehouseDetailsService.listar(parametro,segundoParametro).getBody();
+            Message responseBodegas = (Message) warehouseDetailsService.listar(parametro, segundoParametro).getBody();
             assert response != null;
             assert responseCosto != null;
             assert responseBodegas != null;
             model.addAttribute(STATES, response.getResult());
-            model.addAttribute(COST_TYPES,responseCosto.getResult());
-            model.addAttribute(WAREHOUSES,responseBodegas.getResult());
-        }catch (NullPointerException e) {
+            model.addAttribute(COST_TYPES, responseCosto.getResult());
+            model.addAttribute(WAREHOUSES, responseBodegas.getResult());
+        } catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - listadoBodegas" + e.getMessage());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - listadoBodegas" + e.getMessage());
         }
         return LISTADO_BODEGAS;
@@ -288,27 +287,36 @@ public class HomeController {
 
     @Secured({ROLE_USUARIO})
     @GetMapping("/detalleProducto/{idWarehouse}")
-    public String preparedDatail(@PathVariable Optional<Long> idWarehouse, Model model) {
+    public String preparedDetail(@PathVariable Optional<String> idWarehouse, Model model) {
 
         try {
-            if(!idWarehouse.isPresent()){
+            if (!idWarehouse.isPresent()) {
                 model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
                 return PRODUCT_DETAIL;
             }
-            Message message = (Message) warehouseService.detalleBodega(idWarehouse.get()).getBody();
-            assert  message != null;
 
-            if(message.getType().equals(FAILED)){
-                model.addAttribute(MESSAGE, message);
+            try {
+                Long id = Long.parseLong(idWarehouse.get());
+                Message message = (Message) warehouseService.detalleBodega(id).getBody();
+                assert message != null;
+
+                if (message.getType().equals(FAILED)) {
+                    model.addAttribute(MESSAGE, message);
+                    model.addAttribute(WAREHOUSE, null);
+                    return PRODUCT_DETAIL;
+                }
+
+                model.addAttribute(WAREHOUSE, message);
+            } catch (NumberFormatException e) {
+                model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
                 return PRODUCT_DETAIL;
             }
 
-            model.addAttribute(WAREHOUSE, message);
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - preparedDatail" + e.getMessage());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - preparedDatail" + e.getMessage());
         }
 
@@ -317,38 +325,38 @@ public class HomeController {
 
     @Secured({ROLE_USUARIO})
     @PostMapping("/prepararCompra")
-    public String preparedBuy(@RequestParam("idWarehouse")Optional<Long> idWarehouse,@RequestParam("finalCost")Optional<Double> finalCost, @RequestParam("months")Optional<Integer> months, RedirectAttributes attributes, Model model ){
-        try{
-            if(!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent()){
+    public String preparedBuy(@RequestParam("idWarehouse") Optional<Long> idWarehouse, @RequestParam("finalCost") Optional<Double> finalCost, @RequestParam("months") Optional<Integer> months, RedirectAttributes attributes, Model model) {
+        try {
+            if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent()) {
                 attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 return REDIRECT_PREPARED_DETAIL + idWarehouse;
             }
 
             Message message = (Message) warehouseService.detalleBodega(idWarehouse.get()).getBody();
             assert message != null;
-            if(message.getType().equals(FAILED)){
+            if (message.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, message);
                 return REDIRECT_PREPARED_DETAIL + idWarehouse;
             }
             BeanWarehouse warehouse = (BeanWarehouse) message.getResult();
-            assert  warehouse != null;
+            assert warehouse != null;
             warehouse.setFinalCost(finalCost.get());
             Message response = (Message) stripeService.checkout(warehouse, months.get()).getBody();
-            assert response !=null;
-            if(response.getType().equals(FAILED)){
+            assert response != null;
+            if (response.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, response);
-               return REDIRECT_PREPARED_DETAIL + warehouse.getId();
+                return REDIRECT_PREPARED_DETAIL + warehouse.getId();
             }
             session = (Session) response.getResult();
-            assert  session != null;
+            assert session != null;
 
         } catch (NullPointerException e) {
             log.error("Valor nulo un error en HomeController - preparedBuy" + e.getMessage());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - preparedBuy" + e.getMessage());
         }
 
-        return "redirect:" + session.getUrl() ;
+        return "redirect:" + session.getUrl();
     }
 
     @Secured({ROLE_USUARIO})
@@ -368,17 +376,17 @@ public class HomeController {
             }
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
-            ResponseEntity<?> responseRented =  stripeService.paymentIntent(session, user);
+            ResponseEntity<?> responseRented = stripeService.paymentIntent(session, user);
             Message messageResult = (Message) responseRented.getBody();
-            assert  messageResult != null;
+            assert messageResult != null;
 
-            if(messageResult.getType().equals(FAILED)){
+            if (messageResult.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, messageResult);
                 return PAYMENT_INFORMATION;
             }
 
-            Map<String,Object> mapResult = (Map<String,Object>) messageResult.getResult();
-            assert  mapResult != null;
+            Map<String, Object> mapResult = (Map<String, Object>) messageResult.getResult();
+            assert mapResult != null;
 
             BeanWarehouse warehouse = (BeanWarehouse) mapResult.get("warehouse");
             assert warehouse != null;
@@ -388,9 +396,9 @@ public class HomeController {
             model.addAttribute(MESSAGE, messageResult);
             model.addAttribute(WAREHOUSE, warehouse);
             model.addAttribute(PAYMENT, payment);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             log.error("Ocurrio un error en HomeController - succesPayment" + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - succesPayment" + e.getMessage());
         }
 
@@ -399,11 +407,11 @@ public class HomeController {
 
     @Secured({ROLE_USUARIO})
     @GetMapping("/renovacionBodega/{idPayment}")
-    public String detailRenovation(@PathVariable("idPayment") Optional<Long> idPayment, Model model){
-        try{
-            if(!idPayment.isPresent()){
-               model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
-               return MY_WAREHOUSES;
+    public String detailRenovation(@PathVariable("idPayment") Optional<String> idPayment, Model model) {
+        try {
+            if (!idPayment.isPresent()) {
+                model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
+                return MY_WAREHOUSES;
             }
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = ((User) auth.getPrincipal()).getUsername();
@@ -419,35 +427,42 @@ public class HomeController {
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
 
-            Message messagePayment = (Message) paymentService.buscarPagoRenovacion(idPayment.get(), user).getBody();
-            assert  messagePayment != null;
 
-            if(messagePayment.getType().equals(FAILED)){
+            try {
+                Long id = Long.parseLong(idPayment.get());
+
+                Message messagePayment = (Message) paymentService.buscarPagoRenovacion(id, user).getBody();
+                assert messagePayment != null;
+
+                if (messagePayment.getType().equals(FAILED)) {
+                    model.addAttribute(WAREHOUSE, null);
+                    model.addAttribute(MESSAGE, messagePayment);
+                    return MY_WAREHOUSE_DETAIL;
+                }
+
+                BeanPayment payment = (BeanPayment) messagePayment.getResult();
+                assert payment != null;
+
+                Message messageResponse = (Message) warehouseService.detalleBodegaRentada(payment.getBeanWarehouse().getId(), user).getBody();
+
+                if (messageResponse.getType().equals(FAILED)) {
+                    model.addAttribute(WAREHOUSE, null);
+                    model.addAttribute(MESSAGE, messageResponse);
+                    return MY_WAREHOUSE_DETAIL;
+                }
+
+                model.addAttribute(WAREHOUSE, messageResponse);
+                model.addAttribute(PAYMENT, idPayment.get());
+            } catch (NumberFormatException e) {
+                model.addAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 model.addAttribute(WAREHOUSE, null);
-                model.addAttribute(MESSAGE, messagePayment);
                 return MY_WAREHOUSE_DETAIL;
             }
 
-            BeanPayment payment = (BeanPayment) messagePayment.getResult();
-            assert payment != null;
 
-            Message messageResponse = (Message) warehouseService.detalleBodegaRentada(payment.getBeanWarehouse().getId(),user).getBody();
-
-            if(messageResponse.getType().equals(FAILED)){
-                model.addAttribute(WAREHOUSE, null);
-                model.addAttribute(MESSAGE, messageResponse);
-                return MY_WAREHOUSE_DETAIL;
-            }
-
-
-
-
-
-            model.addAttribute(WAREHOUSE, messageResponse);
-            model.addAttribute(PAYMENT, idPayment.get());
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             log.error("Ocurrio un error en HomeController - detailRenovation" + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - detailRenovation" + e.getMessage());
         }
         return MY_WAREHOUSE_DETAIL;
@@ -456,13 +471,13 @@ public class HomeController {
     @Secured({ROLE_USUARIO})
     @PostMapping("/prepararRenovacion")
     public String prepareRenovation(
-            @RequestParam("idWarehouse")Optional<Long> idWarehouse,
-            @RequestParam("finalCost")Optional<Double> finalCost,
-            @RequestParam("months")Optional<Integer> months,
-            @RequestParam("idPayment")Optional<Long> idPayment,
-            RedirectAttributes attributes, Model model){
-        try{
-            if(!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent() || !idPayment.isPresent()){
+            @RequestParam("idWarehouse") Optional<Long> idWarehouse,
+            @RequestParam("finalCost") Optional<Double> finalCost,
+            @RequestParam("months") Optional<Integer> months,
+            @RequestParam("idPayment") Optional<Long> idPayment,
+            RedirectAttributes attributes, Model model) {
+        try {
+            if (!idWarehouse.isPresent() || !finalCost.isPresent() || !months.isPresent() || !idPayment.isPresent()) {
                 attributes.addFlashAttribute(MESSAGE, MESSAGE_FIELD_ERRORS);
                 return REDIRECT_DETAIL_RENOVATION + idPayment.get();
             }
@@ -484,27 +499,27 @@ public class HomeController {
 
             Message messageResponse = (Message) warehouseService.detalleBodegaRentada(idWarehouse.get(), user).getBody();
             assert messageResponse != null;
-            if(messageResponse.getType().equals(FAILED)){
+            if (messageResponse.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, messageResponse);
                 return REDIRECT_DETAIL_RENOVATION + idPayment.get();
             }
 
 
             BeanWarehouse warehouse = (BeanWarehouse) messageResponse.getResult();
-            assert  warehouse != null;
+            assert warehouse != null;
             warehouse.setFinalCost(finalCost.get());
             Message response = (Message) stripeService.checkoutRenovation(warehouse, months.get(), idPayment.get()).getBody();
-            assert response !=null;
-            if(response.getType().equals(FAILED)){
+            assert response != null;
+            if (response.getType().equals(FAILED)) {
                 attributes.addFlashAttribute(MESSAGE, response);
                 return REDIRECT_DETAIL_RENOVATION + idPayment.get();
             }
             sessionRenovation = (Session) response.getResult();
-            assert  sessionRenovation != null;
+            assert sessionRenovation != null;
 
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             log.error("Ocurrio un error en HomeController - prepareRenovation" + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - prepareRenovation" + e.getMessage());
         }
 
@@ -530,17 +545,17 @@ public class HomeController {
             BeanUser user = (BeanUser) message.getResult();
             assert user != null;
 
-            ResponseEntity<?> responseRented =  stripeService.paymentIntentRenovation(sessionRenovation, user);
+            ResponseEntity<?> responseRented = stripeService.paymentIntentRenovation(sessionRenovation, user);
             Message messageResult = (Message) responseRented.getBody();
-            assert  messageResult != null;
+            assert messageResult != null;
 
-            if(messageResult.getType().equals(FAILED)){
+            if (messageResult.getType().equals(FAILED)) {
                 model.addAttribute(MESSAGE, messageResult);
                 return PAYMENT_RENOVATION_INFORMATION;
             }
 
-            Map<String,Object> mapResult = (Map<String,Object>) messageResult.getResult();
-            assert  mapResult != null;
+            Map<String, Object> mapResult = (Map<String, Object>) messageResult.getResult();
+            assert mapResult != null;
 
             BeanWarehouse warehouse = (BeanWarehouse) mapResult.get("warehouse");
             assert warehouse != null;
@@ -557,19 +572,19 @@ public class HomeController {
             String paymentDay = dateFormat.format(payment.getPaymentDate());
 
             ResponseEntity<?> responseEntityEmail = userService.renovacionBodegaEmail
-                    (correo,usernameUser,nombreBodega, dueDate, paymentDay);
+                    (correo, usernameUser, nombreBodega, dueDate, paymentDay);
             Message messageEmail = (Message) responseEntityEmail.getBody();
 
-            if (messageEmail == null){
+            if (messageEmail == null) {
                 System.out.println("Hubo un error al enviar el email");
             }
 
             model.addAttribute(MESSAGE, messageResult);
             model.addAttribute(WAREHOUSE, warehouse);
             model.addAttribute(PAYMENT, payment);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Ocurrio un error en HomeController - succesPaymentRenovation" + e.getMessage());
         }
 

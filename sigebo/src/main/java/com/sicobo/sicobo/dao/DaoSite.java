@@ -23,4 +23,8 @@ public interface DaoSite  extends JpaRepository<BeanSite, Long> {
     List<BeanSite> findByBeanUser(BeanUser beanUser);
 
     Optional<BeanSite> findBeanSiteById(Long id);
+
+    List<BeanSite> findAllByBeanStateIdAndStatusIs(Long id, int status);
+
+    List<BeanSite> findAllByStatusIs(int status);
 }
