@@ -2,18 +2,18 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/bodegas}">
+            <a class="nav-link" th:href="@{/usuario/bodegas}"  th:classappend="${opcion}=='Warehouse' ? '' : 'collapsed'">
                 <i class="bi bi-house-door-fill"></i>
                 <span>Bodegas</span>
             </a>
-            <a class="nav-link" th:href="@{/misBodegas}">
+            <a class="nav-link" th:href="@{/usuario/misBodegas}" th:classappend="${opcion}== 'MyWarehouses' ? '' : 'collapsed'">
                 <i class="bi bi-house-heart-fill active"></i>
                 <span>Mis bodegas</span>
             </a>
         </li>
         <li class="nav-heading" th:if="${states != null}">Estados</li>
         <li class="nav-item" th:each="tmpEstado: ${states}">
-            <a class="nav-link collapsed" th:href="@{${'/bodegas/'}+${tmpEstado.name}}">
+            <a class="nav-link collapsed" th:href="@{${'/usuario/bodegas/'}+${tmpEstado.name}}">
                 <i class="bi bi-geo-alt-fill"></i>
                 <span th:text="${tmpEstado.name}"></span>
             </a>

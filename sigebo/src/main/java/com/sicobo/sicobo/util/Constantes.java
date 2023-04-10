@@ -95,6 +95,7 @@ public final class Constantes {
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
         public static final String REDIRECT_ADMIN_DASHBOARD = "redirect:/admin/dashboard";
+        public static final String REDIRECT_GESTOR_DASHBOARD = "redirect:/gestor/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
         public static final String GESTOR_WAREHOUSES = "gestorViews/listWarehouses";
         public static final String REDIRECT_ERROR = "redirect:/error";
@@ -118,15 +119,15 @@ public final class Constantes {
 
         public static final String GESTOR_DASHBOARD = "gestorViews/dashboard";
 
-        public static final String USER_INDEX = "redirect:/bodegas";
-        public static final String WAREHOUSES_USER = "/bodegas";
+        public static final String USER_INDEX = "redirect:/usuario/bodegas";
+        public static final String WAREHOUSES_USER = "/usuario/bodegas";
 
         public static final String LISTADO_BODEGAS = "listadoBodegas";
 
         public static final String PRODUCT_DETAIL = "productDetail";
 
-        public static final String REDIRECT_PREPARED_DETAIL = "redirect:/detalleProducto/";
-        public static final String PREPARED_DETAIL = "http://localhost:8080/detalleProducto/";
+        public static final String REDIRECT_PREPARED_DETAIL = "redirect:/usuario/detalleProducto/";
+
         public static final String PAYMENT_INFORMATION = "paymentInformation";
         public static final String PAYMENT_RENOVATION_INFORMATION = "userViews/paymentRenovationtInformation";
         public static final String MY_WAREHOUSE_DETAIL = "userViews/myWarehouseDetail";
@@ -163,6 +164,8 @@ public final class Constantes {
         public static final String WAREHOUSES = "bodegas";
         public static final String PAYMENT = "payment";
         public static final String SELECT_OPTION = "selectOption";
+        public static final String WAREHOUSE_OPTION = "Warehouse";
+        public static final String MYWAREHOUSE_OPTION = "MyWarehouses";
 
     }
 

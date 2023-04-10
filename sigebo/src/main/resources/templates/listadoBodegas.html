@@ -155,7 +155,7 @@
                   </article>
                   <div class="col-12" th:unless="${#arrays.length(bodegas) > 0}">
                     <div class="alert alert-warning" role="alert">
-                     No existen bodegas disponibles según sus parametros.
+                       No existen bodegas disponibles según sus parametros.
                     </div>
                   </div>
                 </div>
@@ -204,23 +204,23 @@
     if(nombreDePath.length ===4){
       if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
         if ($('select[name="price"] option:selected').text()) {
-          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+          urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
           window.location.replace(urlGenerado);
         }
         else {
-          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}`;
           window.location.replace(urlGenerado);
         }
       }else{
-        urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+        urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}`;
         window.location.replace(urlGenerado);
       }
-    }else if(urlActual.href === "http://localhost:8080/bodegas" || bandera===true){
+    }else if(urlActual.href === "http://localhost:8080/usuario/bodegas" || bandera===true){
       if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
-        urlGenerado = "http://localhost:8080/bodegas/"+$('select[name="price"] option:selected').text();
+        urlGenerado = "http://localhost:8080/usuario/bodegas/"+$('select[name="price"] option:selected').text();
         window.location.replace(urlGenerado);
       }else{
-        urlGenerado = "http://localhost:8080/bodegas";
+        urlGenerado = "http://localhost:8080/usuario/bodegas";
         window.location.replace(urlGenerado);
       }
 
@@ -228,15 +228,15 @@
       if (nombreDePath[2]){
         if($('select[name="price"] option:selected').text()!=="Cualquier Precio"){
           if ($('select[name="price"] option:selected').text()) {
-            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
+            urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}/`+$('select[name="price"] option:selected').text();
             window.location.replace(urlGenerado);
           }
           else {
-            urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+            urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}`;
             window.location.replace(urlGenerado);
           }
         }else{
-          urlGenerado = `http://localhost:8080/bodegas/${nombreDePath[2]}`;
+          urlGenerado = `http://localhost:8080/usuario/bodegas/${nombreDePath[2]}`;
           window.location.replace(urlGenerado);
         }
       }
@@ -244,7 +244,7 @@
   });
 
   const detailProduct = (id) =>{
-    let path = `http://localhost:8080/detalleProducto/${id}`
+    let path = `http://localhost:8080/usuario/detalleProducto/${id}`
     window.location.replace(path);
   }
 </script>

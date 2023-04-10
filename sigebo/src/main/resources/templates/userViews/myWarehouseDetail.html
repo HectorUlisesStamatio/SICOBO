@@ -137,7 +137,7 @@
         <h1>Bodegas</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/misBodegas}">Mis bodegas</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/usuario/misBodegas}">Mis bodegas</a></li>
                 <li class="breadcrumb-item active">Detalle renovación bodega</li>
             </ol>
         </nav>
@@ -218,7 +218,7 @@
 
                                         </div>
                                         <div class="col-12 col-md-6 mt-3 align-self-end">
-                                            <form th:action="@{/prepararRenovacion}" method="POST" id="prepareBuy">
+                                            <form th:action="@{/usuario/prepararRenovacion}" method="POST" id="prepareBuy">
                                                 <input type="hidden" th:value="${warehouse.result.id}" name="idWarehouse" />
                                                 <input type="hidden" th:value="${payment}" name="idPayment" />
                                                 <input type="hidden" th:value="${warehouse.result.finalCost}" name="finalCost" id="inputFinalCost" />

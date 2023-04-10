@@ -78,8 +78,8 @@ public class StripeServiceImpl implements IStripeService {
                     }}
             ));
             beanWarehouse.setDescription("");
-            params.put("success_url", "http://localhost:8080/estadoPago");
-            params.put("cancel_url", "http://localhost:8080/detalleProducto/" + beanWarehouse.getId());
+            params.put("success_url", "http://localhost:8080/usuario/estadoPago");
+            params.put("cancel_url", "http://localhost:8080/usuario/detalleProducto/" + beanWarehouse.getId());
             params.put("mode", "payment");
             params.put("metadata", new HashMap<String, Object>() {{
                 put("idWarehouse", beanWarehouse.getId());
@@ -122,8 +122,8 @@ public class StripeServiceImpl implements IStripeService {
                     }}
             ));
             beanWarehouse.setDescription("");
-            params.put("success_url", "http://localhost:8080/estadoRenovacion");
-            params.put("cancel_url", "http://localhost:8080/renovacionBodega/" + idPayment);
+            params.put("success_url", "http://localhost:8080/usuario/estadoRenovacion");
+            params.put("cancel_url", "http://localhost:8080/usuario/renovacionBodega/" + idPayment);
             params.put("mode", "payment");
             params.put("metadata", new HashMap<String, Object>() {{
                 put("idWarehouse", beanWarehouse.getId());
