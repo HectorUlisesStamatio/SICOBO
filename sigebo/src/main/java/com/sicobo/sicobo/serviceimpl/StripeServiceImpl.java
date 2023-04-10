@@ -226,7 +226,7 @@ public class StripeServiceImpl implements IStripeService {
         DTOPayment payment = new DTOPayment();
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(paymentSearched.get().getDueDate());
+        calendar.setTime(currentDate);
         Integer idWarehouse = Integer.parseInt(session.getMetadata().get("idWarehouse"));
 
         try {

@@ -134,11 +134,11 @@ public class PaymentServiceImpl  implements IPaymentService {
             BeanPayment beanPayment = payment.get();
 
             if(paymentValidator.validDate(beanPayment.getDueDate(), new Date())){
-                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "Solo es posible renovar el pago de renta antes de 10 días a vencer el pago   ", FAILED, FAIL_CODE, null), HttpStatus.OK);
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "Solo es posible renovar cuando haya finalizado el anterior pago", FAILED, FAIL_CODE, null), HttpStatus.OK);
             }
 
             if(paymentValidator.validDateOut(beanPayment.getDueDate(), new Date())){
-                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "Solo es posible renovar el pago de renta si actualmente tienes la bodega en renta", FAILED, FAIL_CODE, null), HttpStatus.OK);
+                return new ResponseEntity<>(new Message(FAILED_EXECUTION, "No es posible renovar la bodega, la bodega estará siendo desalojada en los proximos minutos", FAILED, FAIL_CODE, null), HttpStatus.OK);
             }
 
 

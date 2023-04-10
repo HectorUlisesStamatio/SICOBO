@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 
 import java.sql.SQLException;
@@ -55,8 +57,10 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Autowired
     private DaoPayment daoPayment;
 
+    @Autowired
     private JavaMailSender javaMailSender;
 
+    @Autowired
     private TemplateEngine templateEngine;
 
     @Autowired
@@ -356,19 +360,19 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    //Scheduled(cron = "0 * * * * ?") Para las pruebas con este se ejecuta cada minuto
-    @Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
+    @Scheduled(cron = "0 * * * * ?") //Para las pruebas con este se ejecuta cada minuto
+    //@Scheduled(cron = "0 08 11 ? * *") //Para las pruebas con este se ejecuta cada minuto
+    //@Scheduled(cron = "0 0 0 1,15 * ?") //Cada 15 días a las 12:00 am
     @Transactional(rollbackFor = {SQLException.class})
     public void desalojarBodega() {
-        MimeMessage message = javaMailSender.createMimeMessage();
         try {
             List<BeanPayment> payments = daoPayment.findAllByStatusIs(1);
             List<BeanPayment> duePayments = new ArrayList<>();
             List<BeanWarehouse> warehouses = new ArrayList<>();
             if (!payments.isEmpty()) {
                 for (BeanPayment payment : payments) {
-                    int result = payment.getDueDate().compareTo(new Date());
-                    if (result < 0) {
+                   boolean result =  paymentValidator.validDateOut(payment.getDueDate(), new Date());
+                    if (result) {
                         payment.setStatus(0);
                         duePayments.add(payment);
                     }
@@ -384,25 +388,26 @@ public class WarehouseServiceImpl implements IWarehouseService {
                         warehouses.add(warehouse.get());
                     }
                     if (user.isPresent()) {
-                        BeanUser userSearched = user.get();
-                        BeanWarehouse beanWarehouse = warehouse.get();
+                            MimeMessage message = javaMailSender.createMimeMessage();
+                            BeanUser userSearched = user.get();
+                            BeanWarehouse beanWarehouse = warehouse.get();
+                            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                            Context context = new Context();
 
-                        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-                        Context context = new Context();
-                        Map<String,Object> model = new HashMap<>();
+                            Map<String, Object> model = new HashMap<>();
+                            model.put("userName", "Hola " + userSearched.getUsername());
+                            model.put("seccion", " " + beanWarehouse.getSection());
+                            model.put("dueDate", payment.getDueDate());
+                            model.put("paymenDate", payment.getPaymentDate());
+                            context.setVariables(model);
 
-                        model.put("userName", "Hola " +userSearched.getUsername());
-                        model.put("seccion"," " +beanWarehouse.getSection());
-                        model.put("dueDate", payment.getDueDate());
-                        model.put("paymenDate",payment.getPaymentDate());
-                        context.setVariables(model);
+                            String htmlText = templateEngine.process("emailDesalojo", context);
+                            helper.setFrom("sigebowarehouses@gmail.com");
+                            helper.setTo(userSearched.getEmail());
+                            helper.setSubject("Notificación por desalojo de bodega " + beanWarehouse.getSection());
+                            helper.setText(htmlText, true);
+                            javaMailSender.send(message);
 
-                        String htmlText = templateEngine.process("emailDesalojo", context);
-                        helper.setFrom("sigebowarehouses@gmail.com");
-                        helper.setTo(userSearched.getEmail());
-                        helper.setSubject("Notificación por desalojo de bodega " + beanWarehouse.getSection());
-                        helper.setText(htmlText, true);
-                        javaMailSender.send(message);
                     }
                 }
             }
