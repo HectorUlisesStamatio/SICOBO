@@ -32,8 +32,7 @@ public class UserController {
 
         Message warehousesClient = (Message) warehouseService.buscarBodegaPorUsername(auth.getName()).getBody();
 
-        System.out.println(warehousesClient);
-
+        model.addAttribute(OPTION,"misBodegas");
         model.addAttribute(RESPONSE, warehousesClient.getResult());
 
         return MIS_BODEGAS;

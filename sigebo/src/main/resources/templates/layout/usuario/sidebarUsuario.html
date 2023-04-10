@@ -2,11 +2,11 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/bodegas}">
+            <a class="nav-link" th:classappend="${opcion}==null ? '' : 'collapsed'" th:href="@{/bodegas}">
                 <i class="bi bi-house-door-fill"></i>
                 <span>Bodegas</span>
             </a>
-            <a class="nav-link" th:href="@{/misBodegas}">
+            <a class="nav-link" th:classappend="${opcion}!=null ? '' : 'collapsed'" th:href="@{/misBodegas}">
                 <i class="bi bi-house-heart-fill active"></i>
                 <span>Mis bodegas</span>
             </a>
