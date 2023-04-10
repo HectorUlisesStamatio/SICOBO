@@ -94,6 +94,7 @@ public final class Constantes {
         public static final String MIS_BODEGAS = "misBodegas";
         public static final String INDEX = "index";
         public static final String ADMIN_DASHBOARD = "adminViews/dashboard";
+        public static final String REDIRECT_ADMIN_DASHBOARD = "redirect:/admin/dashboard";
         public static final String REDIRECT_LOGIN = "redirect:/login";
         public static final String GESTOR_WAREHOUSES = "gestorViews/listWarehouses";
         public static final String REDIRECT_ERROR = "redirect:/error";
@@ -161,6 +162,7 @@ public final class Constantes {
         public static final String POLICIES = "politicas";
         public static final String WAREHOUSES = "bodegas";
         public static final String PAYMENT = "payment";
+        public static final String SELECT_OPTION = "selectOption";
 
     }
 

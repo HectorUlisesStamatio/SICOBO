@@ -55,11 +55,13 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Autowired
     private DaoPayment daoPayment;
 
-    @Autowired
     private JavaMailSender javaMailSender;
 
-    @Autowired
     private TemplateEngine templateEngine;
+
+    @Autowired
+    private DaoSite daoSite;
+
 
     private Cloudinary cloudinary;
 
@@ -413,6 +415,52 @@ public class WarehouseServiceImpl implements IWarehouseService {
             log.error("Ocurrió un error en WarehouseServiceImpl - desalojarBodega" + e.getMessage());
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> ocupacionBodegasPorSitio() {
+        List<BeanSiteOcupation> siteOcupations = new ArrayList<>();
+        try {
+            List<BeanSite> sitios = daoSite.findAllByStatusIs(1);
+
+            for (BeanSite site: sitios) {
+                List<BeanWarehouse> warehouses = daoWarehouse.findAllByBeanSiteIdAndStatusIs(site.getId(), 2);
+                BeanSiteOcupation beanSiteOcupation = new BeanSiteOcupation(site, warehouses);
+                siteOcupations.add(beanSiteOcupation);
+            }
+            System.out.println(siteOcupations.size());
+
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, siteOcupations), HttpStatus.OK);
+        }catch (Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - ocupacionBodegasPorSitio" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> ocupacionBodegasPorSitioById(Long id) {
+        List<BeanSiteOcupation> siteOcupations = new ArrayList<>();
+        try {
+            List<BeanSite> sitios = daoSite.findAllByBeanStateIdAndStatusIs(id, 1);
+
+            for (BeanSite site: sitios) {
+                List<BeanWarehouse> warehouses = daoWarehouse.findAllByBeanSiteIdAndStatusIs(site.getId(), 2);
+                BeanSiteOcupation beanSiteOcupation = new BeanSiteOcupation(site, warehouses);
+                siteOcupations.add(beanSiteOcupation);
+            }
+
+
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS,SUCCESS_CODE, siteOcupations), HttpStatus.OK);
+        }catch (Exception e){
+            log.error("Ocurrio un error en WarehouseServiceImpl - ocupacionBodegasPorSitio" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION,INTERNAL_ERROR, FAILED,SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+    }
+
 
 
 }
