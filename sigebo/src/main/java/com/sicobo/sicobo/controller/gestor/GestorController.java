@@ -20,7 +20,9 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.sicobo.sicobo.util.Constantes.MessageHeaders.FAILED_SEARCH;
@@ -363,17 +365,16 @@ public class GestorController {
         }
 
         ResponseEntity<List<Object[]>> response = warehouseService.listar(userId, siteName);
-        int bodegasDisponibles = 0;
-        int bodegasRentadas = 0;
+        Message message = (Message) warehouseService.cantidadBodegasRentadasYDisponibles().getBody();
+        assert message != null;
+        Map<String, Object> cantidades = (Map<String, Object>) message.getResult();
+        assert  cantidades != null;
 
-        for (Object[] resultado : response.getBody()) {
-            int status = (int) resultado[4];
-            if (status == 1) {
-                bodegasDisponibles++;
-            } else if (status == 2) {
-                bodegasRentadas++;
-            }
-        }
+        int bodegasDisponibles =(int) cantidades.get("cantidadEnabled");
+        int bodegasRentadas = (int) cantidades.get("candidadRented");
+
+
+
         model.addAttribute("bodegasDisponibles", bodegasDisponibles);
         model.addAttribute("bodegasRentadas", bodegasRentadas);
 

@@ -123,9 +123,14 @@
                                             <td th:text="${resultado[2]}"></td>
                                             <td th:text="${#dates.format(resultado[7], 'dd-MM-yyyy')}"></td>
                                             <td>
-                                                <span th:if="${resultado[8] == 1}" class="badge bg-warning" style="font-size: 0.75em;">A vencer</span>
-                                                <span th:if="${resultado[9] == 1}" class="badge bg-danger "  style="font-size: 0.75em;">A desalojar</span>
-                                                <span th:if="${resultado[8] == 0  && resultado[9] == 0}" class="badge bg-primary "  style="font-size: 0.75em;">En renta</span>
+                                                <div th:if="${resultado[10] == 1}">
+                                                    <span th:if="${resultado[8] == 1}" class="badge bg-warning" style="font-size: 0.75em;">A vencer</span>
+                                                    <span th:if="${resultado[9] == 1}" class="badge bg-danger "  style="font-size: 0.75em;">A desalojar</span>
+                                                    <span th:if="${resultado[8] == 0  && resultado[9] == 0}" class="badge bg-primary "  style="font-size: 0.75em;">En renta</span>
+                                                </div>
+                                                <div th:if="${resultado[10] == 0}">
+                                                    <span class="badge bg-secondary" style="font-size: 0.75em;">Finalizado</span>
+                                                </div>
                                             </td>
                                             <td>
                                                 <span th:if="${resultado[4] == 1} " class="badge bg-success" style="font-size: 0.75em;">Disponible</span>

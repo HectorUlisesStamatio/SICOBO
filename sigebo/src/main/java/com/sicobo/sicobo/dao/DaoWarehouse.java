@@ -30,7 +30,7 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
     @Query(value = "SELECT DISTINCT concat(u.name,' ',u.lastname,' ', u.surname) as fullName,u.username,\n" +
             "s.name, w.description , w.status, w.final_cost, wt.description, p.due_date, (  p.due_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 10 DAY)\n" +
-            "  AND DATEDIFF( p.due_date, NOW()) BETWEEN 1 AND 10) as isDue, p.due_date < DATE_SUB(NOW(), INTERVAL 15 DAY) as isDesert \n" +
+            "  AND DATEDIFF( p.due_date, NOW()) BETWEEN 1 AND 10) as isDue, p.due_date < DATE_SUB(NOW(), INTERVAL 15 DAY) as isDesert, p.status \n" +
             "FROM users u \n" +
             "INNER JOIN payment p ON u.id = p.user_id \n" +
             "INNER JOIN warehouse w ON p.warehouse_id = w.id \n" +
@@ -68,4 +68,7 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
 
     List<BeanWarehouse> findAllByBeanSiteIdAndStatusIs(Long id, int status);
+    List<BeanWarehouse> findAllByStatusIs( int status);
+
+
 }

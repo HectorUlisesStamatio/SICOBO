@@ -482,5 +482,26 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> cantidadBodegasRentadasYDisponibles() {
+        try{
+            List<BeanWarehouse> warehousesRented = daoWarehouse.findAllByStatusIs(2);
+            List<BeanWarehouse> warehousesEnabled = daoWarehouse.findAllByStatusIs(1);
+
+            Map<String, Object> cantidad = new HashMap<>();
+            cantidad.put("candidadRented", warehousesRented.size());
+            cantidad.put("cantidadEnabled", warehousesEnabled.size());
+
+
+
+            return new ResponseEntity<>(new Message(SUCCESSFUL_SEARCH, SEARCH_SUCCESSFUL, SUCCESS, SUCCESS_CODE, cantidad), HttpStatus.OK);
+
+        }catch (Exception e) {
+            log.error("Ocurrió un error en PaymentServiceImpl - buscar" + e.getMessage());
+            return new ResponseEntity<>(new Message(FAILED_EXECUTION, INTERNAL_ERROR, FAILED, SERVER_FAIL_CODE, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }
