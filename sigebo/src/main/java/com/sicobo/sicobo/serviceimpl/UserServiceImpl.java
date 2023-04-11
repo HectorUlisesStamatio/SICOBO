@@ -287,7 +287,7 @@ public class UserServiceImpl implements IUserService
         }
         Optional<BeanSiteAssigment> beanSiteAssigment = Optional.ofNullable(siteAssigment.findByBeanUserId(beanUser.getId()));
         if(beanSiteAssigment.isPresent()) {
-            if(siteAssigment.findAllByBeanSiteId(beanSiteAssigment.get().getBeanSite().getId()).size()==1){
+            if(siteAssigment.findAllByBeanSiteId(beanSiteAssigment.get().getBeanSite().getId()).size()==1 && typeChange=="deshabilitar"){
                 return new ResponseEntity<>(new Message(FAILED_EXECUTION,"El gestor no se puede deshabilitar si es el único asignado a ese sitio", FAILED,FAIL_CODE, null), HttpStatus.BAD_REQUEST);
             }
         }
