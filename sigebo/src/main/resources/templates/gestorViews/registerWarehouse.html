@@ -14,7 +14,8 @@
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Bodegas</h1>
+        <h1 th:if="${sitioName}" th:text="'Bodegas ' + ${sitioName}"></h1>
+        <h1 th:unless="${sitioName}">Bodegas</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Listar Bodegas</a></li>

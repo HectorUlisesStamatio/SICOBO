@@ -44,6 +44,7 @@
                 <div class="col text-end" >
                   <form th:action="@{/gestor/prepararRegistro}" method="POST" >
                     <input type="hidden" name="idSite" th:value="${sitioId}">
+                    <input type="hidden" name="nameSite" th:value="${sitioName}">
                     <button type="submit" class="btn btn-circle btn-outline-success"><i class="bi bi-plus-lg"></i></button>
                   </form>
                 </div>
@@ -101,6 +102,7 @@
                         <td class="text-center" >
                           <form id="formUpdate" th:action="@{/gestor/prepararModificacion}" method="POST"  th:title="${warehouse.status == 2 ? 'Solo se puede modificar una bodega si no esta rentada' : 'Modificar'}">
                             <input type="hidden" name="idSite" th:value="${sitioId}">
+                            <input type="hidden" name="nameSite" th:value="${sitioName}">
                             <input type="hidden" name="idWarehouse" th:value="${warehouse.id}">
                             <button type="submit" class="btn btn-outline-warning"  data-action="modificar"
                                     th:attr="disabled=${warehouse.status == 2} ? true : null">

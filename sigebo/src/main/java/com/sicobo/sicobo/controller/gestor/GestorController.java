@@ -54,7 +54,7 @@ public class GestorController {
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararRegistro")
-    public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
+    public String prepareRegisterWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("nameSite") @NotNull String nameSite,Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
             model.addAttribute(OPTION, WAREHOUSES);
             redirectAttributes.addFlashAttribute(OPTION, WAREHOUSES);
@@ -76,6 +76,7 @@ public class GestorController {
             model.addAttribute(COST_TYPES, listBeanCostType);
             int status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);
+            model.addAttribute(SITIONAME, nameSite);
             warehouse.setBeanSite( (int) idSite);
             warehouse.setStatus(1);
             model.addAttribute(WAREHOUSE, warehouse);
@@ -90,7 +91,7 @@ public class GestorController {
 
     @Secured({ROLE_GESTOR})
     @PostMapping("/prepararModificacion")
-    public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("idWarehouse") @NotNull long idWarehouse,
+    public String prepareUpdateWarehouse(@RequestParam("idSite") @NotNull long idSite, @RequestParam("nameSite") @NotNull String nameSite, @RequestParam("idWarehouse") @NotNull long idWarehouse,
                                          Model model, RedirectAttributes redirectAttributes, DTOWarehouse warehouse) {
         try {
             model.addAttribute(OPTION, WAREHOUSES);
@@ -136,6 +137,7 @@ public class GestorController {
             model.addAttribute(COST_TYPES, listBeanCostType);
             model.addAttribute(RESPONSE, message2);
             model.addAttribute(SITIOID, idSite);
+            model.addAttribute(SITIONAME, nameSite);
             model.addAttribute(WAREHOUSE, warehouse);
 
             return GESTOR_REGISTERWAREHOUSE;
