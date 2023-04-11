@@ -35,6 +35,6 @@ public interface IWarehouseService {
 
     public ResponseEntity<Object> buscarPorId(Long id);
 
-    public ResponseEntity<Object> cantidadBodegasRentadasYDisponibles();
+    public ResponseEntity<Object> cantidadBodegasRentadasYDisponibles(Long id);
 
 }

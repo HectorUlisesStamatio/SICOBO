@@ -484,10 +484,12 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<Object> cantidadBodegasRentadasYDisponibles() {
+    public ResponseEntity<Object> cantidadBodegasRentadasYDisponibles(Long idUser) {
         try{
-            List<BeanWarehouse> warehousesRented = daoWarehouse.findAllByStatusIs(2);
-            List<BeanWarehouse> warehousesEnabled = daoWarehouse.findAllByStatusIs(1);
+            BeanSiteAssigment beanSiteAssigment = daoSiteAssigment.findByBeanUserIdAndStatusIs(idUser, 1);
+
+            List<BeanWarehouse> warehousesRented = daoWarehouse.findAllByStatusIsAndBeanSiteId(2, beanSiteAssigment.getBeanSite().getId());
+            List<BeanWarehouse> warehousesEnabled = daoWarehouse.findAllByStatusIsAndBeanSiteId(1, beanSiteAssigment.getBeanSite().getId());
 
             Map<String, Object> cantidad = new HashMap<>();
             cantidad.put("candidadRented", warehousesRented.size());

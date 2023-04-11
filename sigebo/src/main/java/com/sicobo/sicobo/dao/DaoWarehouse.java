@@ -68,7 +68,7 @@ public interface DaoWarehouse  extends JpaRepository<BeanWarehouse, Long> {
 
 
     List<BeanWarehouse> findAllByBeanSiteIdAndStatusIs(Long id, int status);
-    List<BeanWarehouse> findAllByStatusIs( int status);
+    List<BeanWarehouse> findAllByStatusIsAndBeanSiteId( int status, Long id);
 
 
 }

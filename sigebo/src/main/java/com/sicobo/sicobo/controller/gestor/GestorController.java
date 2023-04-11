@@ -365,7 +365,7 @@ public class GestorController {
         }
 
         ResponseEntity<List<Object[]>> response = warehouseService.listar(userId, siteName);
-        Message message = (Message) warehouseService.cantidadBodegasRentadasYDisponibles().getBody();
+        Message message = (Message) warehouseService.cantidadBodegasRentadasYDisponibles(userId).getBody();
         assert message != null;
         Map<String, Object> cantidades = (Map<String, Object>) message.getResult();
         assert  cantidades != null;
