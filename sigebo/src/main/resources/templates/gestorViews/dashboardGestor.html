@@ -147,7 +147,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Últimas Rentas <span>| Hoy</span></h5>
 
-                                <table class="table table-borderless datatable">
+                                <table class="table table-borderless" id="lastRentsTable">
                                     <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -296,5 +296,16 @@
 <footer th:insert="~{layout/admin/footer :: footer}"></footer>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
+<script>
+    const table = new simpleDatatables.DataTable("#lastRentsTable", {
+        labels: {
+            placeholder: "Buscar...", // The search input placeholder
+            perPage: "{select} Registros por página", // per-page dropdown label
+            noRows: "Ningún dato encontrado", // Message shown when there are no search results
+            info: "Mostrando {start} de {end} de {rows} registros",  //
+            noResults: "No hay resultados que coincidan con su búsqueda"
+        },
+    });
+</script>
 </body>
 </html>

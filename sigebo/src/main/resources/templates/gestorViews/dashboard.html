@@ -55,54 +55,34 @@
                     <div class="col-12 col-lg-12 col-md-4">
                         <div class="row">
                             <div class="row">
-                                <div class="col-12 col-lg-4">
+                                <div class="col-12 col-lg-6">
                                     <div class="card info-card sales-card">
 
                                         <div class="card-body">
-                                            <h5 class="card-title">Bodegas disponibles <span>| Este Año</span></h5>
+                                            <h5 class="card-title">Bodegas disponibles</h5>
 
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-boxes"></i>
+                                                    <i class="bi bi-house-door"></i>
                                                 </div>
                                                 <div class="ps-3">
                                                     <h6>[[${bodegasDisponibles}]]</h6>
-                                                    <span class="text-success small pt-1 fw-bold">22%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
-                                <div class="col-12 col-lg-4">
-                                    <div class="card info-card revenue-card">
-
-                                        <div class="card-body">
-                                            <h5 class="card-title">Dinero <span>| Este Año</span></h5>
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-currency-dollar"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>$20,264</h6>
-                                                    <span class="text-success small pt-1 fw-bold">28%</span> <span class="text-muted small pt-2 ps-1">Incremento</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-4">
+                                <div class="col-12 col-lg-6">
                                     <div class="card info-card customers-card">
                                         <div class="card-body">
                                             <h5 class="card-title">Bodegas rentadas <span>| Este Año</span></h5>
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-boxes"></i>
+                                                    <i class="bi bi-house-door"></i>
                                                 </div>
                                                 <div class="ps-3">
                                                     <h6>[[${bodegasRentadas}]]</h6>
-                                                    <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">Decremento</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -121,7 +101,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Últimas Rentas <span>| Hoy</span></h5>
 
-                                <table class="table table-borderless datatable">
+                                <table class="table table-borderless" id="rentTable">
                                     <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -158,7 +138,17 @@
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
-
+<script>
+    const table = new simpleDatatables.DataTable("#rentTable", {
+        labels: {
+            placeholder: "Buscar...", // The search input placeholder
+            perPage: "{select} Registros por página", // per-page dropdown label
+            noRows: "Ningún dato encontrado", // Message shown when there are no search results
+            info: "Mostrando {start} de {end} de {rows} registros",  //
+            noResults: "No hay resultados que coincidan con su búsqueda"
+        },
+    });
+</script>
 </body>
 
 </html>

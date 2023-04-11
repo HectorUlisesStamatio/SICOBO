@@ -42,7 +42,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col table-responsive">
-                                    <table class="table table-borderless datatable" id="sitesTable">
+                                    <table class="table table-borderless " id="paymentTable">
                                         <thead>
                                         <tr>
                                             <th scope="col">#</th>
@@ -88,6 +88,17 @@
         class="bi bi-arrow-up-short"></i></a>
 <div th:insert="~{layout/admin/scripts :: scripts}"></div>
 
+<script>
+    const table = new simpleDatatables.DataTable("#paymentTable", {
+        labels: {
+            placeholder: "Buscar...", // The search input placeholder
+            perPage: "{select} Registros por página", // per-page dropdown label
+            noRows: "Ningún dato encontrado", // Message shown when there are no search results
+            info: "Mostrando {start} de {end} de {rows} registros",  //
+            noResults: "No hay resultados que coincidan con su búsqueda"
+        },
+    });
+</script>
 
 </body>
 

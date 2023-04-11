@@ -51,7 +51,7 @@
             <div class="container-fluid">
               <div class="row" >
                 <div class="col table-responsive">
-                  <table class="table table-borderless datatable" id="warehousesTable">
+                  <table class="table table-borderless " id="warehousesTable">
                     <thead>
                     <tr>
                       <th scope="col">#</th>
@@ -141,6 +141,16 @@
 
 <script>
   let $ = jQuery;
+
+  const table = new simpleDatatables.DataTable("#warehousesTable", {
+    labels: {
+      placeholder: "Buscar...", // The search input placeholder
+      perPage: "{select} Registros por página", // per-page dropdown label
+      noRows: "Ningún dato encontrado", // Message shown when there are no search results
+      info: "Mostrando {start} de {end} de {rows} registros",  //
+      noResults: "No hay resultados que coincidan con su búsqueda"
+    },
+  });
 
   const tableBody = document.querySelector('#warehousesTable tbody');
   tableBody.addEventListener('change', function(event) {
