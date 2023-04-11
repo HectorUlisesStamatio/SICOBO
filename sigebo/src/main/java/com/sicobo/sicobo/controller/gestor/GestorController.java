@@ -278,12 +278,14 @@ public class GestorController {
             error = handleErrorMessage(message);
             if (error != null){
                 model.addAttribute(SITIOID,  beanSite.getId());
+                model.addAttribute(SITIONAME,  beanSite.getName());
                 model.addAttribute(RESPONSE, message);
                 model.addAttribute(STATUS, SUCCESS_CODE);
                 return GESTOR_WAREHOUSES;
             }
 
             model.addAttribute(SITIOID, beanSite.getId());
+            model.addAttribute(SITIONAME,  beanSite.getName());
             model.addAttribute(RESPONSE, message);
             Object status = responseEntity.getStatusCode().value();
             model.addAttribute(STATUS, status);

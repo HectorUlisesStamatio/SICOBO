@@ -149,6 +149,7 @@ public final class Constantes {
         public static final String ERRORS = "Error: ";
         public static final String STATUS = "status";
         public static final String SITIOID = "sitioId";
+        public static final String SITIONAME = "sitioName";
         public static final String OPTION = "opcion";
         public static final String RESPONSE = "response";
         public static final String SITES = "sitios";
