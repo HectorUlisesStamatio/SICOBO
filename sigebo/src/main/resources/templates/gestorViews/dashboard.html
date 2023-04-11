@@ -109,6 +109,8 @@
                                         <th scope="col">Bodega</th>
                                         <th scope="col">Precio</th>
                                         <th scope="col">Sitio</th>
+                                        <th scope="col">Vencimiento del pago</th>
+                                        <th scope="col">Estatus del pago</th>
                                         <th scope="col">Estatus</th>
                                     </tr>
                                     </thead>
@@ -119,8 +121,16 @@
                                             <td th:text="${resultado[6]}"></td>
                                             <td th:text="'$'+${resultado[5]}"></td>
                                             <td th:text="${resultado[2]}"></td>
-                                            <td th:text="${resultado[4] == 1} ? 'Disponible' : (${resultado[4] == 2} ? 'Rentada' : 'Desactivada')"
-                                                th:class="${resultado[4] == 1} ? 'badge bg-success mt-2' : (${resultado[4] == 2} ? 'badge bg-danger mt-2' : 'badge bg-dark mt-2')">
+                                            <td th:text="${#dates.format(resultado[7], 'dd-MM-yyyy')}"></td>
+                                            <td>
+                                                <span th:if="${resultado[8] == 1}" class="badge bg-warning" style="font-size: 0.75em;">A vencer</span>
+                                                <span th:if="${resultado[9] == 1}" class="badge bg-danger "  style="font-size: 0.75em;">A desalojar</span>
+                                                <span th:if="${resultado[8] == 0  && resultado[9] == 0}" class="badge bg-primary "  style="font-size: 0.75em;">En renta</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${resultado[4] == 1} " class="badge bg-success" style="font-size: 0.75em;">Disponible</span>
+                                                <span th:if="${resultado[4] == 2}" class="badge bg-danger" style="font-size: 0.75em;">Rentada</span>
+                                                <span th:if="${resultado[4] != 1 && resultado[4] != 2} " class="badge bg-dark" style="font-size: 0.75em;">Desactivada</span>
                                             </td>
                                         </tr>
                                     </tbody>
